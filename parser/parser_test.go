@@ -42,30 +42,6 @@ let foobar = 838383;
 	}
 }
 
-func testLetStatement(t *testing.T, s ast.Statement, name string) bool {
-	if s.TokenLiteral() != "let" {
-		t.Fatalf("s.TokenLiteral() not 'let'. got=%q", s.TokenLiteral())
-	}
-
-	letStatement, ok := s.(*ast.LetStatement)
-	if !ok {
-		t.Errorf("s not *ast.Statement. got=%T", s)
-		return false
-	}
-
-	if letStatement.Name.Value != name {
-		t.Errorf("letStatement.Name.Value not '%s'. got=%s", name, letStatement.Name.Value)
-		return false
-	}
-
-	if letStatement.Name.TokenLiteral() != name {
-		t.Errorf("letStatement.Name.TokenLiteral() not '%s'. got=%s", name, letStatement.Name.TokenLiteral())
-		return false
-	}
-
-	return true
-}
-
 func TestReturnStatement(t *testing.T) {
 	input := `
     return 5; 
@@ -89,6 +65,30 @@ func TestReturnStatement(t *testing.T) {
 			return
 		}
 	}
+}
+
+func testLetStatement(t *testing.T, s ast.Statement, name string) bool {
+	if s.TokenLiteral() != "let" {
+		t.Fatalf("s.TokenLiteral() not 'let'. got=%q", s.TokenLiteral())
+	}
+
+	letStatement, ok := s.(*ast.LetStatement)
+	if !ok {
+		t.Errorf("s not *ast.Statement. got=%T", s)
+		return false
+	}
+
+	if letStatement.Name.Value != name {
+		t.Errorf("letStatement.Name.Value not '%s'. got=%s", name, letStatement.Name.Value)
+		return false
+	}
+
+	if letStatement.Name.TokenLiteral() != name {
+		t.Errorf("letStatement.Name.TokenLiteral() not '%s'. got=%s", name, letStatement.Name.TokenLiteral())
+		return false
+	}
+
+	return true
 }
 
 func testReturnStatement(t *testing.T, s ast.Statement) bool {
