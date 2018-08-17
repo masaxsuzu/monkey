@@ -171,6 +171,47 @@ func TestParsingPrefixExpressions(t *testing.T) {
 	}
 }
 
+func TestParsingInfixExpressions(t *testing.T) {
+	infixTests := []struct {
+		input      string
+		leftValue  int64
+		operator   string
+		rightValue int64
+	}{
+		{"5 + 5;", 5, "+", 5},
+		{"5 - 5;", 5, "-", 5},
+		{"5 * 5;", 5, "*", 5},
+		{"5 / 5;", 5, "/", 5},
+		{"5 > 5;", 5, ">", 5},
+		{"5 < 5;", 5, "<", 5},
+		{"5 == 5;", 5, "==", 5},
+		{"5 != 5;", 5, "!=", 5},
+	}
+
+	for _, tt := range infixTests {
+		l := lexer.New(tt.input)
+		p := New(l)
+		program := p.ParseProgram()
+		checkParserErrors(t, p)
+
+		if len(program.Statements) != 1 {
+			t.Fatalf("program.Statements does not contain %d statements. got=%d\n",
+				1, len(program.Statements))
+		}
+
+		stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+		if !ok {
+			t.Fatalf("program.Statements[0] is not ast.ExpressionStatement. got=%T",
+				program.Statements[0])
+		}
+
+		if !testInfixExpression(t, stmt.Expression, tt.leftValue,
+			tt.operator, tt.rightValue) {
+			return
+		}
+	}
+}
+
 func testLetStatement(t *testing.T, s ast.Statement, name string) bool {
 	if s.TokenLiteral() != "let" {
 		t.Fatalf("s.TokenLiteral() not 'let'. got=%q", s.TokenLiteral())
@@ -223,6 +264,31 @@ func testLiteralExpression(t *testing.T, il ast.Expression, value int64) bool {
 	if integ.TokenLiteral() != fmt.Sprintf("%d", value) {
 		t.Errorf("integ.TokenLiteral not %d. got=%s", value,
 			integ.TokenLiteral())
+		return false
+	}
+
+	return true
+}
+
+func testInfixExpression(t *testing.T, exp ast.Expression, left int64,
+	operator string, right int64) bool {
+
+	opExp, ok := exp.(*ast.InfixExpression)
+	if !ok {
+		t.Errorf("exp is not ast.OperatorExpression. got=%T(%s)", exp, exp)
+		return false
+	}
+
+	if !testLiteralExpression(t, opExp.Left, left) {
+		return false
+	}
+
+	if opExp.Operator != operator {
+		t.Errorf("exp.Operator is not '%s'. got=%q", operator, opExp.Operator)
+		return false
+	}
+
+	if !testLiteralExpression(t, opExp.Right, right) {
 		return false
 	}
 
