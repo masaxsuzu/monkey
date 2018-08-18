@@ -12,6 +12,7 @@ import (
 
 func Start(in io.Reader, out io.Writer, prompt string) {
 	scanner := bufio.NewScanner(in)
+	env := object.NewEnvironment()
 
 	for {
 		fmt.Printf(prompt)
@@ -23,7 +24,6 @@ func Start(in io.Reader, out io.Writer, prompt string) {
 		l := lexer.New(line)
 		p := parser.New(l)
 		program := p.ParseProgram()
-		env := object.NewEnvironment()
 		if len(p.Errors()) != 0 {
 			printParserErrorsWithMonkeyFace(out, p.Errors())
 			continue
