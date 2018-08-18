@@ -7,10 +7,10 @@ import (
 type ObjectType string
 
 const (
-	INTEGER_OBJ = "INTEGER"
-	BOOLEAN_OBJ = "BOOLEAN"
-	NULL_OBJ    = "NULL"
-	RETURN_OBJ  = "RETURN_VALUE"
+	INTEGER_OBJ      = "INTEGER"
+	BOOLEAN_OBJ      = "BOOLEAN"
+	NULL_OBJ         = "NULL"
+	RETURN_VALUE_OBJ = "RETURN_VALUE"
 )
 
 type Object interface {
@@ -42,4 +42,4 @@ func (n *Null) Inspect() string  { return fmt.Sprintf("null") }
 func (n *Null) Type() ObjectType { return NULL_OBJ }
 
 func (obj *ReturnValue) Inspect() string  { return obj.Value.Inspect() }
-func (obj *ReturnValue) Type() ObjectType { return RETURN_OBJ }
+func (obj *ReturnValue) Type() ObjectType { return RETURN_VALUE_OBJ }
