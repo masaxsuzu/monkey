@@ -11,8 +11,8 @@ const (
 	ILLEGAL = "ILLEGAL"
 	EOF     = "EOF"
 
-	IDENT = "IDENTIFIER"
-	INT   = "INT"
+	IDENTIFIER = "IDENTIFIER"
+	INT        = "INT"
 
 	ASSIGN   = "="
 	PLUS     = "+"
@@ -56,5 +56,5 @@ func LookupIndent(indent string) TokenType {
 	if tok, ok := keywords[indent]; ok {
 		return tok
 	}
-	return IDENT
+	return IDENTIFIER
 }
