@@ -630,6 +630,7 @@ func testBooleanLiteral(t *testing.T, exp ast.Expression, value bool) bool {
 
 	return true
 }
+
 func testIntegerLiteral(t *testing.T, il ast.Expression, value int64) bool {
 	integ, ok := il.(*ast.IntegerLiteral)
 	if !ok {
