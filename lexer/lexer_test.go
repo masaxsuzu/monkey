@@ -23,6 +23,8 @@ if (5 < 10 ){
 
 10 == 10;
 10 != 9;
+"foobar"
+"foo bar"
 `
 	expected := []struct {
 		expectedType    token.TokenType
@@ -101,7 +103,20 @@ if (5 < 10 ){
 		{token.NOT_EQ, "!="},
 		{token.INT, "9"},
 		{token.SEMICOLON, ";"},
+		{token.STRING, "foobar"},
+		{token.STRING, "foo bar"},
 		{token.EOF, ""}}
+	NextToken(input, expected, t)
+}
+
+func TestDoubleQuoteError(t *testing.T) {
+	input := `"Hello world`
+	expected := []struct {
+		expectedType    token.TokenType
+		expectedLiteral string
+	}{
+		{token.ILLEGAL, "Hello world"},
+	}
 	NextToken(input, expected, t)
 }
 
