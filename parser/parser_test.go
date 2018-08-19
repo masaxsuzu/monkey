@@ -46,6 +46,7 @@ func TestReturnStatement(t *testing.T) {
     return 5; 
     return 10; 
     return 993322; 
+    return 993322
     `
 	l := lexer.New(input)
 	p := New(l)
@@ -55,8 +56,8 @@ func TestReturnStatement(t *testing.T) {
 	if program == nil {
 		t.Fatalf("ParseProgram() returned nil")
 	}
-	if length := len(program.Statements); length != 3 {
-		t.Fatalf("program.Statements does not contain 3 statements. got=%d", length)
+	if length := len(program.Statements); length != 4 {
+		t.Fatalf("program.Statements does not contain 4 statements. got=%d", length)
 	}
 
 	for _, stmt := range program.Statements {
