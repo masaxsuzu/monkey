@@ -92,6 +92,11 @@ type FunctionLiteral struct {
 	Body       *BlockStatement
 }
 
+type ArrayLiteral struct {
+	Token    token.Token
+	Elements []Expression
+}
+
 type CallExpression struct {
 	Token     token.Token
 	Function  Expression
@@ -234,6 +239,21 @@ func (fl *FunctionLiteral) String() string {
 	out.WriteString(strings.Join(params, ","))
 	out.WriteString(")")
 	out.WriteString(fl.Body.String())
+	return out.String()
+}
+
+func (ar *ArrayLiteral) expressionNode()      {}
+func (ar *ArrayLiteral) TokenLiteral() string { return ar.Token.Literal }
+func (ar *ArrayLiteral) String() string {
+	var out bytes.Buffer
+	elements := []string{}
+
+	for _, item := range ar.Elements {
+		elements = append(elements, item.String())
+	}
+	out.WriteString("[")
+	out.WriteString(strings.Join(elements, ", "))
+	out.WriteString("]")
 	return out.String()
 }
 
