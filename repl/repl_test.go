@@ -28,6 +28,10 @@ func TestStart(t *testing.T) {
 			"let add = fn(x,y) { return x + y ;}; add(2,3);",
 			"5\n",
 		},
+		{
+			"puts(\"monkey\");",
+			"null\n",
+		},
 	}
 
 	for _, tt := range tests {
