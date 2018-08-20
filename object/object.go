@@ -17,6 +17,7 @@ const (
 	RETURN_VALUE_OBJ = "RETURN_VALUE"
 	ERROR_OBJ        = "ERROR"
 	FUNCTION_OBJ     = "FUNCTION"
+	BUILTIN_OBJ      = "BUILTIN"
 )
 
 type Object interface {
@@ -50,6 +51,11 @@ type Function struct {
 	Parameters []*ast.Identifier
 	Body       *ast.BlockStatement
 	Env        *Environment
+}
+
+type BuiltinFunction func(args ...Object) Object
+type Builtin struct {
+	Fn BuiltinFunction
 }
 
 type Environment struct {
@@ -103,6 +109,11 @@ func (f *Function) Inspect() string {
 	out.WriteString(")")
 
 	return out.String()
+}
+
+func (bf *Builtin) Type() ObjectType { return BUILTIN_OBJ }
+func (bf *Builtin) Inspect() string {
+	return "built in function"
 }
 
 func (env *Environment) Get(name string) (Object, bool) {
