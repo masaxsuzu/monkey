@@ -308,13 +308,13 @@ func (p *Parser) parseFunctionParameters() []*ast.Identifier {
 
 	p.nextToken()
 
-	ident := &ast.Identifier{Token: p.currentToken, Value: p.currentToken.Literal}
-	identifiers = append(identifiers, ident)
+	identifier := &ast.Identifier{Token: p.currentToken, Value: p.currentToken.Literal}
+	identifiers = append(identifiers, identifier)
 	for p.peekTokenIs(token.COMMA) {
 		p.nextToken()
 		p.nextToken()
-		ident := &ast.Identifier{Token: p.currentToken, Value: p.currentToken.Literal}
-		identifiers = append(identifiers, ident)
+		identifier = &ast.Identifier{Token: p.currentToken, Value: p.currentToken.Literal}
+		identifiers = append(identifiers, identifier)
 	}
 
 	if !p.expectPeek(token.RPAREN) {
