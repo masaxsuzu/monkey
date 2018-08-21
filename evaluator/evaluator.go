@@ -89,7 +89,8 @@ func Eval(node ast.Node, env *object.Environment) object.Object {
 		}
 
 		return evalIndexExpression(left, index)
-
+	case *ast.HashLiteral:
+		return evalHashLiteral(node, env)
 	case *ast.Identifier:
 		return evalIdentifier(node, env)
 	}
@@ -307,6 +308,32 @@ func unwrapReturnValue(obj object.Object) object.Object {
 	}
 
 	return obj
+}
+
+func evalHashLiteral(node *ast.HashLiteral, environment *object.Environment) object.Object {
+	pairs := make(map[object.HashKey]object.HashPair)
+
+	for keyNode, valueNode := range node.Pairs {
+		key := Eval(keyNode, environment)
+
+		if isError(key) {
+			return key
+		}
+
+		hashKey, ok := key.(object.Hashable)
+		if !ok {
+			return newError("unusable as hash key: %s", key.Type())
+		}
+
+		value := Eval(valueNode, environment)
+		if isError(value) {
+			return value
+		}
+
+		hashed := hashKey.HashKey()
+		pairs[hashed] = object.HashPair{key, value}
+	}
+	return &object.Hash{pairs}
 }
 
 func asTrue(obj object.Object) bool {
