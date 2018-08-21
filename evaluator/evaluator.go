@@ -241,7 +241,7 @@ func evalIdentifier(node *ast.Identifier,
 		return val
 	}
 
-	if builtin, ok := builtins[node.Value]; ok {
+	if builtin, ok := builtIns[node.Value]; ok {
 		return builtin
 	}
 
