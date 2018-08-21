@@ -20,6 +20,7 @@ const (
 	FUNCTION_OBJ     = "FUNCTION"
 	BUILTIN_OBJ      = "BUILTIN"
 	ARRAY_OBJ        = "ARRAY"
+	HASH_OBJ         = "HASH"
 )
 
 type Object interface {
@@ -182,7 +183,7 @@ func (s *String) HashKey() HashKey {
 	return HashKey{Type: s.Type(), Value: h.Sum64()}
 }
 
-func (h *Hash) Type() ObjectType { return h.Type() }
+func (h *Hash) Type() ObjectType { return HASH_OBJ }
 func (h *Hash) Inspect() string {
 	var out bytes.Buffer
 	pairs := []string{}

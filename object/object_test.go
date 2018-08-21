@@ -79,6 +79,13 @@ func TestIntegerHashKey(t *testing.T) {
 	}
 }
 
+func TestHashType(t *testing.T) {
+	hash := Hash{}
+	if hash.Type() != "HASH" {
+		t.Errorf("Hash is not hash")
+	}
+}
+
 func testObject(t *testing.T, obj Object, expected ObjectType) {
 	if obj.Type() != expected {
 		t.Fatalf("obj.Type() is different from %T. got=%T", expected, obj.Type())
