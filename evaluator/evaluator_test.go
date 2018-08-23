@@ -355,6 +355,8 @@ func TestBuiltinFunctions(t *testing.T) {
 		{`puts(1)`, NULL},
 		{`puts("1")`, NULL},
 		{`puts("1 +1")`, NULL},
+		{`help()`, NULL},
+		{`help(1)`, NULL},
 	}
 
 	for _, tt := range tests {

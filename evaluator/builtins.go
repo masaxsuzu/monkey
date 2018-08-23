@@ -3,6 +3,7 @@ package evaluator
 import (
 	"fmt"
 	"monkey/object"
+	"os"
 )
 
 var builtIns = map[string]*object.Builtin{
@@ -77,6 +78,19 @@ var builtIns = map[string]*object.Builtin{
 			for _, arg := range args {
 				fmt.Println(arg.Inspect())
 			}
+			return NULL
+		},
+	},
+	"exit": &object.Builtin{
+		Fn: func(args ...object.Object) object.Object {
+			os.Exit(0)
+			return NULL
+		},
+	},
+	"help": &object.Builtin{
+		Fn: func(args ...object.Object) object.Object {
+			fmt.Println("This is the Monkey programming language!")
+			fmt.Println("Execute exit() then exit monkey!")
 			return NULL
 		},
 	},
