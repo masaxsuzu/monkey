@@ -2,7 +2,7 @@ package evaluator
 
 import (
 	"fmt"
-	"monkey/object"
+	"github.com/masa-suzu/monkey/object"
 	"os"
 )
 

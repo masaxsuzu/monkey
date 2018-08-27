@@ -4,10 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"monkey/evaluator"
-	"monkey/lexer"
-	"monkey/object"
-	"monkey/parser"
+	"github.com/masa-suzu/monkey/evaluator"
+	"github.com/masa-suzu/monkey/lexer"
+	"github.com/masa-suzu/monkey/object"
+	"github.com/masa-suzu/monkey/parser"
 )
 
 func Start(in io.Reader, out io.Writer, prompt string) {
