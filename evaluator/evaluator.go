@@ -358,9 +358,9 @@ func evalHashLiteral(node *ast.HashLiteral, environment *object.Environment) obj
 		}
 
 		hashed := hashKey.HashKey()
-		pairs[hashed] = object.HashPair{key, value}
+		pairs[hashed] = object.HashPair{Key: key, Value: value}
 	}
-	return &object.Hash{pairs}
+	return &object.Hash{Pairs: pairs}
 }
 
 func asTrue(obj object.Object) bool {
