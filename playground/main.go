@@ -1,5 +1,3 @@
-// +build js
-
 package main
 
 import (
@@ -8,15 +6,16 @@ import (
 
 	"github.com/gopherjs/gopherjs/js"
 	"github.com/masa-suzu/monkey/repl"
+	"github.com/masa-suzu/monkey/object"
 )
 
 func main() {
-	js.Global.Set("run", startRepl)
+	js.Global.Set("run", startRep)
 }
 
-func startRepl(source string) string {
-	in := bytes.NewBufferString(source)
+func startRep(source string) string {
 	out := bytes.NewBufferString("")
-	repl.Start(in, out, "")
+	env := object.NewEnvironment()
+	repl.Rep(source,out, "", env)
 	return fmt.Sprint(out)
 }

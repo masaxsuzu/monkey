@@ -21,23 +21,26 @@ func Start(in io.Reader, out io.Writer, prompt string) {
 			return
 		}
 		line := scanner.Text()
-		l := lexer.New(line)
-		p := parser.New(l)
-		program := p.ParseProgram()
-		if len(p.Errors()) != 0 {
-			printParserErrorsWithMonkeyFace(out, p.Errors())
-			continue
-		}
-
-		evaluated := evaluator.Eval(program, env)
-
-		if evaluated != nil {
-			io.WriteString(out, evaluated.Inspect())
-			io.WriteString(out, "\n")
-		}
+		Rep(line,out,prompt,env)
 	}
 }
 
+func Rep(in string, out io.Writer, prompt string, env *object.Environment){
+	l := lexer.New(in)
+	p := parser.New(l)
+	program := p.ParseProgram()
+	if len(p.Errors()) != 0 {
+		printParserErrorsWithMonkeyFace(out, p.Errors())
+		return
+	}
+
+	evaluated := evaluator.Eval(program, env)
+
+	if evaluated != nil {
+		io.WriteString(out, evaluated.Inspect())
+		io.WriteString(out, "\n")
+	}
+}
 func printParseErrors(out io.Writer, errors []string) {
 	for _, msg := range errors {
 		io.WriteString(out, "\t"+msg+"\n")
