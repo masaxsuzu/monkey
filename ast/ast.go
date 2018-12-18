@@ -124,7 +124,10 @@ func (p *Program) TokenLiteral() string {
 
 func (p *Program) String() string {
 	var out bytes.Buffer
-	for _, s := range p.Statements {
+	for i, s := range p.Statements {
+		if i != 0 {
+			out.WriteString("\n")
+		}
 		out.WriteString(s.String())
 	}
 	return out.String()
@@ -160,7 +163,7 @@ func (es *ExpressionStatement) statementNode()       {}
 func (es *ExpressionStatement) TokenLiteral() string { return es.Token.Literal }
 func (es *ExpressionStatement) String() string {
 	if es.Expression != nil {
-		return es.Expression.String()
+		return es.Expression.String() +";"
 	}
 	return ""
 }
@@ -175,7 +178,7 @@ func (il *IntegerLiteral) String() string       { return il.Token.Literal }
 
 func (sl *StringLiteral) expressionNode()      {}
 func (sl *StringLiteral) TokenLiteral() string { return sl.Token.Literal }
-func (sl *StringLiteral) String() string       { return sl.Token.Literal }
+func (sl *StringLiteral) String() string       { return "\""+sl.Token.Literal+"\"" }
 
 func (pe *PrefixExpression) expressionNode()      {}
 func (pe *PrefixExpression) TokenLiteral() string { return pe.Token.Literal }
@@ -208,14 +211,16 @@ func (ife *IfExpression) expressionNode()      {}
 func (ife *IfExpression) TokenLiteral() string { return ife.Token.Literal }
 func (ife *IfExpression) String() string {
 	var out bytes.Buffer
-	out.WriteString("if")
+	out.WriteString("if (")
 	out.WriteString(ife.Condition.String())
-	out.WriteString(" ")
+	out.WriteString(") {\n    ")
 	out.WriteString(ife.Consequence.String())
+	out.WriteString("\n}")
 
 	if ife.Alternative != nil {
-		out.WriteString("else")
+		out.WriteString(" else {\n    ")
 		out.WriteString(ife.Alternative.String())
+		out.WriteString("\n}")
 	}
 
 	return out.String()
@@ -247,9 +252,11 @@ func (fl *FunctionLiteral) String() string {
 
 	out.WriteString(fl.TokenLiteral())
 	out.WriteString("(")
-	out.WriteString(strings.Join(params, ","))
+	out.WriteString(strings.Join(params, ", "))
 	out.WriteString(")")
+	out.WriteString(" {\n    ")
 	out.WriteString(fl.Body.String())
+	out.WriteString("\n}")
 	return out.String()
 }
 

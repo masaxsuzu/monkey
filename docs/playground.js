@@ -19950,7 +19950,7 @@ $packages["github.com/masa-suzu/monkey/token"] = (function() {
 	return $pkg;
 })();
 $packages["strings"] = (function() {
-	var $pkg = {}, $init, errors, js, bytealg, io, unicode, utf8, sliceType, Join;
+	var $pkg = {}, $init, errors, js, bytealg, io, unicode, utf8, sliceType, Index, Count, Join, Replace;
 	errors = $packages["errors"];
 	js = $packages["github.com/gopherjs/gopherjs/js"];
 	bytealg = $packages["internal/bytealg"];
@@ -19958,6 +19958,35 @@ $packages["strings"] = (function() {
 	unicode = $packages["unicode"];
 	utf8 = $packages["unicode/utf8"];
 	sliceType = $sliceType($Uint8);
+	Index = function(s, sep) {
+		var s, sep;
+		return $parseInt(s.indexOf(sep)) >> 0;
+	};
+	$pkg.Index = Index;
+	Count = function(s, sep) {
+		var n, pos, s, sep;
+		n = 0;
+		if ((sep.length === 0)) {
+			return utf8.RuneCountInString(s) + 1 >> 0;
+		} else if (sep.length > s.length) {
+			return 0;
+		} else if ((sep.length === s.length)) {
+			if (sep === s) {
+				return 1;
+			}
+			return 0;
+		}
+		while (true) {
+			pos = Index(s, sep);
+			if (pos === -1) {
+				break;
+			}
+			n = n + (1) >> 0;
+			s = $substring(s, (pos + sep.length >> 0));
+		}
+		return n;
+	};
+	$pkg.Count = Count;
 	Join = function(a, sep) {
 		var _1, _i, _ref, a, b, bp, i, n, s, sep;
 		_1 = a.$length;
@@ -19991,6 +20020,42 @@ $packages["strings"] = (function() {
 		return ($bytesToString(b));
 	};
 	$pkg.Join = Join;
+	Replace = function(s, old, new$1, n) {
+		var _tuple, i, j, m, n, new$1, old, s, start, t, w, wid;
+		if (old === new$1 || (n === 0)) {
+			return s;
+		}
+		m = Count(s, old);
+		if (m === 0) {
+			return s;
+		} else if (n < 0 || m < n) {
+			n = m;
+		}
+		t = $makeSlice(sliceType, (s.length + ($imul(n, ((new$1.length - old.length >> 0)))) >> 0));
+		w = 0;
+		start = 0;
+		i = 0;
+		while (true) {
+			if (!(i < n)) { break; }
+			j = start;
+			if (old.length === 0) {
+				if (i > 0) {
+					_tuple = utf8.DecodeRuneInString($substring(s, start));
+					wid = _tuple[1];
+					j = j + (wid) >> 0;
+				}
+			} else {
+				j = j + (Index($substring(s, start), old)) >> 0;
+			}
+			w = w + ($copyString($subslice(t, w), $substring(s, start, j))) >> 0;
+			w = w + ($copyString($subslice(t, w), new$1)) >> 0;
+			start = j + old.length >> 0;
+			i = i + (1) >> 0;
+		}
+		w = w + ($copyString($subslice(t, w), $substring(s, start))) >> 0;
+		return ($bytesToString($subslice(t, 0, w)));
+	};
+	$pkg.Replace = Replace;
 	$init = function() {
 		$pkg.$init = function() {};
 		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
@@ -20239,22 +20304,26 @@ $packages["github.com/masa-suzu/monkey/ast"] = (function() {
 	};
 	Program.prototype.TokenLiteral = function() { return this.$val.TokenLiteral(); };
 	Program.ptr.prototype.String = function() {
-		var _i, _r, _r$1, _ref, out, p, s, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _r = $f._r; _r$1 = $f._r$1; _ref = $f._ref; out = $f.out; p = $f.p; s = $f.s; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var _i, _r, _r$1, _ref, i, out, p, s, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _r = $f._r; _r$1 = $f._r$1; _ref = $f._ref; i = $f.i; out = $f.out; p = $f.p; s = $f.s; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		p = this;
 		out = new bytes.Buffer.ptr(sliceType.nil, 0, arrayType.zero(), 0);
 		_ref = p.Statements;
 		_i = 0;
 		/* while (true) { */ case 1:
 			/* if (!(_i < _ref.$length)) { break; } */ if(!(_i < _ref.$length)) { $s = 2; continue; }
+			i = _i;
 			s = ((_i < 0 || _i >= _ref.$length) ? ($throwRuntimeError("index out of range"), undefined) : _ref.$array[_ref.$offset + _i]);
+			if (!((i === 0))) {
+				out.WriteString("\n");
+			}
 			_r = s.String(); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 			_r$1 = out.WriteString(_r); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
 			_r$1;
 			_i++;
 		/* } */ $s = 1; continue; case 2:
 		$s = -1; return out.String();
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Program.ptr.prototype.String }; } $f._i = _i; $f._r = _r; $f._r$1 = _r$1; $f._ref = _ref; $f.out = out; $f.p = p; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Program.ptr.prototype.String }; } $f._i = _i; $f._r = _r; $f._r$1 = _r$1; $f._ref = _ref; $f.i = i; $f.out = out; $f.p = p; $f.s = s; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	Program.prototype.String = function() { return this.$val.String(); };
 	LetStatement.ptr.prototype.TokenLiteral = function() {
@@ -20321,7 +20390,7 @@ $packages["github.com/masa-suzu/monkey/ast"] = (function() {
 		/* */ $s = 2; continue;
 		/* if (!($interfaceIsEqual(es.Expression, $ifaceNil))) { */ case 1:
 			_r = es.Expression.String(); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-			$s = -1; return _r;
+			$s = -1; return _r + ";";
 		/* } */ case 2:
 		$s = -1; return "";
 		/* */ } return; } if ($f === undefined) { $f = { $blk: ExpressionStatement.ptr.prototype.String }; } $f._r = _r; $f.es = es; $f.$s = $s; $f.$r = $r; return $f;
@@ -20360,7 +20429,7 @@ $packages["github.com/masa-suzu/monkey/ast"] = (function() {
 	StringLiteral.ptr.prototype.String = function() {
 		var sl;
 		sl = this;
-		return sl.Token.Literal;
+		return "\"" + sl.Token.Literal + "\"";
 	};
 	StringLiteral.prototype.String = function() { return this.$val.String(); };
 	PrefixExpression.ptr.prototype.TokenLiteral = function() {
@@ -20431,21 +20500,23 @@ $packages["github.com/masa-suzu/monkey/ast"] = (function() {
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; ife = $f.ife; out = $f.out; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		ife = this;
 		out = new bytes.Buffer.ptr(sliceType.nil, 0, arrayType.zero(), 0);
-		out.WriteString("if");
+		out.WriteString("if (");
 		_r = ife.Condition.String(); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_r$1 = out.WriteString(_r); /* */ $s = 2; case 2: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
 		_r$1;
-		out.WriteString(" ");
+		out.WriteString(") {\n    ");
 		_r$2 = ife.Consequence.String(); /* */ $s = 3; case 3: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
 		_r$3 = out.WriteString(_r$2); /* */ $s = 4; case 4: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
 		_r$3;
+		out.WriteString("\n}");
 		/* */ if (!(ife.Alternative === ptrType.nil)) { $s = 5; continue; }
 		/* */ $s = 6; continue;
 		/* if (!(ife.Alternative === ptrType.nil)) { */ case 5:
-			out.WriteString("else");
+			out.WriteString(" else {\n    ");
 			_r$4 = ife.Alternative.String(); /* */ $s = 7; case 7: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
 			_r$5 = out.WriteString(_r$4); /* */ $s = 8; case 8: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
 			_r$5;
+			out.WriteString("\n}");
 		/* } */ case 6:
 		$s = -1; return out.String();
 		/* */ } return; } if ($f === undefined) { $f = { $blk: IfExpression.ptr.prototype.String }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f.ife = ife; $f.out = out; $f.$s = $s; $f.$r = $r; return $f;
@@ -20498,11 +20569,13 @@ $packages["github.com/masa-suzu/monkey/ast"] = (function() {
 		}
 		out.WriteString(fl.TokenLiteral());
 		out.WriteString("(");
-		out.WriteString(strings.Join(params, ","));
+		out.WriteString(strings.Join(params, ", "));
 		out.WriteString(")");
+		out.WriteString(" {\n    ");
 		_r = fl.Body.String(); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_r$1 = out.WriteString(_r); /* */ $s = 2; case 2: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
 		_r$1;
+		out.WriteString("\n}");
 		$s = -1; return out.String();
 		/* */ } return; } if ($f === undefined) { $f = { $blk: FunctionLiteral.ptr.prototype.String }; } $f._i = _i; $f._r = _r; $f._r$1 = _r$1; $f._ref = _ref; $f.fl = fl; $f.out = out; $f.p = p; $f.params = params; $f.$s = $s; $f.$r = $r; return $f;
 	};
@@ -20668,6 +20741,419 @@ $packages["github.com/masa-suzu/monkey/ast"] = (function() {
 		$r = bytes.$init(); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		$r = token.$init(); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		$r = strings.$init(); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		/* */ } return; } if ($f === undefined) { $f = { $blk: $init }; } $f.$s = $s; $f.$r = $r; return $f;
+	};
+	$pkg.$init = $init;
+	return $pkg;
+})();
+$packages["github.com/masa-suzu/monkey/formatter"] = (function() {
+	var $pkg = {}, $init, bytes, ast, strings, ptrType, ptrType$1, ptrType$2, ptrType$3, ptrType$4, ptrType$5, ptrType$6, ptrType$7, ptrType$8, ptrType$9, ptrType$10, ptrType$11, ptrType$12, ptrType$13, ptrType$14, ptrType$15, ptrType$16, sliceType, arrayType, sliceType$1, Format, indents;
+	bytes = $packages["bytes"];
+	ast = $packages["github.com/masa-suzu/monkey/ast"];
+	strings = $packages["strings"];
+	ptrType = $ptrType(ast.Program);
+	ptrType$1 = $ptrType(ast.ExpressionStatement);
+	ptrType$2 = $ptrType(ast.BlockStatement);
+	ptrType$3 = $ptrType(ast.IntegerLiteral);
+	ptrType$4 = $ptrType(ast.StringLiteral);
+	ptrType$5 = $ptrType(ast.Boolean);
+	ptrType$6 = $ptrType(ast.PrefixExpression);
+	ptrType$7 = $ptrType(ast.InfixExpression);
+	ptrType$8 = $ptrType(ast.IfExpression);
+	ptrType$9 = $ptrType(ast.ReturnStatement);
+	ptrType$10 = $ptrType(ast.LetStatement);
+	ptrType$11 = $ptrType(ast.FunctionLiteral);
+	ptrType$12 = $ptrType(ast.CallExpression);
+	ptrType$13 = $ptrType(ast.ArrayLiteral);
+	ptrType$14 = $ptrType(ast.IndexExpression);
+	ptrType$15 = $ptrType(ast.HashLiteral);
+	ptrType$16 = $ptrType(ast.Identifier);
+	sliceType = $sliceType($Uint8);
+	arrayType = $arrayType($Uint8, 64);
+	sliceType$1 = $sliceType($String);
+	Format = function(node, indent) {
+		var _i, _i$1, _i$2, _r, _r$1, _r$10, _r$11, _r$12, _r$13, _r$14, _r$15, _r$16, _r$17, _r$18, _r$19, _r$2, _r$20, _r$21, _r$22, _r$23, _r$24, _r$3, _r$4, _r$5, _r$6, _r$7, _r$8, _r$9, _ref, _ref$1, _ref$2, _ref$3, i, i$1, indent, node, out, out$1, out$2, out$3, out$4, out$5, p, params, s, s$1, v, v$1, v$10, v$11, v$12, v$13, v$14, v$15, v$16, v$17, v$2, v$3, v$4, v$5, v$6, v$7, v$8, v$9, x, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _i$1 = $f._i$1; _i$2 = $f._i$2; _r = $f._r; _r$1 = $f._r$1; _r$10 = $f._r$10; _r$11 = $f._r$11; _r$12 = $f._r$12; _r$13 = $f._r$13; _r$14 = $f._r$14; _r$15 = $f._r$15; _r$16 = $f._r$16; _r$17 = $f._r$17; _r$18 = $f._r$18; _r$19 = $f._r$19; _r$2 = $f._r$2; _r$20 = $f._r$20; _r$21 = $f._r$21; _r$22 = $f._r$22; _r$23 = $f._r$23; _r$24 = $f._r$24; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _r$7 = $f._r$7; _r$8 = $f._r$8; _r$9 = $f._r$9; _ref = $f._ref; _ref$1 = $f._ref$1; _ref$2 = $f._ref$2; _ref$3 = $f._ref$3; i = $f.i; i$1 = $f.i$1; indent = $f.indent; node = $f.node; out = $f.out; out$1 = $f.out$1; out$2 = $f.out$2; out$3 = $f.out$3; out$4 = $f.out$4; out$5 = $f.out$5; p = $f.p; params = $f.params; s = $f.s; s$1 = $f.s$1; v = $f.v; v$1 = $f.v$1; v$10 = $f.v$10; v$11 = $f.v$11; v$12 = $f.v$12; v$13 = $f.v$13; v$14 = $f.v$14; v$15 = $f.v$15; v$16 = $f.v$16; v$17 = $f.v$17; v$2 = $f.v$2; v$3 = $f.v$3; v$4 = $f.v$4; v$5 = $f.v$5; v$6 = $f.v$6; v$7 = $f.v$7; v$8 = $f.v$8; v$9 = $f.v$9; x = $f.x; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		_ref = node;
+		/* */ if ($assertType(_ref, ptrType, true)[1]) { $s = 1; continue; }
+		/* */ if ($assertType(_ref, ptrType$1, true)[1]) { $s = 2; continue; }
+		/* */ if ($assertType(_ref, ptrType$2, true)[1]) { $s = 3; continue; }
+		/* */ if ($assertType(_ref, ptrType$3, true)[1]) { $s = 4; continue; }
+		/* */ if ($assertType(_ref, ptrType$4, true)[1]) { $s = 5; continue; }
+		/* */ if ($assertType(_ref, ptrType$5, true)[1]) { $s = 6; continue; }
+		/* */ if ($assertType(_ref, ptrType$6, true)[1]) { $s = 7; continue; }
+		/* */ if ($assertType(_ref, ptrType$7, true)[1]) { $s = 8; continue; }
+		/* */ if ($assertType(_ref, ptrType$8, true)[1]) { $s = 9; continue; }
+		/* */ if ($assertType(_ref, ptrType$9, true)[1]) { $s = 10; continue; }
+		/* */ if ($assertType(_ref, ptrType$10, true)[1]) { $s = 11; continue; }
+		/* */ if ($assertType(_ref, ptrType$11, true)[1]) { $s = 12; continue; }
+		/* */ if ($assertType(_ref, ptrType$12, true)[1]) { $s = 13; continue; }
+		/* */ if ($assertType(_ref, ptrType$13, true)[1]) { $s = 14; continue; }
+		/* */ if ($assertType(_ref, ptrType$14, true)[1]) { $s = 15; continue; }
+		/* */ if ($assertType(_ref, ptrType$15, true)[1]) { $s = 16; continue; }
+		/* */ if ($assertType(_ref, ptrType$16, true)[1]) { $s = 17; continue; }
+		/* */ $s = 18; continue;
+		/* if ($assertType(_ref, ptrType, true)[1]) { */ case 1:
+			v = _ref.$val;
+			out = new bytes.Buffer.ptr(sliceType.nil, 0, arrayType.zero(), 0);
+			_ref$1 = v.Statements;
+			_i = 0;
+			/* while (true) { */ case 20:
+				/* if (!(_i < _ref$1.$length)) { break; } */ if(!(_i < _ref$1.$length)) { $s = 21; continue; }
+				i = _i;
+				s = ((_i < 0 || _i >= _ref$1.$length) ? ($throwRuntimeError("index out of range"), undefined) : _ref$1.$array[_ref$1.$offset + _i]);
+				if (!((i === 0))) {
+					out.WriteString("\n");
+				}
+				_r = Format(s, indent); /* */ $s = 22; case 22: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+				_r$1 = out.WriteString(_r); /* */ $s = 23; case 23: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+				_r$1;
+				_i++;
+			/* } */ $s = 20; continue; case 21:
+			$s = -1; return out.String();
+		/* } else if ($assertType(_ref, ptrType$1, true)[1]) { */ case 2:
+			v$1 = _ref.$val;
+			_r$2 = Format(v$1.Expression, indent); /* */ $s = 24; case 24: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+			$s = -1; return _r$2 + ";";
+		/* } else if ($assertType(_ref, ptrType$2, true)[1]) { */ case 3:
+			v$2 = _ref.$val;
+			out$1 = new bytes.Buffer.ptr(sliceType.nil, 0, arrayType.zero(), 0);
+			_ref$2 = v$2.Statements;
+			_i$1 = 0;
+			/* while (true) { */ case 25:
+				/* if (!(_i$1 < _ref$2.$length)) { break; } */ if(!(_i$1 < _ref$2.$length)) { $s = 26; continue; }
+				i$1 = _i$1;
+				s$1 = ((_i$1 < 0 || _i$1 >= _ref$2.$length) ? ($throwRuntimeError("index out of range"), undefined) : _ref$2.$array[_ref$2.$offset + _i$1]);
+				if (!((i$1 === 0))) {
+					out$1.WriteString("\n");
+				}
+				_r$3 = Format(s$1, indent); /* */ $s = 27; case 27: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+				_r$4 = out$1.WriteString(_r$3); /* */ $s = 28; case 28: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
+				_r$4;
+				_i$1++;
+			/* } */ $s = 25; continue; case 26:
+			$s = -1; return out$1.String();
+		/* } else if ($assertType(_ref, ptrType$3, true)[1]) { */ case 4:
+			v$3 = _ref.$val;
+			$s = -1; return indents(indent) + v$3.String();
+		/* } else if ($assertType(_ref, ptrType$4, true)[1]) { */ case 5:
+			v$4 = _ref.$val;
+			$s = -1; return indents(indent) + v$4.String();
+		/* } else if ($assertType(_ref, ptrType$5, true)[1]) { */ case 6:
+			v$5 = _ref.$val;
+			$s = -1; return indents(indent) + v$5.String();
+		/* } else if ($assertType(_ref, ptrType$6, true)[1]) { */ case 7:
+			v$6 = _ref.$val;
+			_r$5 = v$6.String(); /* */ $s = 29; case 29: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
+			$s = -1; return indents(indent) + _r$5;
+		/* } else if ($assertType(_ref, ptrType$7, true)[1]) { */ case 8:
+			v$7 = _ref.$val;
+			_r$6 = v$7.String(); /* */ $s = 30; case 30: if($c) { $c = false; _r$6 = _r$6.$blk(); } if (_r$6 && _r$6.$blk !== undefined) { break s; }
+			$s = -1; return indents(indent) + _r$6;
+		/* } else if ($assertType(_ref, ptrType$8, true)[1]) { */ case 9:
+			v$8 = _ref.$val;
+			out$2 = new bytes.Buffer.ptr(sliceType.nil, 0, arrayType.zero(), 0);
+			out$2.WriteString(indents(indent) + "if(");
+			_r$7 = Format(v$8.Condition, 0); /* */ $s = 31; case 31: if($c) { $c = false; _r$7 = _r$7.$blk(); } if (_r$7 && _r$7.$blk !== undefined) { break s; }
+			_r$8 = out$2.WriteString(_r$7); /* */ $s = 32; case 32: if($c) { $c = false; _r$8 = _r$8.$blk(); } if (_r$8 && _r$8.$blk !== undefined) { break s; }
+			_r$8;
+			out$2.WriteString(") {\n");
+			_r$9 = Format(v$8.Consequence, indent + 1 >> 0); /* */ $s = 33; case 33: if($c) { $c = false; _r$9 = _r$9.$blk(); } if (_r$9 && _r$9.$blk !== undefined) { break s; }
+			_r$10 = out$2.WriteString(_r$9); /* */ $s = 34; case 34: if($c) { $c = false; _r$10 = _r$10.$blk(); } if (_r$10 && _r$10.$blk !== undefined) { break s; }
+			_r$10;
+			out$2.WriteString("\n");
+			out$2.WriteString(indents(indent) + "}");
+			/* */ if (!(v$8.Alternative === ptrType$2.nil)) { $s = 35; continue; }
+			/* */ $s = 36; continue;
+			/* if (!(v$8.Alternative === ptrType$2.nil)) { */ case 35:
+				out$2.WriteString(indents(indent) + " else {\n");
+				_r$11 = Format(v$8.Alternative, indent + 1 >> 0); /* */ $s = 37; case 37: if($c) { $c = false; _r$11 = _r$11.$blk(); } if (_r$11 && _r$11.$blk !== undefined) { break s; }
+				_r$12 = out$2.WriteString(_r$11); /* */ $s = 38; case 38: if($c) { $c = false; _r$12 = _r$12.$blk(); } if (_r$12 && _r$12.$blk !== undefined) { break s; }
+				_r$12;
+				out$2.WriteString("\n");
+				out$2.WriteString(indents(indent) + "}");
+			/* } */ case 36:
+			$s = -1; return out$2.String();
+		/* } else if ($assertType(_ref, ptrType$9, true)[1]) { */ case 10:
+			v$9 = _ref.$val;
+			out$3 = new bytes.Buffer.ptr(sliceType.nil, 0, arrayType.zero(), 0);
+			out$3.WriteString(indents(indent) + "return ");
+			_r$13 = Format(v$9.ReturnValue, indent); /* */ $s = 39; case 39: if($c) { $c = false; _r$13 = _r$13.$blk(); } if (_r$13 && _r$13.$blk !== undefined) { break s; }
+			_r$14 = strings.Replace(_r$13 + ";", indents(indent), "", 1); /* */ $s = 40; case 40: if($c) { $c = false; _r$14 = _r$14.$blk(); } if (_r$14 && _r$14.$blk !== undefined) { break s; }
+			_r$15 = out$3.WriteString(_r$14); /* */ $s = 41; case 41: if($c) { $c = false; _r$15 = _r$15.$blk(); } if (_r$15 && _r$15.$blk !== undefined) { break s; }
+			_r$15;
+			$s = -1; return out$3.String();
+		/* } else if ($assertType(_ref, ptrType$10, true)[1]) { */ case 11:
+			v$10 = _ref.$val;
+			out$4 = new bytes.Buffer.ptr(sliceType.nil, 0, arrayType.zero(), 0);
+			out$4.WriteString(indents(indent) + "let ");
+			out$4.WriteString(v$10.Name.String());
+			out$4.WriteString(" = ");
+			_r$16 = Format(v$10.Value, indent); /* */ $s = 42; case 42: if($c) { $c = false; _r$16 = _r$16.$blk(); } if (_r$16 && _r$16.$blk !== undefined) { break s; }
+			_r$17 = strings.Replace(_r$16 + ";", indents(indent), "", 1); /* */ $s = 43; case 43: if($c) { $c = false; _r$17 = _r$17.$blk(); } if (_r$17 && _r$17.$blk !== undefined) { break s; }
+			_r$18 = out$4.WriteString(_r$17); /* */ $s = 44; case 44: if($c) { $c = false; _r$18 = _r$18.$blk(); } if (_r$18 && _r$18.$blk !== undefined) { break s; }
+			_r$18;
+			$s = -1; return out$4.String();
+		/* } else if ($assertType(_ref, ptrType$11, true)[1]) { */ case 12:
+			v$11 = _ref.$val;
+			out$5 = new bytes.Buffer.ptr(sliceType.nil, 0, arrayType.zero(), 0);
+			params = new sliceType$1([]);
+			_ref$3 = v$11.Parameters;
+			_i$2 = 0;
+			while (true) {
+				if (!(_i$2 < _ref$3.$length)) { break; }
+				p = ((_i$2 < 0 || _i$2 >= _ref$3.$length) ? ($throwRuntimeError("index out of range"), undefined) : _ref$3.$array[_ref$3.$offset + _i$2]);
+				params = $append(params, p.String());
+				_i$2++;
+			}
+			out$5.WriteString(indents(indent) + "fn(");
+			out$5.WriteString(strings.Join(params, ", "));
+			out$5.WriteString(") {\n");
+			_r$19 = Format(v$11.Body, indent + 1 >> 0); /* */ $s = 45; case 45: if($c) { $c = false; _r$19 = _r$19.$blk(); } if (_r$19 && _r$19.$blk !== undefined) { break s; }
+			x = _r$19;
+			out$5.WriteString(x);
+			out$5.WriteString("\n");
+			out$5.WriteString(indents(indent) + "}");
+			$s = -1; return out$5.String();
+		/* } else if ($assertType(_ref, ptrType$12, true)[1]) { */ case 13:
+			v$12 = _ref.$val;
+			_r$20 = v$12.String(); /* */ $s = 46; case 46: if($c) { $c = false; _r$20 = _r$20.$blk(); } if (_r$20 && _r$20.$blk !== undefined) { break s; }
+			$s = -1; return indents(indent) + _r$20;
+		/* } else if ($assertType(_ref, ptrType$13, true)[1]) { */ case 14:
+			v$13 = _ref.$val;
+			_r$21 = v$13.String(); /* */ $s = 47; case 47: if($c) { $c = false; _r$21 = _r$21.$blk(); } if (_r$21 && _r$21.$blk !== undefined) { break s; }
+			$s = -1; return indents(indent) + _r$21;
+		/* } else if ($assertType(_ref, ptrType$14, true)[1]) { */ case 15:
+			v$14 = _ref.$val;
+			_r$22 = v$14.String(); /* */ $s = 48; case 48: if($c) { $c = false; _r$22 = _r$22.$blk(); } if (_r$22 && _r$22.$blk !== undefined) { break s; }
+			$s = -1; return indents(indent) + _r$22;
+		/* } else if ($assertType(_ref, ptrType$15, true)[1]) { */ case 16:
+			v$15 = _ref.$val;
+			_r$23 = v$15.String(); /* */ $s = 49; case 49: if($c) { $c = false; _r$23 = _r$23.$blk(); } if (_r$23 && _r$23.$blk !== undefined) { break s; }
+			$s = -1; return indents(indent) + _r$23;
+		/* } else if ($assertType(_ref, ptrType$16, true)[1]) { */ case 17:
+			v$16 = _ref.$val;
+			$s = -1; return indents(indent) + v$16.String();
+		/* } else { */ case 18:
+			v$17 = _ref;
+			_r$24 = v$17.String(); /* */ $s = 50; case 50: if($c) { $c = false; _r$24 = _r$24.$blk(); } if (_r$24 && _r$24.$blk !== undefined) { break s; }
+			$s = -1; return indents(indent) + _r$24;
+		/* } */ case 19:
+		$s = -1; return "";
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Format }; } $f._i = _i; $f._i$1 = _i$1; $f._i$2 = _i$2; $f._r = _r; $f._r$1 = _r$1; $f._r$10 = _r$10; $f._r$11 = _r$11; $f._r$12 = _r$12; $f._r$13 = _r$13; $f._r$14 = _r$14; $f._r$15 = _r$15; $f._r$16 = _r$16; $f._r$17 = _r$17; $f._r$18 = _r$18; $f._r$19 = _r$19; $f._r$2 = _r$2; $f._r$20 = _r$20; $f._r$21 = _r$21; $f._r$22 = _r$22; $f._r$23 = _r$23; $f._r$24 = _r$24; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._r$7 = _r$7; $f._r$8 = _r$8; $f._r$9 = _r$9; $f._ref = _ref; $f._ref$1 = _ref$1; $f._ref$2 = _ref$2; $f._ref$3 = _ref$3; $f.i = i; $f.i$1 = i$1; $f.indent = indent; $f.node = node; $f.out = out; $f.out$1 = out$1; $f.out$2 = out$2; $f.out$3 = out$3; $f.out$4 = out$4; $f.out$5 = out$5; $f.p = p; $f.params = params; $f.s = s; $f.s$1 = s$1; $f.v = v; $f.v$1 = v$1; $f.v$10 = v$10; $f.v$11 = v$11; $f.v$12 = v$12; $f.v$13 = v$13; $f.v$14 = v$14; $f.v$15 = v$15; $f.v$16 = v$16; $f.v$17 = v$17; $f.v$2 = v$2; $f.v$3 = v$3; $f.v$4 = v$4; $f.v$5 = v$5; $f.v$6 = v$6; $f.v$7 = v$7; $f.v$8 = v$8; $f.v$9 = v$9; $f.x = x; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	$pkg.Format = Format;
+	indents = function(level) {
+		var i, level, out, spaces;
+		spaces = "    ";
+		out = new bytes.Buffer.ptr(sliceType.nil, 0, arrayType.zero(), 0);
+		i = 0;
+		while (true) {
+			if (!(i < level)) { break; }
+			out.WriteString(spaces);
+			i = i + (1) >> 0;
+		}
+		return out.String();
+	};
+	$init = function() {
+		$pkg.$init = function() {};
+		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		$r = bytes.$init(); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = ast.$init(); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = strings.$init(); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		/* */ } return; } if ($f === undefined) { $f = { $blk: $init }; } $f.$s = $s; $f.$r = $r; return $f;
+	};
+	$pkg.$init = $init;
+	return $pkg;
+})();
+$packages["github.com/masa-suzu/monkey/lexer"] = (function() {
+	var $pkg = {}, $init, token, Lexer, ptrType, New, newToken, isLetter, isDigit;
+	token = $packages["github.com/masa-suzu/monkey/token"];
+	Lexer = $pkg.Lexer = $newType(0, $kindStruct, "lexer.Lexer", true, "github.com/masa-suzu/monkey/lexer", true, function(input_, currentPosition_, nextPosition_, ch_) {
+		this.$val = this;
+		if (arguments.length === 0) {
+			this.input = "";
+			this.currentPosition = 0;
+			this.nextPosition = 0;
+			this.ch = 0;
+			return;
+		}
+		this.input = input_;
+		this.currentPosition = currentPosition_;
+		this.nextPosition = nextPosition_;
+		this.ch = ch_;
+	});
+	ptrType = $ptrType(Lexer);
+	New = function(input) {
+		var input, l;
+		l = new Lexer.ptr(input, 0, 0, 0);
+		l.readChar();
+		return l;
+	};
+	$pkg.New = New;
+	Lexer.ptr.prototype.NextToken = function() {
+		var _1, ch, ch$1, l, literal, literal$1, tok;
+		l = this;
+		tok = new token.Token.ptr("", "");
+		l.skipWhitespace();
+		_1 = l.ch;
+		if (_1 === (61)) {
+			if (l.peekChar() === 61) {
+				ch = l.ch;
+				l.readChar();
+				literal = ($encodeRune(ch)) + ($encodeRune(l.ch));
+				token.Token.copy(tok, new token.Token.ptr("==", literal));
+			} else {
+				token.Token.copy(tok, newToken("=", l.ch));
+			}
+		} else if (_1 === (43)) {
+			token.Token.copy(tok, newToken("+", l.ch));
+		} else if (_1 === (45)) {
+			token.Token.copy(tok, newToken("-", l.ch));
+		} else if (_1 === (33)) {
+			if (l.peekChar() === 61) {
+				ch$1 = l.ch;
+				l.readChar();
+				literal$1 = ($encodeRune(ch$1)) + ($encodeRune(l.ch));
+				token.Token.copy(tok, new token.Token.ptr("!=", literal$1));
+			} else {
+				token.Token.copy(tok, newToken("!", l.ch));
+			}
+		} else if (_1 === (47)) {
+			token.Token.copy(tok, newToken("/", l.ch));
+		} else if (_1 === (42)) {
+			token.Token.copy(tok, newToken("*", l.ch));
+		} else if (_1 === (60)) {
+			token.Token.copy(tok, newToken("<", l.ch));
+		} else if (_1 === (62)) {
+			token.Token.copy(tok, newToken(">", l.ch));
+		} else if (_1 === (40)) {
+			token.Token.copy(tok, newToken("(", l.ch));
+		} else if (_1 === (41)) {
+			token.Token.copy(tok, newToken(")", l.ch));
+		} else if (_1 === (123)) {
+			token.Token.copy(tok, newToken("{", l.ch));
+		} else if (_1 === (125)) {
+			token.Token.copy(tok, newToken("}", l.ch));
+		} else if (_1 === (91)) {
+			token.Token.copy(tok, newToken("[", l.ch));
+		} else if (_1 === (93)) {
+			token.Token.copy(tok, newToken("]", l.ch));
+		} else if (_1 === (44)) {
+			token.Token.copy(tok, newToken(",", l.ch));
+		} else if (_1 === (59)) {
+			token.Token.copy(tok, newToken(";", l.ch));
+		} else if (_1 === (58)) {
+			token.Token.copy(tok, newToken(":", l.ch));
+		} else if (_1 === (34)) {
+			token.Token.copy(tok, l.readString());
+		} else if (_1 === (0)) {
+			tok.Literal = "";
+			tok.Type = "EOF";
+		} else if (isLetter(l.ch)) {
+			tok.Literal = l.readIdentifier();
+			tok.Type = token.LookupIdentifier(tok.Literal);
+			return tok;
+		} else if (isDigit(l.ch)) {
+			tok.Type = "INT";
+			tok.Literal = l.readNumber();
+			return tok;
+		} else {
+			token.Token.copy(tok, newToken("ILLEGAL", l.ch));
+		}
+		l.readChar();
+		return tok;
+	};
+	Lexer.prototype.NextToken = function() { return this.$val.NextToken(); };
+	Lexer.ptr.prototype.readChar = function() {
+		var l;
+		l = this;
+		if (l.nextPosition >= l.input.length) {
+			l.ch = 0;
+		} else {
+			l.ch = l.input.charCodeAt(l.nextPosition);
+		}
+		l.currentPosition = l.nextPosition;
+		l.nextPosition = l.nextPosition + (1) >> 0;
+	};
+	Lexer.prototype.readChar = function() { return this.$val.readChar(); };
+	Lexer.ptr.prototype.readString = function() {
+		var l, pos, t;
+		l = this;
+		pos = l.currentPosition + 1 >> 0;
+		t = "ILLEGAL";
+		while (true) {
+			l.readChar();
+			if (l.ch === 34) {
+				t = "STRING";
+				break;
+			} else if (l.ch === 0) {
+				t = "ILLEGAL";
+				break;
+			}
+		}
+		return new token.Token.ptr((t), $substring(l.input, pos, l.currentPosition));
+	};
+	Lexer.prototype.readString = function() { return this.$val.readString(); };
+	Lexer.ptr.prototype.peekChar = function() {
+		var l;
+		l = this;
+		if (l.nextPosition >= l.input.length) {
+			return 0;
+		} else {
+			return l.input.charCodeAt(l.nextPosition);
+		}
+	};
+	Lexer.prototype.peekChar = function() { return this.$val.peekChar(); };
+	Lexer.ptr.prototype.readIdentifier = function() {
+		var basePosition, l;
+		l = this;
+		basePosition = l.currentPosition;
+		while (true) {
+			if (!(isLetter(l.ch))) { break; }
+			l.readChar();
+		}
+		return $substring(l.input, basePosition, l.currentPosition);
+	};
+	Lexer.prototype.readIdentifier = function() { return this.$val.readIdentifier(); };
+	Lexer.ptr.prototype.readNumber = function() {
+		var basePosition, l;
+		l = this;
+		basePosition = l.currentPosition;
+		while (true) {
+			if (!(isDigit(l.ch))) { break; }
+			l.readChar();
+		}
+		return $substring(l.input, basePosition, l.currentPosition);
+	};
+	Lexer.prototype.readNumber = function() { return this.$val.readNumber(); };
+	Lexer.ptr.prototype.skipWhitespace = function() {
+		var l;
+		l = this;
+		while (true) {
+			if (!((l.ch === 32) || (l.ch === 9) || (l.ch === 10) || (l.ch === 13))) { break; }
+			l.readChar();
+		}
+	};
+	Lexer.prototype.skipWhitespace = function() { return this.$val.skipWhitespace(); };
+	newToken = function(tokenType, ch) {
+		var ch, tokenType;
+		return new token.Token.ptr(tokenType, ($encodeRune(ch)));
+	};
+	isLetter = function(ch) {
+		var ch;
+		return 97 <= ch && ch <= 122 || 65 <= ch && ch <= 90 || (ch === 95);
+	};
+	isDigit = function(ch) {
+		var ch;
+		return 48 <= ch && ch <= 57;
+	};
+	ptrType.methods = [{prop: "NextToken", name: "NextToken", pkg: "", typ: $funcType([], [token.Token], false)}, {prop: "readChar", name: "readChar", pkg: "github.com/masa-suzu/monkey/lexer", typ: $funcType([], [], false)}, {prop: "readString", name: "readString", pkg: "github.com/masa-suzu/monkey/lexer", typ: $funcType([], [token.Token], false)}, {prop: "peekChar", name: "peekChar", pkg: "github.com/masa-suzu/monkey/lexer", typ: $funcType([], [$Uint8], false)}, {prop: "readIdentifier", name: "readIdentifier", pkg: "github.com/masa-suzu/monkey/lexer", typ: $funcType([], [$String], false)}, {prop: "readNumber", name: "readNumber", pkg: "github.com/masa-suzu/monkey/lexer", typ: $funcType([], [$String], false)}, {prop: "skipWhitespace", name: "skipWhitespace", pkg: "github.com/masa-suzu/monkey/lexer", typ: $funcType([], [], false)}];
+	Lexer.init("github.com/masa-suzu/monkey/lexer", [{prop: "input", name: "input", embedded: false, exported: false, typ: $String, tag: ""}, {prop: "currentPosition", name: "currentPosition", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "nextPosition", name: "nextPosition", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "ch", name: "ch", embedded: false, exported: false, typ: $Uint8, tag: ""}]);
+	$init = function() {
+		$pkg.$init = function() {};
+		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		$r = token.$init(); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		/* */ } return; } if ($f === undefined) { $f = { $blk: $init }; } $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.$init = $init;
@@ -21216,6 +21702,635 @@ $packages["github.com/masa-suzu/monkey/object"] = (function() {
 		$r = ast.$init(); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		$r = fnv.$init(); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		$r = strings.$init(); /* */ $s = 5; case 5: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		/* */ } return; } if ($f === undefined) { $f = { $blk: $init }; } $f.$s = $s; $f.$r = $r; return $f;
+	};
+	$pkg.$init = $init;
+	return $pkg;
+})();
+$packages["github.com/masa-suzu/monkey/parser"] = (function() {
+	var $pkg = {}, $init, fmt, ast, lexer, token, strconv, prefixParseFunction, infixParseFunction, Parser, ptrType, sliceType, sliceType$1, ptrType$1, ptrType$2, sliceType$2, ptrType$3, sliceType$3, sliceType$4, ptrType$4, ptrType$5, ptrType$6, ptrType$7, mapType, mapType$1, precedences, New;
+	fmt = $packages["fmt"];
+	ast = $packages["github.com/masa-suzu/monkey/ast"];
+	lexer = $packages["github.com/masa-suzu/monkey/lexer"];
+	token = $packages["github.com/masa-suzu/monkey/token"];
+	strconv = $packages["strconv"];
+	prefixParseFunction = $pkg.prefixParseFunction = $newType(4, $kindFunc, "parser.prefixParseFunction", true, "github.com/masa-suzu/monkey/parser", false, null);
+	infixParseFunction = $pkg.infixParseFunction = $newType(4, $kindFunc, "parser.infixParseFunction", true, "github.com/masa-suzu/monkey/parser", false, null);
+	Parser = $pkg.Parser = $newType(0, $kindStruct, "parser.Parser", true, "github.com/masa-suzu/monkey/parser", true, function(l_, currentToken_, peekToken_, errors_, prefixParseFunctions_, infixParseFunctions_) {
+		this.$val = this;
+		if (arguments.length === 0) {
+			this.l = ptrType.nil;
+			this.currentToken = new token.Token.ptr("", "");
+			this.peekToken = new token.Token.ptr("", "");
+			this.errors = sliceType.nil;
+			this.prefixParseFunctions = false;
+			this.infixParseFunctions = false;
+			return;
+		}
+		this.l = l_;
+		this.currentToken = currentToken_;
+		this.peekToken = peekToken_;
+		this.errors = errors_;
+		this.prefixParseFunctions = prefixParseFunctions_;
+		this.infixParseFunctions = infixParseFunctions_;
+	});
+	ptrType = $ptrType(lexer.Lexer);
+	sliceType = $sliceType($String);
+	sliceType$1 = $sliceType(ast.Statement);
+	ptrType$1 = $ptrType(ast.Identifier);
+	ptrType$2 = $ptrType(ast.LetStatement);
+	sliceType$2 = $sliceType($emptyInterface);
+	ptrType$3 = $ptrType(ast.BlockStatement);
+	sliceType$3 = $sliceType(ptrType$1);
+	sliceType$4 = $sliceType(ast.Expression);
+	ptrType$4 = $ptrType(ast.Program);
+	ptrType$5 = $ptrType(ast.ReturnStatement);
+	ptrType$6 = $ptrType(ast.ExpressionStatement);
+	ptrType$7 = $ptrType(Parser);
+	mapType = $mapType(token.TokenType, prefixParseFunction);
+	mapType$1 = $mapType(token.TokenType, infixParseFunction);
+	New = function(l) {
+		var l, p;
+		p = new Parser.ptr(l, new token.Token.ptr("", ""), new token.Token.ptr("", ""), new sliceType([]), false, false);
+		p.prefixParseFunctions = {};
+		p.registerPrefix("IDENTIFIER", $methodVal(p, "parseIdentifier"));
+		p.registerPrefix("INT", $methodVal(p, "parseIntegerLiteral"));
+		p.registerPrefix("STRING", $methodVal(p, "parseStringLiteral"));
+		p.registerPrefix("!", $methodVal(p, "parsePrefixExpression"));
+		p.registerPrefix("-", $methodVal(p, "parsePrefixExpression"));
+		p.registerPrefix("TRUE", $methodVal(p, "parseBoolean"));
+		p.registerPrefix("FALSE", $methodVal(p, "parseBoolean"));
+		p.registerPrefix("(", $methodVal(p, "parseGroupedExpression"));
+		p.registerPrefix("IF", $methodVal(p, "parseIfExpression"));
+		p.registerPrefix("FUNCTION", $methodVal(p, "parseFunctionLiteral"));
+		p.registerPrefix("[", $methodVal(p, "parseArrayLiteral"));
+		p.registerPrefix("{", $methodVal(p, "parseHashLiteral"));
+		p.infixParseFunctions = {};
+		p.registerInfix("+", $methodVal(p, "parseInfixExpression"));
+		p.registerInfix("-", $methodVal(p, "parseInfixExpression"));
+		p.registerInfix("*", $methodVal(p, "parseInfixExpression"));
+		p.registerInfix("/", $methodVal(p, "parseInfixExpression"));
+		p.registerInfix("==", $methodVal(p, "parseInfixExpression"));
+		p.registerInfix("!=", $methodVal(p, "parseInfixExpression"));
+		p.registerInfix("<", $methodVal(p, "parseInfixExpression"));
+		p.registerInfix(">", $methodVal(p, "parseInfixExpression"));
+		p.registerInfix("(", $methodVal(p, "parseCallExpression"));
+		p.registerInfix("[", $methodVal(p, "parseIndexExpression"));
+		p.nextToken();
+		p.nextToken();
+		return p;
+	};
+	$pkg.New = New;
+	Parser.ptr.prototype.Errors = function() {
+		var p;
+		p = this;
+		return p.errors;
+	};
+	Parser.prototype.Errors = function() { return this.$val.Errors(); };
+	Parser.ptr.prototype.ParseProgram = function() {
+		var _r, p, program, statement, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; p = $f.p; program = $f.program; statement = $f.statement; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		program = new ast.Program.ptr(sliceType$1.nil);
+		program.Statements = new sliceType$1([]);
+		/* while (true) { */ case 1:
+			/* if (!(!p.currentTokenIs("EOF"))) { break; } */ if(!(!p.currentTokenIs("EOF"))) { $s = 2; continue; }
+			_r = p.parseStatement(); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+			statement = _r;
+			if (!($interfaceIsEqual(statement, $ifaceNil))) {
+				program.Statements = $append(program.Statements, statement);
+			}
+			p.nextToken();
+		/* } */ $s = 1; continue; case 2:
+		$s = -1; return program;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.ParseProgram }; } $f._r = _r; $f.p = p; $f.program = program; $f.statement = statement; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Parser.prototype.ParseProgram = function() { return this.$val.ParseProgram(); };
+	Parser.ptr.prototype.parseStatement = function() {
+		var _1, _r, _r$1, _r$2, p, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _1 = $f._1; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; p = $f.p; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+			_1 = p.currentToken.Type;
+			/* */ if (_1 === ("LET")) { $s = 2; continue; }
+			/* */ if (_1 === ("RETURN")) { $s = 3; continue; }
+			/* */ $s = 4; continue;
+			/* if (_1 === ("LET")) { */ case 2:
+				_r = p.parseLetStatement(); /* */ $s = 6; case 6: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+				$s = -1; return _r;
+			/* } else if (_1 === ("RETURN")) { */ case 3:
+				_r$1 = p.parseReturnStatement(); /* */ $s = 7; case 7: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+				$s = -1; return _r$1;
+			/* } else { */ case 4:
+				_r$2 = p.parseExpressionStatement(); /* */ $s = 8; case 8: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+				$s = -1; return _r$2;
+			/* } */ case 5:
+		case 1:
+		$s = -1; return $ifaceNil;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseStatement }; } $f._1 = _1; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f.p = p; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Parser.prototype.parseStatement = function() { return this.$val.parseStatement(); };
+	Parser.ptr.prototype.parseLetStatement = function() {
+		var _r, _r$1, _r$2, p, statement, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; p = $f.p; statement = $f.statement; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		statement = new ast.LetStatement.ptr($clone(p.currentToken, token.Token), ptrType$1.nil, $ifaceNil);
+		_r = p.expectPeek("IDENTIFIER"); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		/* */ if (!_r) { $s = 1; continue; }
+		/* */ $s = 2; continue;
+		/* if (!_r) { */ case 1:
+			$s = -1; return ptrType$2.nil;
+		/* } */ case 2:
+		statement.Name = new ast.Identifier.ptr($clone(p.currentToken, token.Token), p.currentToken.Literal);
+		_r$1 = p.expectPeek("="); /* */ $s = 6; case 6: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+		/* */ if (!_r$1) { $s = 4; continue; }
+		/* */ $s = 5; continue;
+		/* if (!_r$1) { */ case 4:
+			$s = -1; return ptrType$2.nil;
+		/* } */ case 5:
+		p.nextToken();
+		_r$2 = p.parseExpression(1); /* */ $s = 7; case 7: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+		statement.Value = _r$2;
+		if (p.peekTokenIs(";")) {
+			p.nextToken();
+		}
+		$s = -1; return statement;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseLetStatement }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f.p = p; $f.statement = statement; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Parser.prototype.parseLetStatement = function() { return this.$val.parseLetStatement(); };
+	Parser.ptr.prototype.parseReturnStatement = function() {
+		var _r, p, statement, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; p = $f.p; statement = $f.statement; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		statement = new ast.ReturnStatement.ptr($clone(p.currentToken, token.Token), $ifaceNil);
+		p.nextToken();
+		_r = p.parseExpression(1); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		statement.ReturnValue = _r;
+		while (true) {
+			if (!(p.peekTokenIs(";"))) { break; }
+			p.nextToken();
+		}
+		$s = -1; return statement;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseReturnStatement }; } $f._r = _r; $f.p = p; $f.statement = statement; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Parser.prototype.parseReturnStatement = function() { return this.$val.parseReturnStatement(); };
+	Parser.ptr.prototype.parseExpressionStatement = function() {
+		var _r, p, statement, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; p = $f.p; statement = $f.statement; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		statement = new ast.ExpressionStatement.ptr($clone(p.currentToken, token.Token), $ifaceNil);
+		_r = p.parseExpression(1); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		statement.Expression = _r;
+		if (p.peekTokenIs(";")) {
+			p.nextToken();
+		}
+		$s = -1; return statement;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseExpressionStatement }; } $f._r = _r; $f.p = p; $f.statement = statement; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Parser.prototype.parseExpressionStatement = function() { return this.$val.parseExpressionStatement(); };
+	Parser.ptr.prototype.parseExpression = function(precedence) {
+		var _entry, _entry$1, _r, _r$1, infix, leftExp, p, precedence, prefix, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _entry = $f._entry; _entry$1 = $f._entry$1; _r = $f._r; _r$1 = $f._r$1; infix = $f.infix; leftExp = $f.leftExp; p = $f.p; precedence = $f.precedence; prefix = $f.prefix; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		prefix = (_entry = p.prefixParseFunctions[token.TokenType.keyFor(p.currentToken.Type)], _entry !== undefined ? _entry.v : $throwNilPointerError);
+		/* */ if (prefix === $throwNilPointerError) { $s = 1; continue; }
+		/* */ $s = 2; continue;
+		/* if (prefix === $throwNilPointerError) { */ case 1:
+			$r = p.noPrefixParseError(p.currentToken.Type); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+			$s = -1; return $ifaceNil;
+		/* } */ case 2:
+		_r = prefix(); /* */ $s = 4; case 4: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		leftExp = _r;
+		/* while (true) { */ case 5:
+			/* if (!(!p.peekTokenIs(";") && precedence < p.peekPrecedence())) { break; } */ if(!(!p.peekTokenIs(";") && precedence < p.peekPrecedence())) { $s = 6; continue; }
+			infix = (_entry$1 = p.infixParseFunctions[token.TokenType.keyFor(p.peekToken.Type)], _entry$1 !== undefined ? _entry$1.v : $throwNilPointerError);
+			if (infix === $throwNilPointerError) {
+				$s = -1; return leftExp;
+			}
+			p.nextToken();
+			_r$1 = infix(leftExp); /* */ $s = 7; case 7: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+			leftExp = _r$1;
+		/* } */ $s = 5; continue; case 6:
+		$s = -1; return leftExp;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseExpression }; } $f._entry = _entry; $f._entry$1 = _entry$1; $f._r = _r; $f._r$1 = _r$1; $f.infix = infix; $f.leftExp = leftExp; $f.p = p; $f.precedence = precedence; $f.prefix = prefix; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Parser.prototype.parseExpression = function(precedence) { return this.$val.parseExpression(precedence); };
+	Parser.ptr.prototype.parseIdentifier = function() {
+		var p;
+		p = this;
+		return new ast.Identifier.ptr($clone(p.currentToken, token.Token), p.currentToken.Literal);
+	};
+	Parser.prototype.parseIdentifier = function() { return this.$val.parseIdentifier(); };
+	Parser.ptr.prototype.parseIntegerLiteral = function() {
+		var _r, _tuple, err, lit, msg, p, value, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; err = $f.err; lit = $f.lit; msg = $f.msg; p = $f.p; value = $f.value; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		lit = new ast.IntegerLiteral.ptr($clone(p.currentToken, token.Token), new $Int64(0, 0));
+		_tuple = strconv.ParseInt(p.currentToken.Literal, 0, 64);
+		value = _tuple[0];
+		err = _tuple[1];
+		/* */ if (!($interfaceIsEqual(err, $ifaceNil))) { $s = 1; continue; }
+		/* */ $s = 2; continue;
+		/* if (!($interfaceIsEqual(err, $ifaceNil))) { */ case 1:
+			_r = fmt.Sprintf("could not parse %q as interger", new sliceType$2([new $String(p.currentToken.Literal)])); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+			msg = _r;
+			p.errors = $append(p.errors, msg);
+			$s = -1; return $ifaceNil;
+		/* } */ case 2:
+		lit.Value = value;
+		$s = -1; return lit;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseIntegerLiteral }; } $f._r = _r; $f._tuple = _tuple; $f.err = err; $f.lit = lit; $f.msg = msg; $f.p = p; $f.value = value; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Parser.prototype.parseIntegerLiteral = function() { return this.$val.parseIntegerLiteral(); };
+	Parser.ptr.prototype.parseStringLiteral = function() {
+		var p;
+		p = this;
+		return new ast.StringLiteral.ptr($clone(p.currentToken, token.Token), p.currentToken.Literal);
+	};
+	Parser.prototype.parseStringLiteral = function() { return this.$val.parseStringLiteral(); };
+	Parser.ptr.prototype.parsePrefixExpression = function() {
+		var _r, expression, p, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; expression = $f.expression; p = $f.p; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		expression = new ast.PrefixExpression.ptr($clone(p.currentToken, token.Token), p.currentToken.Literal, $ifaceNil);
+		p.nextToken();
+		_r = p.parseExpression(6); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		expression.Right = _r;
+		$s = -1; return expression;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parsePrefixExpression }; } $f._r = _r; $f.expression = expression; $f.p = p; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Parser.prototype.parsePrefixExpression = function() { return this.$val.parsePrefixExpression(); };
+	Parser.ptr.prototype.parseInfixExpression = function(left) {
+		var _r, expression, left, p, precedence, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; expression = $f.expression; left = $f.left; p = $f.p; precedence = $f.precedence; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		expression = new ast.InfixExpression.ptr($clone(p.currentToken, token.Token), left, p.currentToken.Literal, $ifaceNil);
+		precedence = p.currentPrecedence();
+		p.nextToken();
+		_r = p.parseExpression(precedence); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		expression.Right = _r;
+		$s = -1; return expression;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseInfixExpression }; } $f._r = _r; $f.expression = expression; $f.left = left; $f.p = p; $f.precedence = precedence; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Parser.prototype.parseInfixExpression = function(left) { return this.$val.parseInfixExpression(left); };
+	Parser.ptr.prototype.parseBoolean = function() {
+		var p;
+		p = this;
+		return new ast.Boolean.ptr($clone(p.currentToken, token.Token), p.currentTokenIs("TRUE"));
+	};
+	Parser.prototype.parseBoolean = function() { return this.$val.parseBoolean(); };
+	Parser.ptr.prototype.parseGroupedExpression = function() {
+		var _r, _r$1, exp, p, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; exp = $f.exp; p = $f.p; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		p.nextToken();
+		_r = p.parseExpression(1); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		exp = _r;
+		_r$1 = p.expectPeek(")"); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+		/* */ if (!_r$1) { $s = 2; continue; }
+		/* */ $s = 3; continue;
+		/* if (!_r$1) { */ case 2:
+			$s = -1; return $ifaceNil;
+		/* } */ case 3:
+		$s = -1; return exp;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseGroupedExpression }; } $f._r = _r; $f._r$1 = _r$1; $f.exp = exp; $f.p = p; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Parser.prototype.parseGroupedExpression = function() { return this.$val.parseGroupedExpression(); };
+	Parser.ptr.prototype.parseIfExpression = function() {
+		var _r, _r$1, _r$2, _r$3, _r$4, _r$5, _r$6, exp, p, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; exp = $f.exp; p = $f.p; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		exp = new ast.IfExpression.ptr($clone(p.currentToken, token.Token), $ifaceNil, ptrType$3.nil, ptrType$3.nil);
+		_r = p.expectPeek("("); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		/* */ if (!_r) { $s = 1; continue; }
+		/* */ $s = 2; continue;
+		/* if (!_r) { */ case 1:
+			$s = -1; return $ifaceNil;
+		/* } */ case 2:
+		p.nextToken();
+		_r$1 = p.parseExpression(1); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+		exp.Condition = _r$1;
+		_r$2 = p.expectPeek(")"); /* */ $s = 7; case 7: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+		/* */ if (!_r$2) { $s = 5; continue; }
+		/* */ $s = 6; continue;
+		/* if (!_r$2) { */ case 5:
+			$s = -1; return $ifaceNil;
+		/* } */ case 6:
+		_r$3 = p.expectPeek("{"); /* */ $s = 10; case 10: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+		/* */ if (!_r$3) { $s = 8; continue; }
+		/* */ $s = 9; continue;
+		/* if (!_r$3) { */ case 8:
+			$s = -1; return $ifaceNil;
+		/* } */ case 9:
+		_r$4 = p.parseBlockStatement(); /* */ $s = 11; case 11: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
+		exp.Consequence = _r$4;
+		/* */ if (p.peekTokenIs("ELSE")) { $s = 12; continue; }
+		/* */ $s = 13; continue;
+		/* if (p.peekTokenIs("ELSE")) { */ case 12:
+			p.nextToken();
+			_r$5 = p.expectPeek("{"); /* */ $s = 16; case 16: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
+			/* */ if (!_r$5) { $s = 14; continue; }
+			/* */ $s = 15; continue;
+			/* if (!_r$5) { */ case 14:
+				$s = -1; return $ifaceNil;
+			/* } */ case 15:
+			_r$6 = p.parseBlockStatement(); /* */ $s = 17; case 17: if($c) { $c = false; _r$6 = _r$6.$blk(); } if (_r$6 && _r$6.$blk !== undefined) { break s; }
+			exp.Alternative = _r$6;
+		/* } */ case 13:
+		$s = -1; return exp;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseIfExpression }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f.exp = exp; $f.p = p; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Parser.prototype.parseIfExpression = function() { return this.$val.parseIfExpression(); };
+	Parser.ptr.prototype.parseBlockStatement = function() {
+		var _r, block, p, statement, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; block = $f.block; p = $f.p; statement = $f.statement; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		block = new ast.BlockStatement.ptr($clone(p.currentToken, token.Token), sliceType$1.nil);
+		block.Statements = new sliceType$1([]);
+		p.nextToken();
+		/* while (true) { */ case 1:
+			/* if (!(!p.currentTokenIs("}") && !p.currentTokenIs("EOF"))) { break; } */ if(!(!p.currentTokenIs("}") && !p.currentTokenIs("EOF"))) { $s = 2; continue; }
+			_r = p.parseStatement(); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+			statement = _r;
+			if (!($interfaceIsEqual(statement, $ifaceNil))) {
+				block.Statements = $append(block.Statements, statement);
+			}
+			p.nextToken();
+		/* } */ $s = 1; continue; case 2:
+		$s = -1; return block;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseBlockStatement }; } $f._r = _r; $f.block = block; $f.p = p; $f.statement = statement; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Parser.prototype.parseBlockStatement = function() { return this.$val.parseBlockStatement(); };
+	Parser.ptr.prototype.parseFunctionLiteral = function() {
+		var _r, _r$1, _r$2, _r$3, lit, p, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; lit = $f.lit; p = $f.p; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		lit = new ast.FunctionLiteral.ptr($clone(p.currentToken, token.Token), sliceType$3.nil, ptrType$3.nil);
+		_r = p.expectPeek("("); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		/* */ if (!_r) { $s = 1; continue; }
+		/* */ $s = 2; continue;
+		/* if (!_r) { */ case 1:
+			$s = -1; return $ifaceNil;
+		/* } */ case 2:
+		_r$1 = p.parseFunctionParameters(); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+		lit.Parameters = _r$1;
+		_r$2 = p.expectPeek("{"); /* */ $s = 7; case 7: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+		/* */ if (!_r$2) { $s = 5; continue; }
+		/* */ $s = 6; continue;
+		/* if (!_r$2) { */ case 5:
+			$s = -1; return $ifaceNil;
+		/* } */ case 6:
+		_r$3 = p.parseBlockStatement(); /* */ $s = 8; case 8: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+		lit.Body = _r$3;
+		$s = -1; return lit;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseFunctionLiteral }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f.lit = lit; $f.p = p; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Parser.prototype.parseFunctionLiteral = function() { return this.$val.parseFunctionLiteral(); };
+	Parser.ptr.prototype.parseFunctionParameters = function() {
+		var _r, identifier, identifiers, p, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; identifier = $f.identifier; identifiers = $f.identifiers; p = $f.p; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		identifiers = new sliceType$3([]);
+		if (p.peekTokenIs(")")) {
+			p.nextToken();
+			$s = -1; return identifiers;
+		}
+		p.nextToken();
+		identifier = new ast.Identifier.ptr($clone(p.currentToken, token.Token), p.currentToken.Literal);
+		identifiers = $append(identifiers, identifier);
+		while (true) {
+			if (!(p.peekTokenIs(","))) { break; }
+			p.nextToken();
+			p.nextToken();
+			identifier = new ast.Identifier.ptr($clone(p.currentToken, token.Token), p.currentToken.Literal);
+			identifiers = $append(identifiers, identifier);
+		}
+		_r = p.expectPeek(")"); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		/* */ if (!_r) { $s = 1; continue; }
+		/* */ $s = 2; continue;
+		/* if (!_r) { */ case 1:
+			$s = -1; return sliceType$3.nil;
+		/* } */ case 2:
+		$s = -1; return identifiers;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseFunctionParameters }; } $f._r = _r; $f.identifier = identifier; $f.identifiers = identifiers; $f.p = p; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Parser.prototype.parseFunctionParameters = function() { return this.$val.parseFunctionParameters(); };
+	Parser.ptr.prototype.parseCallExpression = function(function$1) {
+		var _r, exp, function$1, p, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; exp = $f.exp; function$1 = $f.function$1; p = $f.p; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		exp = new ast.CallExpression.ptr($clone(p.currentToken, token.Token), function$1, sliceType$4.nil);
+		_r = p.parseExpressionList(")"); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		exp.Arguments = _r;
+		$s = -1; return exp;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseCallExpression }; } $f._r = _r; $f.exp = exp; $f.function$1 = function$1; $f.p = p; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Parser.prototype.parseCallExpression = function(function$1) { return this.$val.parseCallExpression(function$1); };
+	Parser.ptr.prototype.parseArrayLiteral = function() {
+		var _r, array, p, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; array = $f.array; p = $f.p; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		array = new ast.ArrayLiteral.ptr($clone(p.currentToken, token.Token), sliceType$4.nil);
+		_r = p.parseExpressionList("]"); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		array.Elements = _r;
+		$s = -1; return array;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseArrayLiteral }; } $f._r = _r; $f.array = array; $f.p = p; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Parser.prototype.parseArrayLiteral = function() { return this.$val.parseArrayLiteral(); };
+	Parser.ptr.prototype.parseExpressionList = function(end) {
+		var _r, _r$1, _r$2, end, list, p, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; end = $f.end; list = $f.list; p = $f.p; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		list = new sliceType$4([]);
+		if (p.peekTokenIs(end)) {
+			p.nextToken();
+			p.nextToken();
+			$s = -1; return list;
+		}
+		p.nextToken();
+		_r = p.parseExpression(1); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		list = $append(list, _r);
+		/* while (true) { */ case 2:
+			/* if (!(p.peekTokenIs(","))) { break; } */ if(!(p.peekTokenIs(","))) { $s = 3; continue; }
+			p.nextToken();
+			p.nextToken();
+			_r$1 = p.parseExpression(1); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+			list = $append(list, _r$1);
+		/* } */ $s = 2; continue; case 3:
+		_r$2 = p.expectPeek(end); /* */ $s = 7; case 7: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+		/* */ if (!_r$2) { $s = 5; continue; }
+		/* */ $s = 6; continue;
+		/* if (!_r$2) { */ case 5:
+			$s = -1; return sliceType$4.nil;
+		/* } */ case 6:
+		$s = -1; return list;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseExpressionList }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f.end = end; $f.list = list; $f.p = p; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Parser.prototype.parseExpressionList = function(end) { return this.$val.parseExpressionList(end); };
+	Parser.ptr.prototype.parseIndexExpression = function(left) {
+		var _r, _r$1, exp, left, p, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; exp = $f.exp; left = $f.left; p = $f.p; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		exp = new ast.IndexExpression.ptr($clone(p.currentToken, token.Token), left, $ifaceNil);
+		p.nextToken();
+		_r = p.parseExpression(1); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		exp.Index = _r;
+		_r$1 = p.expectPeek("]"); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+		/* */ if (!_r$1) { $s = 2; continue; }
+		/* */ $s = 3; continue;
+		/* if (!_r$1) { */ case 2:
+			$s = -1; return $ifaceNil;
+		/* } */ case 3:
+		$s = -1; return exp;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseIndexExpression }; } $f._r = _r; $f._r$1 = _r$1; $f.exp = exp; $f.left = left; $f.p = p; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Parser.prototype.parseIndexExpression = function(left) { return this.$val.parseIndexExpression(left); };
+	Parser.ptr.prototype.parseHashLiteral = function() {
+		var _key, _r, _r$1, _r$2, _r$3, _r$4, _v, hash, key, p, value, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _key = $f._key; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _v = $f._v; hash = $f.hash; key = $f.key; p = $f.p; value = $f.value; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		hash = new ast.HashLiteral.ptr($clone(p.currentToken, token.Token), false);
+		hash.Pairs = {};
+		/* while (true) { */ case 1:
+			/* if (!(!p.peekTokenIs("}"))) { break; } */ if(!(!p.peekTokenIs("}"))) { $s = 2; continue; }
+			p.nextToken();
+			_r = p.parseExpression(1); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+			key = _r;
+			_r$1 = p.expectPeek(":"); /* */ $s = 6; case 6: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+			/* */ if (!_r$1) { $s = 4; continue; }
+			/* */ $s = 5; continue;
+			/* if (!_r$1) { */ case 4:
+				$s = -1; return $ifaceNil;
+			/* } */ case 5:
+			p.nextToken();
+			_r$2 = p.parseExpression(1); /* */ $s = 7; case 7: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+			value = _r$2;
+			_key = key; (hash.Pairs || $throwRuntimeError("assignment to entry in nil map"))[ast.Expression.keyFor(_key)] = { k: _key, v: value };
+			if (!(!p.peekTokenIs("}"))) { _v = false; $s = 10; continue s; }
+			_r$3 = p.expectPeek(","); /* */ $s = 11; case 11: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+			_v = !_r$3; case 10:
+			/* */ if (_v) { $s = 8; continue; }
+			/* */ $s = 9; continue;
+			/* if (_v) { */ case 8:
+				$s = -1; return $ifaceNil;
+			/* } */ case 9:
+		/* } */ $s = 1; continue; case 2:
+		_r$4 = p.expectPeek("}"); /* */ $s = 14; case 14: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
+		/* */ if (!_r$4) { $s = 12; continue; }
+		/* */ $s = 13; continue;
+		/* if (!_r$4) { */ case 12:
+			$s = -1; return $ifaceNil;
+		/* } */ case 13:
+		$s = -1; return hash;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseHashLiteral }; } $f._key = _key; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._v = _v; $f.hash = hash; $f.key = key; $f.p = p; $f.value = value; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Parser.prototype.parseHashLiteral = function() { return this.$val.parseHashLiteral(); };
+	Parser.ptr.prototype.nextToken = function() {
+		var p;
+		p = this;
+		token.Token.copy(p.currentToken, p.peekToken);
+		token.Token.copy(p.peekToken, p.l.NextToken());
+	};
+	Parser.prototype.nextToken = function() { return this.$val.nextToken(); };
+	Parser.ptr.prototype.currentTokenIs = function(t) {
+		var p, t;
+		p = this;
+		return p.currentToken.Type === t;
+	};
+	Parser.prototype.currentTokenIs = function(t) { return this.$val.currentTokenIs(t); };
+	Parser.ptr.prototype.peekTokenIs = function(t) {
+		var p, t;
+		p = this;
+		return p.peekToken.Type === t;
+	};
+	Parser.prototype.peekTokenIs = function(t) { return this.$val.peekTokenIs(t); };
+	Parser.ptr.prototype.expectPeek = function(t) {
+		var p, t, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; p = $f.p; t = $f.t; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		/* */ if (p.peekTokenIs(t)) { $s = 1; continue; }
+		/* */ $s = 2; continue;
+		/* if (p.peekTokenIs(t)) { */ case 1:
+			p.nextToken();
+			$s = -1; return true;
+		/* } else { */ case 2:
+			$r = p.peekErrors(t); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+			$s = -1; return false;
+		/* } */ case 3:
+		$s = -1; return false;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.expectPeek }; } $f.p = p; $f.t = t; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Parser.prototype.expectPeek = function(t) { return this.$val.expectPeek(t); };
+	Parser.ptr.prototype.peekErrors = function(t) {
+		var _r, msg, p, t, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; msg = $f.msg; p = $f.p; t = $f.t; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		_r = fmt.Sprintf("expected next token to be %s, got %s instead.", new sliceType$2([new token.TokenType(t), new token.TokenType(p.peekToken.Type)])); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		msg = _r;
+		p.errors = $append(p.errors, msg);
+		$s = -1; return;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.peekErrors }; } $f._r = _r; $f.msg = msg; $f.p = p; $f.t = t; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Parser.prototype.peekErrors = function(t) { return this.$val.peekErrors(t); };
+	Parser.ptr.prototype.peekPrecedence = function() {
+		var _entry, _tuple, ok, p, p$1;
+		p = this;
+		_tuple = (_entry = precedences[token.TokenType.keyFor(p.peekToken.Type)], _entry !== undefined ? [_entry.v, true] : [0, false]);
+		p$1 = _tuple[0];
+		ok = _tuple[1];
+		if (ok) {
+			return p$1;
+		}
+		return 1;
+	};
+	Parser.prototype.peekPrecedence = function() { return this.$val.peekPrecedence(); };
+	Parser.ptr.prototype.currentPrecedence = function() {
+		var _entry, _tuple, ok, p, p$1;
+		p = this;
+		_tuple = (_entry = precedences[token.TokenType.keyFor(p.currentToken.Type)], _entry !== undefined ? [_entry.v, true] : [0, false]);
+		p$1 = _tuple[0];
+		ok = _tuple[1];
+		if (ok) {
+			return p$1;
+		}
+		return 1;
+	};
+	Parser.prototype.currentPrecedence = function() { return this.$val.currentPrecedence(); };
+	Parser.ptr.prototype.noPrefixParseError = function(t) {
+		var _r, msg, p, t, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; msg = $f.msg; p = $f.p; t = $f.t; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		_r = fmt.Sprintf("no prefix parse function for %s found", new sliceType$2([new token.TokenType(t)])); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		msg = _r;
+		p.errors = $append(p.errors, msg);
+		$s = -1; return;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.noPrefixParseError }; } $f._r = _r; $f.msg = msg; $f.p = p; $f.t = t; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Parser.prototype.noPrefixParseError = function(t) { return this.$val.noPrefixParseError(t); };
+	Parser.ptr.prototype.registerPrefix = function(t, fn) {
+		var _key, fn, p, t;
+		p = this;
+		_key = t; (p.prefixParseFunctions || $throwRuntimeError("assignment to entry in nil map"))[token.TokenType.keyFor(_key)] = { k: _key, v: fn };
+	};
+	Parser.prototype.registerPrefix = function(t, fn) { return this.$val.registerPrefix(t, fn); };
+	Parser.ptr.prototype.registerInfix = function(t, fn) {
+		var _key, fn, p, t;
+		p = this;
+		_key = t; (p.infixParseFunctions || $throwRuntimeError("assignment to entry in nil map"))[token.TokenType.keyFor(_key)] = { k: _key, v: fn };
+	};
+	Parser.prototype.registerInfix = function(t, fn) { return this.$val.registerInfix(t, fn); };
+	ptrType$7.methods = [{prop: "Errors", name: "Errors", pkg: "", typ: $funcType([], [sliceType], false)}, {prop: "ParseProgram", name: "ParseProgram", pkg: "", typ: $funcType([], [ptrType$4], false)}, {prop: "parseStatement", name: "parseStatement", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Statement], false)}, {prop: "parseLetStatement", name: "parseLetStatement", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ptrType$2], false)}, {prop: "parseReturnStatement", name: "parseReturnStatement", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ptrType$5], false)}, {prop: "parseExpressionStatement", name: "parseExpressionStatement", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ptrType$6], false)}, {prop: "parseExpression", name: "parseExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([$Int], [ast.Expression], false)}, {prop: "parseIdentifier", name: "parseIdentifier", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseIntegerLiteral", name: "parseIntegerLiteral", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseStringLiteral", name: "parseStringLiteral", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parsePrefixExpression", name: "parsePrefixExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseInfixExpression", name: "parseInfixExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([ast.Expression], [ast.Expression], false)}, {prop: "parseBoolean", name: "parseBoolean", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseGroupedExpression", name: "parseGroupedExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseIfExpression", name: "parseIfExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseBlockStatement", name: "parseBlockStatement", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ptrType$3], false)}, {prop: "parseFunctionLiteral", name: "parseFunctionLiteral", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseFunctionParameters", name: "parseFunctionParameters", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [sliceType$3], false)}, {prop: "parseCallExpression", name: "parseCallExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([ast.Expression], [ast.Expression], false)}, {prop: "parseArrayLiteral", name: "parseArrayLiteral", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseExpressionList", name: "parseExpressionList", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType], [sliceType$4], false)}, {prop: "parseIndexExpression", name: "parseIndexExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([ast.Expression], [ast.Expression], false)}, {prop: "parseHashLiteral", name: "parseHashLiteral", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "nextToken", name: "nextToken", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [], false)}, {prop: "currentTokenIs", name: "currentTokenIs", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType], [$Bool], false)}, {prop: "peekTokenIs", name: "peekTokenIs", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType], [$Bool], false)}, {prop: "expectPeek", name: "expectPeek", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType], [$Bool], false)}, {prop: "peekErrors", name: "peekErrors", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType], [], false)}, {prop: "peekPrecedence", name: "peekPrecedence", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [$Int], false)}, {prop: "currentPrecedence", name: "currentPrecedence", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [$Int], false)}, {prop: "noPrefixParseError", name: "noPrefixParseError", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType], [], false)}, {prop: "registerPrefix", name: "registerPrefix", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType, prefixParseFunction], [], false)}, {prop: "registerInfix", name: "registerInfix", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType, infixParseFunction], [], false)}];
+	prefixParseFunction.init([], [ast.Expression], false);
+	infixParseFunction.init([ast.Expression], [ast.Expression], false);
+	Parser.init("github.com/masa-suzu/monkey/parser", [{prop: "l", name: "l", embedded: false, exported: false, typ: ptrType, tag: ""}, {prop: "currentToken", name: "currentToken", embedded: false, exported: false, typ: token.Token, tag: ""}, {prop: "peekToken", name: "peekToken", embedded: false, exported: false, typ: token.Token, tag: ""}, {prop: "errors", name: "errors", embedded: false, exported: false, typ: sliceType, tag: ""}, {prop: "prefixParseFunctions", name: "prefixParseFunctions", embedded: false, exported: false, typ: mapType, tag: ""}, {prop: "infixParseFunctions", name: "infixParseFunctions", embedded: false, exported: false, typ: mapType$1, tag: ""}]);
+	$init = function() {
+		$pkg.$init = function() {};
+		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		$r = fmt.$init(); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = ast.$init(); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = lexer.$init(); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = token.$init(); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = strconv.$init(); /* */ $s = 5; case 5: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		precedences = $makeMap(token.TokenType.keyFor, [{ k: "==", v: 2 }, { k: "!=", v: 2 }, { k: "<", v: 3 }, { k: ">", v: 3 }, { k: "+", v: 4 }, { k: "-", v: 4 }, { k: "/", v: 5 }, { k: "*", v: 5 }, { k: "(", v: 7 }, { k: "[", v: 8 }]);
 		/* */ } return; } if ($f === undefined) { $f = { $blk: $init }; } $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.$init = $init;
@@ -22091,828 +23206,6 @@ $packages["github.com/masa-suzu/monkey/evaluator"] = (function() {
 	$pkg.$init = $init;
 	return $pkg;
 })();
-$packages["github.com/masa-suzu/monkey/lexer"] = (function() {
-	var $pkg = {}, $init, token, Lexer, ptrType, New, newToken, isLetter, isDigit;
-	token = $packages["github.com/masa-suzu/monkey/token"];
-	Lexer = $pkg.Lexer = $newType(0, $kindStruct, "lexer.Lexer", true, "github.com/masa-suzu/monkey/lexer", true, function(input_, currentPosition_, nextPosition_, ch_) {
-		this.$val = this;
-		if (arguments.length === 0) {
-			this.input = "";
-			this.currentPosition = 0;
-			this.nextPosition = 0;
-			this.ch = 0;
-			return;
-		}
-		this.input = input_;
-		this.currentPosition = currentPosition_;
-		this.nextPosition = nextPosition_;
-		this.ch = ch_;
-	});
-	ptrType = $ptrType(Lexer);
-	New = function(input) {
-		var input, l;
-		l = new Lexer.ptr(input, 0, 0, 0);
-		l.readChar();
-		return l;
-	};
-	$pkg.New = New;
-	Lexer.ptr.prototype.NextToken = function() {
-		var _1, ch, ch$1, l, literal, literal$1, tok;
-		l = this;
-		tok = new token.Token.ptr("", "");
-		l.skipWhitespace();
-		_1 = l.ch;
-		if (_1 === (61)) {
-			if (l.peekChar() === 61) {
-				ch = l.ch;
-				l.readChar();
-				literal = ($encodeRune(ch)) + ($encodeRune(l.ch));
-				token.Token.copy(tok, new token.Token.ptr("==", literal));
-			} else {
-				token.Token.copy(tok, newToken("=", l.ch));
-			}
-		} else if (_1 === (43)) {
-			token.Token.copy(tok, newToken("+", l.ch));
-		} else if (_1 === (45)) {
-			token.Token.copy(tok, newToken("-", l.ch));
-		} else if (_1 === (33)) {
-			if (l.peekChar() === 61) {
-				ch$1 = l.ch;
-				l.readChar();
-				literal$1 = ($encodeRune(ch$1)) + ($encodeRune(l.ch));
-				token.Token.copy(tok, new token.Token.ptr("!=", literal$1));
-			} else {
-				token.Token.copy(tok, newToken("!", l.ch));
-			}
-		} else if (_1 === (47)) {
-			token.Token.copy(tok, newToken("/", l.ch));
-		} else if (_1 === (42)) {
-			token.Token.copy(tok, newToken("*", l.ch));
-		} else if (_1 === (60)) {
-			token.Token.copy(tok, newToken("<", l.ch));
-		} else if (_1 === (62)) {
-			token.Token.copy(tok, newToken(">", l.ch));
-		} else if (_1 === (40)) {
-			token.Token.copy(tok, newToken("(", l.ch));
-		} else if (_1 === (41)) {
-			token.Token.copy(tok, newToken(")", l.ch));
-		} else if (_1 === (123)) {
-			token.Token.copy(tok, newToken("{", l.ch));
-		} else if (_1 === (125)) {
-			token.Token.copy(tok, newToken("}", l.ch));
-		} else if (_1 === (91)) {
-			token.Token.copy(tok, newToken("[", l.ch));
-		} else if (_1 === (93)) {
-			token.Token.copy(tok, newToken("]", l.ch));
-		} else if (_1 === (44)) {
-			token.Token.copy(tok, newToken(",", l.ch));
-		} else if (_1 === (59)) {
-			token.Token.copy(tok, newToken(";", l.ch));
-		} else if (_1 === (58)) {
-			token.Token.copy(tok, newToken(":", l.ch));
-		} else if (_1 === (34)) {
-			token.Token.copy(tok, l.readString());
-		} else if (_1 === (0)) {
-			tok.Literal = "";
-			tok.Type = "EOF";
-		} else if (isLetter(l.ch)) {
-			tok.Literal = l.readIdentifier();
-			tok.Type = token.LookupIdentifier(tok.Literal);
-			return tok;
-		} else if (isDigit(l.ch)) {
-			tok.Type = "INT";
-			tok.Literal = l.readNumber();
-			return tok;
-		} else {
-			token.Token.copy(tok, newToken("ILLEGAL", l.ch));
-		}
-		l.readChar();
-		return tok;
-	};
-	Lexer.prototype.NextToken = function() { return this.$val.NextToken(); };
-	Lexer.ptr.prototype.readChar = function() {
-		var l;
-		l = this;
-		if (l.nextPosition >= l.input.length) {
-			l.ch = 0;
-		} else {
-			l.ch = l.input.charCodeAt(l.nextPosition);
-		}
-		l.currentPosition = l.nextPosition;
-		l.nextPosition = l.nextPosition + (1) >> 0;
-	};
-	Lexer.prototype.readChar = function() { return this.$val.readChar(); };
-	Lexer.ptr.prototype.readString = function() {
-		var l, pos, t;
-		l = this;
-		pos = l.currentPosition + 1 >> 0;
-		t = "ILLEGAL";
-		while (true) {
-			l.readChar();
-			if (l.ch === 34) {
-				t = "STRING";
-				break;
-			} else if (l.ch === 0) {
-				t = "ILLEGAL";
-				break;
-			}
-		}
-		return new token.Token.ptr((t), $substring(l.input, pos, l.currentPosition));
-	};
-	Lexer.prototype.readString = function() { return this.$val.readString(); };
-	Lexer.ptr.prototype.peekChar = function() {
-		var l;
-		l = this;
-		if (l.nextPosition >= l.input.length) {
-			return 0;
-		} else {
-			return l.input.charCodeAt(l.nextPosition);
-		}
-	};
-	Lexer.prototype.peekChar = function() { return this.$val.peekChar(); };
-	Lexer.ptr.prototype.readIdentifier = function() {
-		var basePosition, l;
-		l = this;
-		basePosition = l.currentPosition;
-		while (true) {
-			if (!(isLetter(l.ch))) { break; }
-			l.readChar();
-		}
-		return $substring(l.input, basePosition, l.currentPosition);
-	};
-	Lexer.prototype.readIdentifier = function() { return this.$val.readIdentifier(); };
-	Lexer.ptr.prototype.readNumber = function() {
-		var basePosition, l;
-		l = this;
-		basePosition = l.currentPosition;
-		while (true) {
-			if (!(isDigit(l.ch))) { break; }
-			l.readChar();
-		}
-		return $substring(l.input, basePosition, l.currentPosition);
-	};
-	Lexer.prototype.readNumber = function() { return this.$val.readNumber(); };
-	Lexer.ptr.prototype.skipWhitespace = function() {
-		var l;
-		l = this;
-		while (true) {
-			if (!((l.ch === 32) || (l.ch === 9) || (l.ch === 10) || (l.ch === 13))) { break; }
-			l.readChar();
-		}
-	};
-	Lexer.prototype.skipWhitespace = function() { return this.$val.skipWhitespace(); };
-	newToken = function(tokenType, ch) {
-		var ch, tokenType;
-		return new token.Token.ptr(tokenType, ($encodeRune(ch)));
-	};
-	isLetter = function(ch) {
-		var ch;
-		return 97 <= ch && ch <= 122 || 65 <= ch && ch <= 90 || (ch === 95);
-	};
-	isDigit = function(ch) {
-		var ch;
-		return 48 <= ch && ch <= 57;
-	};
-	ptrType.methods = [{prop: "NextToken", name: "NextToken", pkg: "", typ: $funcType([], [token.Token], false)}, {prop: "readChar", name: "readChar", pkg: "github.com/masa-suzu/monkey/lexer", typ: $funcType([], [], false)}, {prop: "readString", name: "readString", pkg: "github.com/masa-suzu/monkey/lexer", typ: $funcType([], [token.Token], false)}, {prop: "peekChar", name: "peekChar", pkg: "github.com/masa-suzu/monkey/lexer", typ: $funcType([], [$Uint8], false)}, {prop: "readIdentifier", name: "readIdentifier", pkg: "github.com/masa-suzu/monkey/lexer", typ: $funcType([], [$String], false)}, {prop: "readNumber", name: "readNumber", pkg: "github.com/masa-suzu/monkey/lexer", typ: $funcType([], [$String], false)}, {prop: "skipWhitespace", name: "skipWhitespace", pkg: "github.com/masa-suzu/monkey/lexer", typ: $funcType([], [], false)}];
-	Lexer.init("github.com/masa-suzu/monkey/lexer", [{prop: "input", name: "input", embedded: false, exported: false, typ: $String, tag: ""}, {prop: "currentPosition", name: "currentPosition", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "nextPosition", name: "nextPosition", embedded: false, exported: false, typ: $Int, tag: ""}, {prop: "ch", name: "ch", embedded: false, exported: false, typ: $Uint8, tag: ""}]);
-	$init = function() {
-		$pkg.$init = function() {};
-		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		$r = token.$init(); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		/* */ } return; } if ($f === undefined) { $f = { $blk: $init }; } $f.$s = $s; $f.$r = $r; return $f;
-	};
-	$pkg.$init = $init;
-	return $pkg;
-})();
-$packages["github.com/masa-suzu/monkey/parser"] = (function() {
-	var $pkg = {}, $init, fmt, ast, lexer, token, strconv, prefixParseFunction, infixParseFunction, Parser, ptrType, sliceType, sliceType$1, ptrType$1, ptrType$2, sliceType$2, ptrType$3, sliceType$3, sliceType$4, ptrType$4, ptrType$5, ptrType$6, ptrType$7, mapType, mapType$1, precedences, New;
-	fmt = $packages["fmt"];
-	ast = $packages["github.com/masa-suzu/monkey/ast"];
-	lexer = $packages["github.com/masa-suzu/monkey/lexer"];
-	token = $packages["github.com/masa-suzu/monkey/token"];
-	strconv = $packages["strconv"];
-	prefixParseFunction = $pkg.prefixParseFunction = $newType(4, $kindFunc, "parser.prefixParseFunction", true, "github.com/masa-suzu/monkey/parser", false, null);
-	infixParseFunction = $pkg.infixParseFunction = $newType(4, $kindFunc, "parser.infixParseFunction", true, "github.com/masa-suzu/monkey/parser", false, null);
-	Parser = $pkg.Parser = $newType(0, $kindStruct, "parser.Parser", true, "github.com/masa-suzu/monkey/parser", true, function(l_, currentToken_, peekToken_, errors_, prefixParseFunctions_, infixParseFunctions_) {
-		this.$val = this;
-		if (arguments.length === 0) {
-			this.l = ptrType.nil;
-			this.currentToken = new token.Token.ptr("", "");
-			this.peekToken = new token.Token.ptr("", "");
-			this.errors = sliceType.nil;
-			this.prefixParseFunctions = false;
-			this.infixParseFunctions = false;
-			return;
-		}
-		this.l = l_;
-		this.currentToken = currentToken_;
-		this.peekToken = peekToken_;
-		this.errors = errors_;
-		this.prefixParseFunctions = prefixParseFunctions_;
-		this.infixParseFunctions = infixParseFunctions_;
-	});
-	ptrType = $ptrType(lexer.Lexer);
-	sliceType = $sliceType($String);
-	sliceType$1 = $sliceType(ast.Statement);
-	ptrType$1 = $ptrType(ast.Identifier);
-	ptrType$2 = $ptrType(ast.LetStatement);
-	sliceType$2 = $sliceType($emptyInterface);
-	ptrType$3 = $ptrType(ast.BlockStatement);
-	sliceType$3 = $sliceType(ptrType$1);
-	sliceType$4 = $sliceType(ast.Expression);
-	ptrType$4 = $ptrType(ast.Program);
-	ptrType$5 = $ptrType(ast.ReturnStatement);
-	ptrType$6 = $ptrType(ast.ExpressionStatement);
-	ptrType$7 = $ptrType(Parser);
-	mapType = $mapType(token.TokenType, prefixParseFunction);
-	mapType$1 = $mapType(token.TokenType, infixParseFunction);
-	New = function(l) {
-		var l, p;
-		p = new Parser.ptr(l, new token.Token.ptr("", ""), new token.Token.ptr("", ""), new sliceType([]), false, false);
-		p.prefixParseFunctions = {};
-		p.registerPrefix("IDENTIFIER", $methodVal(p, "parseIdentifier"));
-		p.registerPrefix("INT", $methodVal(p, "parseIntegerLiteral"));
-		p.registerPrefix("STRING", $methodVal(p, "parseStringLiteral"));
-		p.registerPrefix("!", $methodVal(p, "parsePrefixExpression"));
-		p.registerPrefix("-", $methodVal(p, "parsePrefixExpression"));
-		p.registerPrefix("TRUE", $methodVal(p, "parseBoolean"));
-		p.registerPrefix("FALSE", $methodVal(p, "parseBoolean"));
-		p.registerPrefix("(", $methodVal(p, "parseGroupedExpression"));
-		p.registerPrefix("IF", $methodVal(p, "parseIfExpression"));
-		p.registerPrefix("FUNCTION", $methodVal(p, "parseFunctionLiteral"));
-		p.registerPrefix("[", $methodVal(p, "parseArrayLiteral"));
-		p.registerPrefix("{", $methodVal(p, "parseHashLiteral"));
-		p.infixParseFunctions = {};
-		p.registerInfix("+", $methodVal(p, "parseInfixExpression"));
-		p.registerInfix("-", $methodVal(p, "parseInfixExpression"));
-		p.registerInfix("*", $methodVal(p, "parseInfixExpression"));
-		p.registerInfix("/", $methodVal(p, "parseInfixExpression"));
-		p.registerInfix("==", $methodVal(p, "parseInfixExpression"));
-		p.registerInfix("!=", $methodVal(p, "parseInfixExpression"));
-		p.registerInfix("<", $methodVal(p, "parseInfixExpression"));
-		p.registerInfix(">", $methodVal(p, "parseInfixExpression"));
-		p.registerInfix("(", $methodVal(p, "parseCallExpression"));
-		p.registerInfix("[", $methodVal(p, "parseIndexExpression"));
-		p.nextToken();
-		p.nextToken();
-		return p;
-	};
-	$pkg.New = New;
-	Parser.ptr.prototype.Errors = function() {
-		var p;
-		p = this;
-		return p.errors;
-	};
-	Parser.prototype.Errors = function() { return this.$val.Errors(); };
-	Parser.ptr.prototype.ParseProgram = function() {
-		var _r, p, program, statement, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; p = $f.p; program = $f.program; statement = $f.statement; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		p = this;
-		program = new ast.Program.ptr(sliceType$1.nil);
-		program.Statements = new sliceType$1([]);
-		/* while (true) { */ case 1:
-			/* if (!(!p.currentTokenIs("EOF"))) { break; } */ if(!(!p.currentTokenIs("EOF"))) { $s = 2; continue; }
-			_r = p.parseStatement(); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-			statement = _r;
-			if (!($interfaceIsEqual(statement, $ifaceNil))) {
-				program.Statements = $append(program.Statements, statement);
-			}
-			p.nextToken();
-		/* } */ $s = 1; continue; case 2:
-		$s = -1; return program;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.ParseProgram }; } $f._r = _r; $f.p = p; $f.program = program; $f.statement = statement; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	Parser.prototype.ParseProgram = function() { return this.$val.ParseProgram(); };
-	Parser.ptr.prototype.parseStatement = function() {
-		var _1, _r, _r$1, _r$2, p, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _1 = $f._1; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; p = $f.p; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		p = this;
-			_1 = p.currentToken.Type;
-			/* */ if (_1 === ("LET")) { $s = 2; continue; }
-			/* */ if (_1 === ("RETURN")) { $s = 3; continue; }
-			/* */ $s = 4; continue;
-			/* if (_1 === ("LET")) { */ case 2:
-				_r = p.parseLetStatement(); /* */ $s = 6; case 6: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-				$s = -1; return _r;
-			/* } else if (_1 === ("RETURN")) { */ case 3:
-				_r$1 = p.parseReturnStatement(); /* */ $s = 7; case 7: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
-				$s = -1; return _r$1;
-			/* } else { */ case 4:
-				_r$2 = p.parseExpressionStatement(); /* */ $s = 8; case 8: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
-				$s = -1; return _r$2;
-			/* } */ case 5:
-		case 1:
-		$s = -1; return $ifaceNil;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseStatement }; } $f._1 = _1; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f.p = p; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	Parser.prototype.parseStatement = function() { return this.$val.parseStatement(); };
-	Parser.ptr.prototype.parseLetStatement = function() {
-		var _r, _r$1, _r$2, p, statement, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; p = $f.p; statement = $f.statement; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		p = this;
-		statement = new ast.LetStatement.ptr($clone(p.currentToken, token.Token), ptrType$1.nil, $ifaceNil);
-		_r = p.expectPeek("IDENTIFIER"); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		/* */ if (!_r) { $s = 1; continue; }
-		/* */ $s = 2; continue;
-		/* if (!_r) { */ case 1:
-			$s = -1; return ptrType$2.nil;
-		/* } */ case 2:
-		statement.Name = new ast.Identifier.ptr($clone(p.currentToken, token.Token), p.currentToken.Literal);
-		_r$1 = p.expectPeek("="); /* */ $s = 6; case 6: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
-		/* */ if (!_r$1) { $s = 4; continue; }
-		/* */ $s = 5; continue;
-		/* if (!_r$1) { */ case 4:
-			$s = -1; return ptrType$2.nil;
-		/* } */ case 5:
-		p.nextToken();
-		_r$2 = p.parseExpression(1); /* */ $s = 7; case 7: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
-		statement.Value = _r$2;
-		if (p.peekTokenIs(";")) {
-			p.nextToken();
-		}
-		$s = -1; return statement;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseLetStatement }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f.p = p; $f.statement = statement; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	Parser.prototype.parseLetStatement = function() { return this.$val.parseLetStatement(); };
-	Parser.ptr.prototype.parseReturnStatement = function() {
-		var _r, p, statement, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; p = $f.p; statement = $f.statement; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		p = this;
-		statement = new ast.ReturnStatement.ptr($clone(p.currentToken, token.Token), $ifaceNil);
-		p.nextToken();
-		_r = p.parseExpression(1); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		statement.ReturnValue = _r;
-		while (true) {
-			if (!(p.peekTokenIs(";"))) { break; }
-			p.nextToken();
-		}
-		$s = -1; return statement;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseReturnStatement }; } $f._r = _r; $f.p = p; $f.statement = statement; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	Parser.prototype.parseReturnStatement = function() { return this.$val.parseReturnStatement(); };
-	Parser.ptr.prototype.parseExpressionStatement = function() {
-		var _r, p, statement, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; p = $f.p; statement = $f.statement; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		p = this;
-		statement = new ast.ExpressionStatement.ptr($clone(p.currentToken, token.Token), $ifaceNil);
-		_r = p.parseExpression(1); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		statement.Expression = _r;
-		if (p.peekTokenIs(";")) {
-			p.nextToken();
-		}
-		$s = -1; return statement;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseExpressionStatement }; } $f._r = _r; $f.p = p; $f.statement = statement; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	Parser.prototype.parseExpressionStatement = function() { return this.$val.parseExpressionStatement(); };
-	Parser.ptr.prototype.parseExpression = function(precedence) {
-		var _entry, _entry$1, _r, _r$1, infix, leftExp, p, precedence, prefix, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _entry = $f._entry; _entry$1 = $f._entry$1; _r = $f._r; _r$1 = $f._r$1; infix = $f.infix; leftExp = $f.leftExp; p = $f.p; precedence = $f.precedence; prefix = $f.prefix; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		p = this;
-		prefix = (_entry = p.prefixParseFunctions[token.TokenType.keyFor(p.currentToken.Type)], _entry !== undefined ? _entry.v : $throwNilPointerError);
-		/* */ if (prefix === $throwNilPointerError) { $s = 1; continue; }
-		/* */ $s = 2; continue;
-		/* if (prefix === $throwNilPointerError) { */ case 1:
-			$r = p.noPrefixParseError(p.currentToken.Type); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-			$s = -1; return $ifaceNil;
-		/* } */ case 2:
-		_r = prefix(); /* */ $s = 4; case 4: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		leftExp = _r;
-		/* while (true) { */ case 5:
-			/* if (!(!p.peekTokenIs(";") && precedence < p.peekPrecedence())) { break; } */ if(!(!p.peekTokenIs(";") && precedence < p.peekPrecedence())) { $s = 6; continue; }
-			infix = (_entry$1 = p.infixParseFunctions[token.TokenType.keyFor(p.peekToken.Type)], _entry$1 !== undefined ? _entry$1.v : $throwNilPointerError);
-			if (infix === $throwNilPointerError) {
-				$s = -1; return leftExp;
-			}
-			p.nextToken();
-			_r$1 = infix(leftExp); /* */ $s = 7; case 7: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
-			leftExp = _r$1;
-		/* } */ $s = 5; continue; case 6:
-		$s = -1; return leftExp;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseExpression }; } $f._entry = _entry; $f._entry$1 = _entry$1; $f._r = _r; $f._r$1 = _r$1; $f.infix = infix; $f.leftExp = leftExp; $f.p = p; $f.precedence = precedence; $f.prefix = prefix; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	Parser.prototype.parseExpression = function(precedence) { return this.$val.parseExpression(precedence); };
-	Parser.ptr.prototype.parseIdentifier = function() {
-		var p;
-		p = this;
-		return new ast.Identifier.ptr($clone(p.currentToken, token.Token), p.currentToken.Literal);
-	};
-	Parser.prototype.parseIdentifier = function() { return this.$val.parseIdentifier(); };
-	Parser.ptr.prototype.parseIntegerLiteral = function() {
-		var _r, _tuple, err, lit, msg, p, value, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; err = $f.err; lit = $f.lit; msg = $f.msg; p = $f.p; value = $f.value; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		p = this;
-		lit = new ast.IntegerLiteral.ptr($clone(p.currentToken, token.Token), new $Int64(0, 0));
-		_tuple = strconv.ParseInt(p.currentToken.Literal, 0, 64);
-		value = _tuple[0];
-		err = _tuple[1];
-		/* */ if (!($interfaceIsEqual(err, $ifaceNil))) { $s = 1; continue; }
-		/* */ $s = 2; continue;
-		/* if (!($interfaceIsEqual(err, $ifaceNil))) { */ case 1:
-			_r = fmt.Sprintf("could not parse %q as interger", new sliceType$2([new $String(p.currentToken.Literal)])); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-			msg = _r;
-			p.errors = $append(p.errors, msg);
-			$s = -1; return $ifaceNil;
-		/* } */ case 2:
-		lit.Value = value;
-		$s = -1; return lit;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseIntegerLiteral }; } $f._r = _r; $f._tuple = _tuple; $f.err = err; $f.lit = lit; $f.msg = msg; $f.p = p; $f.value = value; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	Parser.prototype.parseIntegerLiteral = function() { return this.$val.parseIntegerLiteral(); };
-	Parser.ptr.prototype.parseStringLiteral = function() {
-		var p;
-		p = this;
-		return new ast.StringLiteral.ptr($clone(p.currentToken, token.Token), p.currentToken.Literal);
-	};
-	Parser.prototype.parseStringLiteral = function() { return this.$val.parseStringLiteral(); };
-	Parser.ptr.prototype.parsePrefixExpression = function() {
-		var _r, expression, p, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; expression = $f.expression; p = $f.p; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		p = this;
-		expression = new ast.PrefixExpression.ptr($clone(p.currentToken, token.Token), p.currentToken.Literal, $ifaceNil);
-		p.nextToken();
-		_r = p.parseExpression(6); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		expression.Right = _r;
-		$s = -1; return expression;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parsePrefixExpression }; } $f._r = _r; $f.expression = expression; $f.p = p; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	Parser.prototype.parsePrefixExpression = function() { return this.$val.parsePrefixExpression(); };
-	Parser.ptr.prototype.parseInfixExpression = function(left) {
-		var _r, expression, left, p, precedence, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; expression = $f.expression; left = $f.left; p = $f.p; precedence = $f.precedence; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		p = this;
-		expression = new ast.InfixExpression.ptr($clone(p.currentToken, token.Token), left, p.currentToken.Literal, $ifaceNil);
-		precedence = p.currentPrecedence();
-		p.nextToken();
-		_r = p.parseExpression(precedence); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		expression.Right = _r;
-		$s = -1; return expression;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseInfixExpression }; } $f._r = _r; $f.expression = expression; $f.left = left; $f.p = p; $f.precedence = precedence; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	Parser.prototype.parseInfixExpression = function(left) { return this.$val.parseInfixExpression(left); };
-	Parser.ptr.prototype.parseBoolean = function() {
-		var p;
-		p = this;
-		return new ast.Boolean.ptr($clone(p.currentToken, token.Token), p.currentTokenIs("TRUE"));
-	};
-	Parser.prototype.parseBoolean = function() { return this.$val.parseBoolean(); };
-	Parser.ptr.prototype.parseGroupedExpression = function() {
-		var _r, _r$1, exp, p, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; exp = $f.exp; p = $f.p; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		p = this;
-		p.nextToken();
-		_r = p.parseExpression(1); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		exp = _r;
-		_r$1 = p.expectPeek(")"); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
-		/* */ if (!_r$1) { $s = 2; continue; }
-		/* */ $s = 3; continue;
-		/* if (!_r$1) { */ case 2:
-			$s = -1; return $ifaceNil;
-		/* } */ case 3:
-		$s = -1; return exp;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseGroupedExpression }; } $f._r = _r; $f._r$1 = _r$1; $f.exp = exp; $f.p = p; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	Parser.prototype.parseGroupedExpression = function() { return this.$val.parseGroupedExpression(); };
-	Parser.ptr.prototype.parseIfExpression = function() {
-		var _r, _r$1, _r$2, _r$3, _r$4, _r$5, _r$6, exp, p, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; exp = $f.exp; p = $f.p; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		p = this;
-		exp = new ast.IfExpression.ptr($clone(p.currentToken, token.Token), $ifaceNil, ptrType$3.nil, ptrType$3.nil);
-		_r = p.expectPeek("("); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		/* */ if (!_r) { $s = 1; continue; }
-		/* */ $s = 2; continue;
-		/* if (!_r) { */ case 1:
-			$s = -1; return $ifaceNil;
-		/* } */ case 2:
-		p.nextToken();
-		_r$1 = p.parseExpression(1); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
-		exp.Condition = _r$1;
-		_r$2 = p.expectPeek(")"); /* */ $s = 7; case 7: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
-		/* */ if (!_r$2) { $s = 5; continue; }
-		/* */ $s = 6; continue;
-		/* if (!_r$2) { */ case 5:
-			$s = -1; return $ifaceNil;
-		/* } */ case 6:
-		_r$3 = p.expectPeek("{"); /* */ $s = 10; case 10: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
-		/* */ if (!_r$3) { $s = 8; continue; }
-		/* */ $s = 9; continue;
-		/* if (!_r$3) { */ case 8:
-			$s = -1; return $ifaceNil;
-		/* } */ case 9:
-		_r$4 = p.parseBlockStatement(); /* */ $s = 11; case 11: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
-		exp.Consequence = _r$4;
-		/* */ if (p.peekTokenIs("ELSE")) { $s = 12; continue; }
-		/* */ $s = 13; continue;
-		/* if (p.peekTokenIs("ELSE")) { */ case 12:
-			p.nextToken();
-			_r$5 = p.expectPeek("{"); /* */ $s = 16; case 16: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
-			/* */ if (!_r$5) { $s = 14; continue; }
-			/* */ $s = 15; continue;
-			/* if (!_r$5) { */ case 14:
-				$s = -1; return $ifaceNil;
-			/* } */ case 15:
-			_r$6 = p.parseBlockStatement(); /* */ $s = 17; case 17: if($c) { $c = false; _r$6 = _r$6.$blk(); } if (_r$6 && _r$6.$blk !== undefined) { break s; }
-			exp.Alternative = _r$6;
-		/* } */ case 13:
-		$s = -1; return exp;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseIfExpression }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f.exp = exp; $f.p = p; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	Parser.prototype.parseIfExpression = function() { return this.$val.parseIfExpression(); };
-	Parser.ptr.prototype.parseBlockStatement = function() {
-		var _r, block, p, statement, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; block = $f.block; p = $f.p; statement = $f.statement; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		p = this;
-		block = new ast.BlockStatement.ptr($clone(p.currentToken, token.Token), sliceType$1.nil);
-		block.Statements = new sliceType$1([]);
-		p.nextToken();
-		/* while (true) { */ case 1:
-			/* if (!(!p.currentTokenIs("}") && !p.currentTokenIs("EOF"))) { break; } */ if(!(!p.currentTokenIs("}") && !p.currentTokenIs("EOF"))) { $s = 2; continue; }
-			_r = p.parseStatement(); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-			statement = _r;
-			if (!($interfaceIsEqual(statement, $ifaceNil))) {
-				block.Statements = $append(block.Statements, statement);
-			}
-			p.nextToken();
-		/* } */ $s = 1; continue; case 2:
-		$s = -1; return block;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseBlockStatement }; } $f._r = _r; $f.block = block; $f.p = p; $f.statement = statement; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	Parser.prototype.parseBlockStatement = function() { return this.$val.parseBlockStatement(); };
-	Parser.ptr.prototype.parseFunctionLiteral = function() {
-		var _r, _r$1, _r$2, _r$3, lit, p, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; lit = $f.lit; p = $f.p; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		p = this;
-		lit = new ast.FunctionLiteral.ptr($clone(p.currentToken, token.Token), sliceType$3.nil, ptrType$3.nil);
-		_r = p.expectPeek("("); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		/* */ if (!_r) { $s = 1; continue; }
-		/* */ $s = 2; continue;
-		/* if (!_r) { */ case 1:
-			$s = -1; return $ifaceNil;
-		/* } */ case 2:
-		_r$1 = p.parseFunctionParameters(); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
-		lit.Parameters = _r$1;
-		_r$2 = p.expectPeek("{"); /* */ $s = 7; case 7: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
-		/* */ if (!_r$2) { $s = 5; continue; }
-		/* */ $s = 6; continue;
-		/* if (!_r$2) { */ case 5:
-			$s = -1; return $ifaceNil;
-		/* } */ case 6:
-		_r$3 = p.parseBlockStatement(); /* */ $s = 8; case 8: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
-		lit.Body = _r$3;
-		$s = -1; return lit;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseFunctionLiteral }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f.lit = lit; $f.p = p; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	Parser.prototype.parseFunctionLiteral = function() { return this.$val.parseFunctionLiteral(); };
-	Parser.ptr.prototype.parseFunctionParameters = function() {
-		var _r, identifier, identifiers, p, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; identifier = $f.identifier; identifiers = $f.identifiers; p = $f.p; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		p = this;
-		identifiers = new sliceType$3([]);
-		if (p.peekTokenIs(")")) {
-			p.nextToken();
-			$s = -1; return identifiers;
-		}
-		p.nextToken();
-		identifier = new ast.Identifier.ptr($clone(p.currentToken, token.Token), p.currentToken.Literal);
-		identifiers = $append(identifiers, identifier);
-		while (true) {
-			if (!(p.peekTokenIs(","))) { break; }
-			p.nextToken();
-			p.nextToken();
-			identifier = new ast.Identifier.ptr($clone(p.currentToken, token.Token), p.currentToken.Literal);
-			identifiers = $append(identifiers, identifier);
-		}
-		_r = p.expectPeek(")"); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		/* */ if (!_r) { $s = 1; continue; }
-		/* */ $s = 2; continue;
-		/* if (!_r) { */ case 1:
-			$s = -1; return sliceType$3.nil;
-		/* } */ case 2:
-		$s = -1; return identifiers;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseFunctionParameters }; } $f._r = _r; $f.identifier = identifier; $f.identifiers = identifiers; $f.p = p; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	Parser.prototype.parseFunctionParameters = function() { return this.$val.parseFunctionParameters(); };
-	Parser.ptr.prototype.parseCallExpression = function(function$1) {
-		var _r, exp, function$1, p, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; exp = $f.exp; function$1 = $f.function$1; p = $f.p; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		p = this;
-		exp = new ast.CallExpression.ptr($clone(p.currentToken, token.Token), function$1, sliceType$4.nil);
-		_r = p.parseExpressionList(")"); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		exp.Arguments = _r;
-		$s = -1; return exp;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseCallExpression }; } $f._r = _r; $f.exp = exp; $f.function$1 = function$1; $f.p = p; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	Parser.prototype.parseCallExpression = function(function$1) { return this.$val.parseCallExpression(function$1); };
-	Parser.ptr.prototype.parseArrayLiteral = function() {
-		var _r, array, p, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; array = $f.array; p = $f.p; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		p = this;
-		array = new ast.ArrayLiteral.ptr($clone(p.currentToken, token.Token), sliceType$4.nil);
-		_r = p.parseExpressionList("]"); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		array.Elements = _r;
-		$s = -1; return array;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseArrayLiteral }; } $f._r = _r; $f.array = array; $f.p = p; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	Parser.prototype.parseArrayLiteral = function() { return this.$val.parseArrayLiteral(); };
-	Parser.ptr.prototype.parseExpressionList = function(end) {
-		var _r, _r$1, _r$2, end, list, p, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; end = $f.end; list = $f.list; p = $f.p; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		p = this;
-		list = new sliceType$4([]);
-		if (p.peekTokenIs(end)) {
-			p.nextToken();
-			p.nextToken();
-			$s = -1; return list;
-		}
-		p.nextToken();
-		_r = p.parseExpression(1); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		list = $append(list, _r);
-		/* while (true) { */ case 2:
-			/* if (!(p.peekTokenIs(","))) { break; } */ if(!(p.peekTokenIs(","))) { $s = 3; continue; }
-			p.nextToken();
-			p.nextToken();
-			_r$1 = p.parseExpression(1); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
-			list = $append(list, _r$1);
-		/* } */ $s = 2; continue; case 3:
-		_r$2 = p.expectPeek(end); /* */ $s = 7; case 7: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
-		/* */ if (!_r$2) { $s = 5; continue; }
-		/* */ $s = 6; continue;
-		/* if (!_r$2) { */ case 5:
-			$s = -1; return sliceType$4.nil;
-		/* } */ case 6:
-		$s = -1; return list;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseExpressionList }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f.end = end; $f.list = list; $f.p = p; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	Parser.prototype.parseExpressionList = function(end) { return this.$val.parseExpressionList(end); };
-	Parser.ptr.prototype.parseIndexExpression = function(left) {
-		var _r, _r$1, exp, left, p, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; exp = $f.exp; left = $f.left; p = $f.p; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		p = this;
-		exp = new ast.IndexExpression.ptr($clone(p.currentToken, token.Token), left, $ifaceNil);
-		p.nextToken();
-		_r = p.parseExpression(1); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		exp.Index = _r;
-		_r$1 = p.expectPeek("]"); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
-		/* */ if (!_r$1) { $s = 2; continue; }
-		/* */ $s = 3; continue;
-		/* if (!_r$1) { */ case 2:
-			$s = -1; return $ifaceNil;
-		/* } */ case 3:
-		$s = -1; return exp;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseIndexExpression }; } $f._r = _r; $f._r$1 = _r$1; $f.exp = exp; $f.left = left; $f.p = p; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	Parser.prototype.parseIndexExpression = function(left) { return this.$val.parseIndexExpression(left); };
-	Parser.ptr.prototype.parseHashLiteral = function() {
-		var _key, _r, _r$1, _r$2, _r$3, _r$4, _v, hash, key, p, value, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _key = $f._key; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _v = $f._v; hash = $f.hash; key = $f.key; p = $f.p; value = $f.value; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		p = this;
-		hash = new ast.HashLiteral.ptr($clone(p.currentToken, token.Token), false);
-		hash.Pairs = {};
-		/* while (true) { */ case 1:
-			/* if (!(!p.peekTokenIs("}"))) { break; } */ if(!(!p.peekTokenIs("}"))) { $s = 2; continue; }
-			p.nextToken();
-			_r = p.parseExpression(1); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-			key = _r;
-			_r$1 = p.expectPeek(":"); /* */ $s = 6; case 6: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
-			/* */ if (!_r$1) { $s = 4; continue; }
-			/* */ $s = 5; continue;
-			/* if (!_r$1) { */ case 4:
-				$s = -1; return $ifaceNil;
-			/* } */ case 5:
-			p.nextToken();
-			_r$2 = p.parseExpression(1); /* */ $s = 7; case 7: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
-			value = _r$2;
-			_key = key; (hash.Pairs || $throwRuntimeError("assignment to entry in nil map"))[ast.Expression.keyFor(_key)] = { k: _key, v: value };
-			if (!(!p.peekTokenIs("}"))) { _v = false; $s = 10; continue s; }
-			_r$3 = p.expectPeek(","); /* */ $s = 11; case 11: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
-			_v = !_r$3; case 10:
-			/* */ if (_v) { $s = 8; continue; }
-			/* */ $s = 9; continue;
-			/* if (_v) { */ case 8:
-				$s = -1; return $ifaceNil;
-			/* } */ case 9:
-		/* } */ $s = 1; continue; case 2:
-		_r$4 = p.expectPeek("}"); /* */ $s = 14; case 14: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
-		/* */ if (!_r$4) { $s = 12; continue; }
-		/* */ $s = 13; continue;
-		/* if (!_r$4) { */ case 12:
-			$s = -1; return $ifaceNil;
-		/* } */ case 13:
-		$s = -1; return hash;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseHashLiteral }; } $f._key = _key; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._v = _v; $f.hash = hash; $f.key = key; $f.p = p; $f.value = value; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	Parser.prototype.parseHashLiteral = function() { return this.$val.parseHashLiteral(); };
-	Parser.ptr.prototype.nextToken = function() {
-		var p;
-		p = this;
-		token.Token.copy(p.currentToken, p.peekToken);
-		token.Token.copy(p.peekToken, p.l.NextToken());
-	};
-	Parser.prototype.nextToken = function() { return this.$val.nextToken(); };
-	Parser.ptr.prototype.currentTokenIs = function(t) {
-		var p, t;
-		p = this;
-		return p.currentToken.Type === t;
-	};
-	Parser.prototype.currentTokenIs = function(t) { return this.$val.currentTokenIs(t); };
-	Parser.ptr.prototype.peekTokenIs = function(t) {
-		var p, t;
-		p = this;
-		return p.peekToken.Type === t;
-	};
-	Parser.prototype.peekTokenIs = function(t) { return this.$val.peekTokenIs(t); };
-	Parser.ptr.prototype.expectPeek = function(t) {
-		var p, t, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; p = $f.p; t = $f.t; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		p = this;
-		/* */ if (p.peekTokenIs(t)) { $s = 1; continue; }
-		/* */ $s = 2; continue;
-		/* if (p.peekTokenIs(t)) { */ case 1:
-			p.nextToken();
-			$s = -1; return true;
-		/* } else { */ case 2:
-			$r = p.peekErrors(t); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-			$s = -1; return false;
-		/* } */ case 3:
-		$s = -1; return false;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.expectPeek }; } $f.p = p; $f.t = t; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	Parser.prototype.expectPeek = function(t) { return this.$val.expectPeek(t); };
-	Parser.ptr.prototype.peekErrors = function(t) {
-		var _r, msg, p, t, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; msg = $f.msg; p = $f.p; t = $f.t; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		p = this;
-		_r = fmt.Sprintf("expected next token to be %s, got %s instead.", new sliceType$2([new token.TokenType(t), new token.TokenType(p.peekToken.Type)])); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		msg = _r;
-		p.errors = $append(p.errors, msg);
-		$s = -1; return;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.peekErrors }; } $f._r = _r; $f.msg = msg; $f.p = p; $f.t = t; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	Parser.prototype.peekErrors = function(t) { return this.$val.peekErrors(t); };
-	Parser.ptr.prototype.peekPrecedence = function() {
-		var _entry, _tuple, ok, p, p$1;
-		p = this;
-		_tuple = (_entry = precedences[token.TokenType.keyFor(p.peekToken.Type)], _entry !== undefined ? [_entry.v, true] : [0, false]);
-		p$1 = _tuple[0];
-		ok = _tuple[1];
-		if (ok) {
-			return p$1;
-		}
-		return 1;
-	};
-	Parser.prototype.peekPrecedence = function() { return this.$val.peekPrecedence(); };
-	Parser.ptr.prototype.currentPrecedence = function() {
-		var _entry, _tuple, ok, p, p$1;
-		p = this;
-		_tuple = (_entry = precedences[token.TokenType.keyFor(p.currentToken.Type)], _entry !== undefined ? [_entry.v, true] : [0, false]);
-		p$1 = _tuple[0];
-		ok = _tuple[1];
-		if (ok) {
-			return p$1;
-		}
-		return 1;
-	};
-	Parser.prototype.currentPrecedence = function() { return this.$val.currentPrecedence(); };
-	Parser.ptr.prototype.noPrefixParseError = function(t) {
-		var _r, msg, p, t, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; msg = $f.msg; p = $f.p; t = $f.t; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		p = this;
-		_r = fmt.Sprintf("no prefix parse function for %s found", new sliceType$2([new token.TokenType(t)])); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-		msg = _r;
-		p.errors = $append(p.errors, msg);
-		$s = -1; return;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.noPrefixParseError }; } $f._r = _r; $f.msg = msg; $f.p = p; $f.t = t; $f.$s = $s; $f.$r = $r; return $f;
-	};
-	Parser.prototype.noPrefixParseError = function(t) { return this.$val.noPrefixParseError(t); };
-	Parser.ptr.prototype.registerPrefix = function(t, fn) {
-		var _key, fn, p, t;
-		p = this;
-		_key = t; (p.prefixParseFunctions || $throwRuntimeError("assignment to entry in nil map"))[token.TokenType.keyFor(_key)] = { k: _key, v: fn };
-	};
-	Parser.prototype.registerPrefix = function(t, fn) { return this.$val.registerPrefix(t, fn); };
-	Parser.ptr.prototype.registerInfix = function(t, fn) {
-		var _key, fn, p, t;
-		p = this;
-		_key = t; (p.infixParseFunctions || $throwRuntimeError("assignment to entry in nil map"))[token.TokenType.keyFor(_key)] = { k: _key, v: fn };
-	};
-	Parser.prototype.registerInfix = function(t, fn) { return this.$val.registerInfix(t, fn); };
-	ptrType$7.methods = [{prop: "Errors", name: "Errors", pkg: "", typ: $funcType([], [sliceType], false)}, {prop: "ParseProgram", name: "ParseProgram", pkg: "", typ: $funcType([], [ptrType$4], false)}, {prop: "parseStatement", name: "parseStatement", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Statement], false)}, {prop: "parseLetStatement", name: "parseLetStatement", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ptrType$2], false)}, {prop: "parseReturnStatement", name: "parseReturnStatement", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ptrType$5], false)}, {prop: "parseExpressionStatement", name: "parseExpressionStatement", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ptrType$6], false)}, {prop: "parseExpression", name: "parseExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([$Int], [ast.Expression], false)}, {prop: "parseIdentifier", name: "parseIdentifier", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseIntegerLiteral", name: "parseIntegerLiteral", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseStringLiteral", name: "parseStringLiteral", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parsePrefixExpression", name: "parsePrefixExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseInfixExpression", name: "parseInfixExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([ast.Expression], [ast.Expression], false)}, {prop: "parseBoolean", name: "parseBoolean", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseGroupedExpression", name: "parseGroupedExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseIfExpression", name: "parseIfExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseBlockStatement", name: "parseBlockStatement", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ptrType$3], false)}, {prop: "parseFunctionLiteral", name: "parseFunctionLiteral", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseFunctionParameters", name: "parseFunctionParameters", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [sliceType$3], false)}, {prop: "parseCallExpression", name: "parseCallExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([ast.Expression], [ast.Expression], false)}, {prop: "parseArrayLiteral", name: "parseArrayLiteral", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseExpressionList", name: "parseExpressionList", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType], [sliceType$4], false)}, {prop: "parseIndexExpression", name: "parseIndexExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([ast.Expression], [ast.Expression], false)}, {prop: "parseHashLiteral", name: "parseHashLiteral", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "nextToken", name: "nextToken", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [], false)}, {prop: "currentTokenIs", name: "currentTokenIs", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType], [$Bool], false)}, {prop: "peekTokenIs", name: "peekTokenIs", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType], [$Bool], false)}, {prop: "expectPeek", name: "expectPeek", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType], [$Bool], false)}, {prop: "peekErrors", name: "peekErrors", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType], [], false)}, {prop: "peekPrecedence", name: "peekPrecedence", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [$Int], false)}, {prop: "currentPrecedence", name: "currentPrecedence", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [$Int], false)}, {prop: "noPrefixParseError", name: "noPrefixParseError", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType], [], false)}, {prop: "registerPrefix", name: "registerPrefix", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType, prefixParseFunction], [], false)}, {prop: "registerInfix", name: "registerInfix", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType, infixParseFunction], [], false)}];
-	prefixParseFunction.init([], [ast.Expression], false);
-	infixParseFunction.init([ast.Expression], [ast.Expression], false);
-	Parser.init("github.com/masa-suzu/monkey/parser", [{prop: "l", name: "l", embedded: false, exported: false, typ: ptrType, tag: ""}, {prop: "currentToken", name: "currentToken", embedded: false, exported: false, typ: token.Token, tag: ""}, {prop: "peekToken", name: "peekToken", embedded: false, exported: false, typ: token.Token, tag: ""}, {prop: "errors", name: "errors", embedded: false, exported: false, typ: sliceType, tag: ""}, {prop: "prefixParseFunctions", name: "prefixParseFunctions", embedded: false, exported: false, typ: mapType, tag: ""}, {prop: "infixParseFunctions", name: "infixParseFunctions", embedded: false, exported: false, typ: mapType$1, tag: ""}]);
-	$init = function() {
-		$pkg.$init = function() {};
-		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		$r = fmt.$init(); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = ast.$init(); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = lexer.$init(); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = token.$init(); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = strconv.$init(); /* */ $s = 5; case 5: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		precedences = $makeMap(token.TokenType.keyFor, [{ k: "==", v: 2 }, { k: "!=", v: 2 }, { k: "<", v: 3 }, { k: ">", v: 3 }, { k: "+", v: 4 }, { k: "-", v: 4 }, { k: "/", v: 5 }, { k: "*", v: 5 }, { k: "(", v: 7 }, { k: "[", v: 8 }]);
-		/* */ } return; } if ($f === undefined) { $f = { $blk: $init }; } $f.$s = $s; $f.$r = $r; return $f;
-	};
-	$pkg.$init = $init;
-	return $pkg;
-})();
 $packages["github.com/masa-suzu/monkey/repl"] = (function() {
 	var $pkg = {}, $init, bufio, fmt, evaluator, lexer, object, parser, io, Rep, printParserErrorsWithMonkeyFace;
 	bufio = $packages["bufio"];
@@ -22989,16 +23282,20 @@ $packages["github.com/masa-suzu/monkey/repl"] = (function() {
 	return $pkg;
 })();
 $packages["main"] = (function() {
-	var $pkg = {}, $init, bytes, fmt, js, object, repl, funcType, sliceType, main, startRep;
+	var $pkg = {}, $init, bytes, fmt, js, formatter, lexer, object, parser, repl, funcType, sliceType, main, startRep, startFormat;
 	bytes = $packages["bytes"];
 	fmt = $packages["fmt"];
 	js = $packages["github.com/gopherjs/gopherjs/js"];
+	formatter = $packages["github.com/masa-suzu/monkey/formatter"];
+	lexer = $packages["github.com/masa-suzu/monkey/lexer"];
 	object = $packages["github.com/masa-suzu/monkey/object"];
+	parser = $packages["github.com/masa-suzu/monkey/parser"];
 	repl = $packages["github.com/masa-suzu/monkey/repl"];
 	funcType = $funcType([$String], [$String], false);
 	sliceType = $sliceType($emptyInterface);
 	main = function() {
 		$global.run = $externalize(startRep, funcType);
+		$global.fmt = $externalize(startFormat, funcType);
 	};
 	startRep = function(source) {
 		var _r, env, out, source, $s, $r;
@@ -23010,14 +23307,32 @@ $packages["main"] = (function() {
 		$s = -1; return _r;
 		/* */ } return; } if ($f === undefined) { $f = { $blk: startRep }; } $f._r = _r; $f.env = env; $f.out = out; $f.source = source; $f.$s = $s; $f.$r = $r; return $f;
 	};
+	startFormat = function(source) {
+		var _r, _r$1, _r$2, _r$3, ast, l, out, p, source, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; ast = $f.ast; l = $f.l; out = $f.out; p = $f.p; source = $f.source; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		out = bytes.NewBufferString("");
+		l = lexer.New(source);
+		p = parser.New(l);
+		_r = p.ParseProgram(); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		ast = _r;
+		_r$1 = formatter.Format(ast, 0); /* */ $s = 2; case 2: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+		_r$2 = out.WriteString(_r$1); /* */ $s = 3; case 3: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+		_r$2;
+		_r$3 = fmt.Sprint(new sliceType([out])); /* */ $s = 4; case 4: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+		$s = -1; return _r$3;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: startFormat }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f.ast = ast; $f.l = l; $f.out = out; $f.p = p; $f.source = source; $f.$s = $s; $f.$r = $r; return $f;
+	};
 	$init = function() {
 		$pkg.$init = function() {};
 		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		$r = bytes.$init(); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		$r = fmt.$init(); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		$r = js.$init(); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = object.$init(); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = repl.$init(); /* */ $s = 5; case 5: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = formatter.$init(); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = lexer.$init(); /* */ $s = 5; case 5: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = object.$init(); /* */ $s = 6; case 6: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = parser.$init(); /* */ $s = 7; case 7: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = repl.$init(); /* */ $s = 8; case 8: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		if ($pkg === $mainPkg) {
 			main();
 			$mainFinished = true;

@@ -40,7 +40,9 @@
                 stdout.innerHTML = "<pre>"+ ret + "</pre>";
 			});
             $('#fmt').click(function() {
-				window.alert( "Format is currently not available. " ) ;
+                let code = document.getElementById("code");
+                let ret = fmt(code.value);
+                code.value = ret;
 			});
 		
 		});
