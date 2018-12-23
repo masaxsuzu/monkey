@@ -71,6 +71,8 @@ func TestReadOperands(t *testing.T) {
 		{Mul, []int{}, 0},
 		{Div, []int{}, 0},
 		{Pop, []int{}, 0},
+		{True, []int{}, 0},
+		{False, []int{}, 0},
 	}
 
 	for _, tt := range tests {

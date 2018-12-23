@@ -9,6 +9,9 @@ import (
 
 const StackSize = 2048
 
+var True = &object.Boolean{Value: true}
+var False = &object.Boolean{Value: false}
+
 type VirtualMachine struct {
 	constants    []object.Object
 	instructions code.Instructions
@@ -64,6 +67,16 @@ func (vm *VirtualMachine) Run() error {
 			}
 		case code.Pop:
 			vm.pop()
+		case code.True:
+			err := vm.push(True)
+			if err != nil {
+				return err
+			}
+		case code.False:
+			err := vm.push(False)
+			if err != nil {
+				return err
+			}
 		}
 	}
 	return nil

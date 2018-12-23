@@ -22,6 +22,8 @@ const (
 	Mul
 	Div
 	Pop
+	True
+	False
 )
 
 var definitions = map[OperandCode]*Definition{
@@ -31,6 +33,8 @@ var definitions = map[OperandCode]*Definition{
 	Mul:      {"Mul", []int{}},
 	Div:      {"Div", []int{}},
 	Pop:      {"Pop", []int{}},
+	True:     {"True", []int{}},
+	False:    {"False", []int{}},
 }
 
 func (ins Instructions) String() string {
