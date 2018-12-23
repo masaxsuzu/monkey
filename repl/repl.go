@@ -81,12 +81,6 @@ func Rep_VM(in string, out io.Writer) {
 	}
 }
 
-func printParseErrors(out io.Writer, errors []string) {
-	for _, msg := range errors {
-		io.WriteString(out, "\t"+msg+"\n")
-	}
-}
-
 const MONKEY_FACE = `            __,__
    .--.  .-"     "-.  .--.
   / .. \/  .-. .-.  \/ .. \
