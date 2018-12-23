@@ -19,8 +19,17 @@ func TestIntegerArithmetic(t *testing.T) {
 	tests := []testCase{
 		{"1", 1},
 		{"1 + 2", 3},
+		{"1 - 2", -1},
+		{"2 * 2", 4},
+		{"1 / 2", 0},
 	}
 	testRun(t, tests)
+}
+func TestIntegerArithmeticError(t *testing.T) {
+	tests := []testCase{
+		{"1 / 0", fmt.Errorf("integer divide by zero")},
+	}
+	testRunWithError(t, tests)
 }
 
 func testRun(t *testing.T, tests []testCase) {
@@ -47,6 +56,26 @@ func testRun(t *testing.T, tests []testCase) {
 	}
 }
 
+func testRunWithError(t *testing.T, tests []testCase) {
+	t.Helper()
+
+	for _, tt := range tests {
+		p := parse(tt.in)
+		c := compiler.New()
+		err := c.Compile(p)
+		if err != nil {
+			t.Fatalf("compiler got error: %s", err)
+		}
+
+		vm := New(c.ByteCode())
+		err = vm.Run()
+		if err.Error() != tt.want.(error).Error() {
+			t.Errorf("error is not %s, got %s", tt.want.(error).Error(), err.Error())
+		}
+
+	}
+}
+
 func testExpectedObject(
 	t *testing.T,
 	want interface{},
@@ -59,7 +88,6 @@ func testExpectedObject(
 		if err != nil {
 			t.Errorf("testExpectedObject failed: %s", err)
 		}
-
 	}
 }
 

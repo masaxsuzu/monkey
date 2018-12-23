@@ -51,10 +51,10 @@ func TestStartVM(t *testing.T) {
 		input    string
 		expected string
 	}{
-		{
-			"1+1",
-			"2\n",
-		},
+		{"1+1", "2\n"},
+		{"1-3", "-2\n"},
+		{"1*4", "4\n"},
+		{"1/5", "0\n"},
 	}
 
 	for _, tt := range tests {
