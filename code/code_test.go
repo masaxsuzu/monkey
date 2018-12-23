@@ -4,13 +4,13 @@ import "testing"
 
 func TestMake(t *testing.T) {
 	tests := []struct {
-		op       Opcode
+		op       OperandCode
 		operands []int
 		expected []byte
 	}{
 		{OpConstant, []int{1}, []byte{byte(OpConstant), 0, 1}},
 		{OpConstant, []int{65534}, []byte{byte(OpConstant), 255, 254}},
-		{Opcode(255), nil, []byte{}},
+		{OperandCode(255), nil, []byte{}},
 	}
 
 	for _, tt := range tests {
@@ -52,7 +52,7 @@ func TestInstructionsString(t *testing.T) {
 
 func TestReadOperands(t *testing.T) {
 	tests := []struct {
-		op        Opcode
+		op        OperandCode
 		operands  []int
 		bytesRead int
 	}{

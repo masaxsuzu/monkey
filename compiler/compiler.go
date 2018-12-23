@@ -60,7 +60,7 @@ type ByteCode struct {
 	Constants    []object.Object
 }
 
-func (c *Compiler) emit(op code.Opcode, operand ...int) int {
+func (c *Compiler) emit(op code.OperandCode, operand ...int) int {
 	ins := code.Make(op, operand...)
 	pos := c.addInstruction(ins)
 	return pos

@@ -35,7 +35,7 @@ func (vm *VirtualMachine) StackTop() object.Object {
 
 func (vm *VirtualMachine) Run() error {
 	for ip := 0; ip < len(vm.instructions); ip++ {
-		op := code.Opcode(vm.instructions[ip])
+		op := code.OperandCode(vm.instructions[ip])
 
 		switch op {
 		case code.OpConstant:
