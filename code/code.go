@@ -18,11 +18,13 @@ type Definition struct {
 const (
 	Constant = iota
 	Add
+	Pop
 )
 
 var definitions = map[OperandCode]*Definition{
 	Constant: {"Constant", []int{2}},
 	Add:      {"Add", []int{}},
+	Pop:      {"Pop", []int{}},
 }
 
 func (ins Instructions) String() string {

@@ -3,14 +3,16 @@ package repl
 import (
 	"bufio"
 	"fmt"
-	"io"
+	"github.com/masa-suzu/monkey/compiler"
 	"github.com/masa-suzu/monkey/evaluator"
 	"github.com/masa-suzu/monkey/lexer"
 	"github.com/masa-suzu/monkey/object"
 	"github.com/masa-suzu/monkey/parser"
+	"github.com/masa-suzu/monkey/vm"
+	"io"
 )
 
-func Start(in io.Reader, out io.Writer, prompt string) {
+func Start(in io.Reader, out io.Writer, prompt string, useVM bool) {
 	scanner := bufio.NewScanner(in)
 	env := object.NewEnvironment()
 
@@ -21,11 +23,15 @@ func Start(in io.Reader, out io.Writer, prompt string) {
 			return
 		}
 		line := scanner.Text()
-		Rep(line,out,prompt,env)
+		if useVM {
+			Rep_VM(line, out)
+		} else {
+			Rep(line, out, env)
+		}
 	}
 }
 
-func Rep(in string, out io.Writer, prompt string, env *object.Environment){
+func Rep(in string, out io.Writer, env *object.Environment) {
 	l := lexer.New(in)
 	p := parser.New(l)
 	program := p.ParseProgram()
@@ -41,6 +47,40 @@ func Rep(in string, out io.Writer, prompt string, env *object.Environment){
 		io.WriteString(out, "\n")
 	}
 }
+
+func Rep_VM(in string, out io.Writer) {
+	l := lexer.New(in)
+	p := parser.New(l)
+	program := p.ParseProgram()
+	if len(p.Errors()) != 0 {
+		printParserErrorsWithMonkeyFace(out, p.Errors())
+		return
+	}
+
+	c := compiler.New()
+
+	err := c.Compile(program)
+
+	if err != nil {
+		printParserErrorsWithMonkeyFace(out, []string{err.Error()})
+		return
+	}
+
+	vMachine := vm.New(c.ByteCode())
+	err = vMachine.Run()
+
+	if err != nil {
+		printParserErrorsWithMonkeyFace(out, []string{err.Error()})
+		return
+	}
+
+	lastPopped := vMachine.LastPoppedStackElement()
+	if lastPopped != nil {
+		io.WriteString(out, lastPopped.Inspect())
+		io.WriteString(out, "\n")
+	}
+}
+
 func printParseErrors(out io.Writer, errors []string) {
 	for _, msg := range errors {
 		io.WriteString(out, "\t"+msg+"\n")

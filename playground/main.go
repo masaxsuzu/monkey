@@ -8,8 +8,8 @@ import (
 	"github.com/masa-suzu/monkey/parser"
 
 	"github.com/gopherjs/gopherjs/js"
-	"github.com/masa-suzu/monkey/repl"
 	"github.com/masa-suzu/monkey/object"
+	"github.com/masa-suzu/monkey/repl"
 )
 
 func main() {
@@ -21,7 +21,7 @@ func main() {
 func startRep(source string) string {
 	out := bytes.NewBufferString("")
 	env := object.NewEnvironment()
-	repl.Rep(source,out, "", env)
+	repl.Rep(source, out, env)
 	return fmt.Sprint(out)
 }
 
@@ -30,6 +30,6 @@ func startFormat(source string) string {
 	l := lexer.New(source)
 	p := parser.New(l)
 	ast := p.ParseProgram()
-	out.WriteString(formatter.Format(ast,0))
+	out.WriteString(formatter.Format(ast, 0))
 	return fmt.Sprint(out)
 }

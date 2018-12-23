@@ -41,7 +41,7 @@ func testRun(t *testing.T, tests []testCase) {
 			t.Fatalf("vm.Run got error: %s", err)
 		}
 
-		stackElem := vm.StackTop()
+		stackElem := vm.LastPoppedStackElement()
 
 		testExpectedObject(t, tt.want, stackElem)
 	}

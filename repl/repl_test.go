@@ -38,7 +38,30 @@ func TestStart(t *testing.T) {
 		r := strings.NewReader(tt.input)
 		w := &fakeWriter{Buffer: bytes.NewBuffer(nil)}
 
-		Start(r, w, "")
+		Start(r, w, "", false)
+		out := w.String()
+		if out != tt.expected {
+			t.Errorf("expected=%q, got=%q", tt.expected, out)
+		}
+	}
+}
+
+func TestStartVM(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected string
+	}{
+		{
+			"1+1",
+			"2\n",
+		},
+	}
+
+	for _, tt := range tests {
+		r := strings.NewReader(tt.input)
+		w := &fakeWriter{Buffer: bytes.NewBuffer(nil)}
+
+		Start(r, w, "", true)
 		out := w.String()
 		if out != tt.expected {
 			t.Errorf("expected=%q, got=%q", tt.expected, out)
