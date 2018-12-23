@@ -38,6 +38,9 @@ func TestInstructionsString(t *testing.T) {
 		Make(Sub),
 		Make(Mul),
 		Make(Div),
+		Make(Equal),
+		Make(NotEqual),
+		Make(GreaterThan),
 	}
 	expected := `0000 Add
 0001 Constant 2
@@ -46,6 +49,9 @@ func TestInstructionsString(t *testing.T) {
 0008 Sub
 0009 Mul
 0010 Div
+0011 Equal
+0012 NotEqual
+0013 GreaterThan
 `
 
 	concatted := Instructions{}
@@ -72,7 +78,9 @@ func TestReadOperands(t *testing.T) {
 		{Div, []int{}, 0},
 		{Pop, []int{}, 0},
 		{True, []int{}, 0},
-		{False, []int{}, 0},
+		{Equal, []int{}, 0},
+		{NotEqual, []int{}, 0},
+		{GreaterThan, []int{}, 0},
 	}
 
 	for _, tt := range tests {

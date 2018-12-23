@@ -86,6 +86,66 @@ func TestBooleanExpressions(t *testing.T) {
 				code.Make(code.Pop),
 			},
 		},
+		{
+			input:             "1 > 2",
+			expectedConstants: []interface{}{1, 2},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.Constant, 0),
+				code.Make(code.Constant, 1),
+				code.Make(code.GreaterThan),
+				code.Make(code.Pop),
+			},
+		},
+		{
+			input:             "1 < 2",
+			expectedConstants: []interface{}{2, 1},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.Constant, 0),
+				code.Make(code.Constant, 1),
+				code.Make(code.GreaterThan),
+				code.Make(code.Pop),
+			},
+		},
+		{
+			input:             "1 == 2",
+			expectedConstants: []interface{}{1, 2},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.Constant, 0),
+				code.Make(code.Constant, 1),
+				code.Make(code.Equal),
+				code.Make(code.Pop),
+			},
+		},
+		{
+			input:             "1 != 2",
+			expectedConstants: []interface{}{1, 2},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.Constant, 0),
+				code.Make(code.Constant, 1),
+				code.Make(code.NotEqual),
+				code.Make(code.Pop),
+			},
+		},
+		{
+			input:             "true == false",
+			expectedConstants: []interface{}{},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.True),
+				code.Make(code.False),
+				code.Make(code.Equal),
+				code.Make(code.Pop),
+			},
+		},
+		{
+			input:             "true != false",
+			expectedConstants: []interface{}{},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.True),
+				code.Make(code.False),
+				code.Make(code.NotEqual),
+				code.Make(code.Pop),
+			},
+		},
 	}
 	runCompilerTest(t, tests)
 }

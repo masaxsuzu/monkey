@@ -36,6 +36,16 @@ func TestBooleanExpressions(t *testing.T) {
 	tests := []testCase{
 		{"true", true},
 		{"false", false},
+		{"1 == 1", true},
+		{"true == false", false},
+		{"1 != 2", true},
+		{"false != false", false},
+		{"1 > 2", false},
+		{"1 < 2", true},
+		// TODO Compare integer and boolean
+		//{"1 == false", false},
+		//{"2 != true", false},
+
 	}
 	testRun(t, tests)
 }
@@ -60,7 +70,7 @@ func testRun(t *testing.T, tests []testCase) {
 
 		stackElem := vm.LastPoppedStackElement()
 
-		testExpectedObject(t, tt.want, stackElem)
+		testExpectedObject(t, tt.in, tt.want, stackElem)
 	}
 }
 
@@ -86,6 +96,7 @@ func testRunWithError(t *testing.T, tests []testCase) {
 
 func testExpectedObject(
 	t *testing.T,
+	name string,
 	want interface{},
 	got object.Object,
 ) {
@@ -94,12 +105,12 @@ func testExpectedObject(
 	case int:
 		err := testIntegerObject(int64(want), got)
 		if err != nil {
-			t.Errorf("testExpectedObject failed: %s", err)
+			t.Errorf("%s failed: %s", name, err)
 		}
 	case bool:
 		err := testBooleanObject(bool(want), got)
 		if err != nil {
-			t.Errorf("testExpectedObject failed: %s", err)
+			t.Errorf("%s failed: %s", name, err)
 		}
 	}
 }

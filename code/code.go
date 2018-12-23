@@ -24,17 +24,23 @@ const (
 	Pop
 	True
 	False
+	Equal
+	NotEqual
+	GreaterThan
 )
 
 var definitions = map[OperandCode]*Definition{
-	Constant: {"Constant", []int{2}},
-	Add:      {"Add", []int{}},
-	Sub:      {"Sub", []int{}},
-	Mul:      {"Mul", []int{}},
-	Div:      {"Div", []int{}},
-	Pop:      {"Pop", []int{}},
-	True:     {"True", []int{}},
-	False:    {"False", []int{}},
+	Constant:    {"Constant", []int{2}},
+	Add:         {"Add", []int{}},
+	Sub:         {"Sub", []int{}},
+	Mul:         {"Mul", []int{}},
+	Div:         {"Div", []int{}},
+	Pop:         {"Pop", []int{}},
+	True:        {"True", []int{}},
+	False:       {"False", []int{}},
+	Equal:       {"Equal", []int{}},
+	NotEqual:    {"NotEqual", []int{}},
+	GreaterThan: {"GreaterThan", []int{}},
 }
 
 func (ins Instructions) String() string {
