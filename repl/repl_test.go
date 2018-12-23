@@ -38,7 +38,7 @@ func TestStart(t *testing.T) {
 		r := strings.NewReader(tt.input)
 		w := &fakeWriter{Buffer: bytes.NewBuffer(nil)}
 
-		Start(r, w, "", false)
+		Start(r, w, "", false, false)
 		out := w.String()
 		if out != tt.expected {
 			t.Errorf("expected=%q, got=%q", tt.expected, out)
@@ -61,7 +61,7 @@ func TestStartVM(t *testing.T) {
 		r := strings.NewReader(tt.input)
 		w := &fakeWriter{Buffer: bytes.NewBuffer(nil)}
 
-		Start(r, w, "", true)
+		Start(r, w, "", true, false)
 		out := w.String()
 		if out != tt.expected {
 			t.Errorf("expected=%q, got=%q", tt.expected, out)

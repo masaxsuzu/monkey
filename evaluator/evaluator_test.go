@@ -179,6 +179,11 @@ func TestErrorHandling(t *testing.T) {
 			"unknown operator: BOOLEAN + BOOLEAN",
 		},
 		{
+			"1 / 0;",
+			"zero division error: 1 / 0",
+		},
+
+		{
 			"5; true + false; 5",
 			"unknown operator: BOOLEAN + BOOLEAN",
 		},

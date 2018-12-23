@@ -13,8 +13,9 @@ type VirtualMachine struct {
 	constants    []object.Object
 	instructions code.Instructions
 
-	stack []object.Object
-	sp    int // Points to the next value. Top of stack is stack[sp-1]
+	stack     []object.Object
+	sp        int // Points to the next value. Top of stack is stack[sp-1]
+	debugMode bool
 }
 
 func New(byteCode *compiler.ByteCode) *VirtualMachine {
@@ -23,7 +24,14 @@ func New(byteCode *compiler.ByteCode) *VirtualMachine {
 		constants:    byteCode.Constants,
 		stack:        make([]object.Object, StackSize),
 		sp:           0,
+		debugMode:    false,
 	}
+}
+
+func DebugMode(byteCode *compiler.ByteCode) *VirtualMachine {
+	vm := New(byteCode)
+	vm.debugMode = true
+	return vm
 }
 
 func (vm *VirtualMachine) StackTop() object.Object {
@@ -34,9 +42,11 @@ func (vm *VirtualMachine) StackTop() object.Object {
 }
 
 func (vm *VirtualMachine) Run() error {
+	if vm.debugMode {
+		vm.dumpInstructions()
+	}
 	for ip := 0; ip < len(vm.instructions); ip++ {
 		op := code.OperandCode(vm.instructions[ip])
-
 		switch op {
 		case code.Constant:
 			index := code.ReadUint16(vm.instructions[ip+1:])
@@ -113,4 +123,8 @@ func (vm *VirtualMachine) executeBinaryIntegerOperation(op code.OperandCode, lef
 		return fmt.Errorf("uknown integer operator: %d", op)
 	}
 	return vm.push(&object.Integer{Value: ret})
+}
+
+func (vm *VirtualMachine) dumpInstructions() {
+	fmt.Printf("[dump]\n%s[out]\n", vm.instructions)
 }

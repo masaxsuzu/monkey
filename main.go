@@ -9,7 +9,8 @@ import (
 )
 
 var (
-	useVM = flag.Bool("vm", false, "run on virtual machine")
+	useVM     = flag.Bool("vm", false, "run on virtual machine")
+	debugMode = flag.Bool("debug", false, "dump instructions on virtual machine for each run")
 )
 
 func main() {
@@ -23,5 +24,5 @@ func main() {
 	fmt.Printf("Hello %s! This is the Monkey programming language!\n", u.Username)
 	fmt.Printf("Execute exit() then exit monkey!\n")
 
-	repl.Start(os.Stdin, os.Stdout, "$ ", *useVM)
+	repl.Start(os.Stdin, os.Stdout, "$ ", *useVM, *debugMode)
 }
