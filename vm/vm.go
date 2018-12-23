@@ -70,6 +70,16 @@ func (vm *VirtualMachine) Run() error {
 			if err != nil {
 				return err
 			}
+		case code.Minus:
+			err := vm.executeMinusOperator()
+			if err != nil {
+				return err
+			}
+		case code.Bang:
+			err := vm.executeBangOperator()
+			if err != nil {
+				return err
+			}
 		case code.Pop:
 			vm.pop()
 		case code.True:
@@ -177,6 +187,29 @@ func (vm *VirtualMachine) executeIntegerComparison(
 		return vm.push(nativeBoolToBooleanObject(leftValue > rightValue))
 	default:
 		return fmt.Errorf("unknown operator: %d", op)
+	}
+}
+
+func (vm *VirtualMachine) executeMinusOperator() error {
+	op := vm.pop()
+
+	if op.Type() != object.INTEGER_OBJ {
+		return fmt.Errorf("unsupported type for negation: %s", op.Type())
+	}
+	value := op.(*object.Integer).Value
+	return vm.push(&object.Integer{Value: -value})
+}
+
+func (vm *VirtualMachine) executeBangOperator() error {
+	op := vm.pop()
+
+	switch op {
+	case True:
+		return vm.push(False)
+	case False:
+		return vm.push(True)
+	default:
+		return vm.push(False)
 	}
 }
 

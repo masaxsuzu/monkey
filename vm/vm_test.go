@@ -22,6 +22,8 @@ func TestIntegerArithmetic(t *testing.T) {
 		{"1 - 2", -1},
 		{"2 * 2", 4},
 		{"1 / 2", 0},
+		{"-1", -1},
+		{"-1 * 5", -5},
 	}
 	testRun(t, tests)
 }
@@ -45,7 +47,9 @@ func TestBooleanExpressions(t *testing.T) {
 		// TODO Compare integer and boolean
 		//{"1 == false", false},
 		//{"2 != true", false},
-
+		{"!true", false},
+		{"!!true", true},
+		{"!1", false},
 	}
 	testRun(t, tests)
 }

@@ -27,6 +27,8 @@ const (
 	Equal
 	NotEqual
 	GreaterThan
+	Minus
+	Bang
 )
 
 var definitions = map[OperandCode]*Definition{
@@ -41,6 +43,8 @@ var definitions = map[OperandCode]*Definition{
 	Equal:       {"Equal", []int{}},
 	NotEqual:    {"NotEqual", []int{}},
 	GreaterThan: {"GreaterThan", []int{}},
+	Minus:       {"Minus", []int{}},
+	Bang:        {"Bang", []int{}},
 }
 
 func (ins Instructions) String() string {

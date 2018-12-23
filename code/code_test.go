@@ -41,6 +41,10 @@ func TestInstructionsString(t *testing.T) {
 		Make(Equal),
 		Make(NotEqual),
 		Make(GreaterThan),
+		Make(True),
+		Make(False),
+		Make(Minus),
+		Make(Bang),
 	}
 	expected := `0000 Add
 0001 Constant 2
@@ -52,6 +56,10 @@ func TestInstructionsString(t *testing.T) {
 0011 Equal
 0012 NotEqual
 0013 GreaterThan
+0014 True
+0015 False
+0016 Minus
+0017 Bang
 `
 
 	concatted := Instructions{}
@@ -61,7 +69,7 @@ func TestInstructionsString(t *testing.T) {
 	}
 
 	if concatted.String() != expected {
-		t.Errorf("instructions wrongly formatted.\nwant=%q\ngot=%q", expected, concatted.String())
+		t.Errorf("instructions wrongly formatted.\nwant=%q\ngot= %q", expected, concatted.String())
 	}
 }
 
@@ -81,6 +89,8 @@ func TestReadOperands(t *testing.T) {
 		{Equal, []int{}, 0},
 		{NotEqual, []int{}, 0},
 		{GreaterThan, []int{}, 0},
+		{Minus, []int{}, 0},
+		{Bang, []int{}, 0},
 	}
 
 	for _, tt := range tests {
