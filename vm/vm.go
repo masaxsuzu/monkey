@@ -38,7 +38,7 @@ func (vm *VirtualMachine) Run() error {
 		op := code.OperandCode(vm.instructions[ip])
 
 		switch op {
-		case code.OpConstant:
+		case code.Constant:
 			index := code.ReadUint16(vm.instructions[ip+1:])
 			ip += 2
 
@@ -47,6 +47,14 @@ func (vm *VirtualMachine) Run() error {
 			if err != nil {
 				return err
 			}
+		case code.Add:
+			r := vm.pop()
+			l := vm.pop()
+			leftValue := l.(*object.Integer).Value
+			rightValue := r.(*object.Integer).Value
+
+			ret := leftValue + rightValue
+			vm.push(&object.Integer{Value: ret})
 		}
 	}
 	return nil
@@ -61,4 +69,10 @@ func (vm *VirtualMachine) push(o object.Object) error {
 	vm.sp++
 
 	return nil
+}
+
+func (vm *VirtualMachine) pop() object.Object {
+	top := vm.stack[vm.sp-1]
+	vm.sp--
+	return top
 }

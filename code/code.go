@@ -16,11 +16,13 @@ type Definition struct {
 }
 
 const (
-	OpConstant = iota
+	Constant = iota
+	Add
 )
 
 var definitions = map[OperandCode]*Definition{
-	OpConstant: {"OpConstant", []int{2}},
+	Constant: {"Constant", []int{2}},
+	Add:      {"Add", []int{}},
 }
 
 func (ins Instructions) String() string {
@@ -50,6 +52,8 @@ func (ins Instructions) fmtInstruction(def *Definition, operands []int) string {
 	}
 
 	switch operandCount {
+	case 0:
+		return def.Name
 	case 1:
 		return fmt.Sprintf("%s %d", def.Name, operands[0])
 	}

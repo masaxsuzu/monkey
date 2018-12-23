@@ -1,6 +1,7 @@
 package compiler
 
 import (
+	"fmt"
 	"github.com/masa-suzu/monkey/ast"
 	"github.com/masa-suzu/monkey/code"
 	"github.com/masa-suzu/monkey/object"
@@ -41,9 +42,15 @@ func (c *Compiler) Compile(node ast.Node) error {
 		if err != nil {
 			return err
 		}
+		switch node.Operator {
+		case "+":
+			c.emit(code.Add)
+		default:
+			return fmt.Errorf("unknown operator %s", node.Operator)
+		}
 	case *ast.IntegerLiteral:
 		integer := &object.Integer{Value: node.Value}
-		c.emit(code.OpConstant, c.addConstant(integer))
+		c.emit(code.Constant, c.addConstant(integer))
 	}
 	return nil
 }
