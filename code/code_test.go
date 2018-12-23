@@ -34,10 +34,18 @@ func TestInstructionsString(t *testing.T) {
 		Make(Add),
 		Make(Constant, 2),
 		Make(Constant, 65535),
+		Make(Pop),
+		Make(Sub),
+		Make(Mul),
+		Make(Div),
 	}
 	expected := `0000 Add
 0001 Constant 2
 0004 Constant 65535
+0007 Pop
+0008 Sub
+0009 Mul
+0010 Div
 `
 
 	concatted := Instructions{}
@@ -58,6 +66,11 @@ func TestReadOperands(t *testing.T) {
 		bytesRead int
 	}{
 		{Constant, []int{65535}, 2},
+		{Add, []int{}, 0},
+		{Sub, []int{}, 0},
+		{Mul, []int{}, 0},
+		{Div, []int{}, 0},
+		{Pop, []int{}, 0},
 	}
 
 	for _, tt := range tests {

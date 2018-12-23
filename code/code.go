@@ -18,12 +18,18 @@ type Definition struct {
 const (
 	Constant = iota
 	Add
+	Sub
+	Mul
+	Div
 	Pop
 )
 
 var definitions = map[OperandCode]*Definition{
 	Constant: {"Constant", []int{2}},
 	Add:      {"Add", []int{}},
+	Sub:      {"Sub", []int{}},
+	Mul:      {"Mul", []int{}},
+	Div:      {"Div", []int{}},
 	Pop:      {"Pop", []int{}},
 }
 
