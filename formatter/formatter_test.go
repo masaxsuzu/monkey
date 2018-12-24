@@ -12,8 +12,8 @@ import (
 
 func TestFormat(t *testing.T) {
 	tests := []struct {
-		input    string
-		want string
+		input string
+		want  string
 	}{
 		{"10", "10;"},
 		{`"a";`, `"a";`},
@@ -32,8 +32,8 @@ func TestFormat(t *testing.T) {
 		{"fn(x,y,z){return x*y +z}", `fn(x, y, z) {
     return ((x * y) + z);
 };`},
-		{"[1,2,3]","[1, 2, 3];"},
-		{"[1,2,3] (2)","[1, 2, 3](2);"},
+		{"[1,2,3]", "[1, 2, 3];"},
+		{"[1,2,3] (2)", "[1, 2, 3](2);"},
 		{
 			`let f = fn(x,y,z){return x*y +z};
 f(1,4,5);`,
@@ -41,15 +41,15 @@ f(1,4,5);`,
     return ((x * y) + z);
 };
 f(1, 4, 5);`},
-		{`{"a":1};`,`{"a":1};`},
+		{`{"a":1};`, `{"a":1};`},
 		{`if(true){ if(false){1}}`,
-`if(true) {
+			`if(true) {
     if(false) {
         1;
     };
 };`},
 		{`fn(x,y,z){fn(x,y,z){return x*y +z}}`,
-`fn(x, y, z) {
+			`fn(x, y, z) {
     fn(x, y, z) {
         return ((x * y) + z);
     };
@@ -66,13 +66,23 @@ f(1, 4, 5);`},
         return ((x * y) + z);
     };
 };`},
+		{`macro(x){x}`, `macro(x) {
+    x;
+};`,
+		},
+		{`macro(x){fn(){x}}`, `macro(x) {
+    fn() {
+        x;
+    };
+};`,
+		},
 	}
 
 	for _, tt := range tests {
 		p := parse(tt.input)
-		got := formatter.Format(p,0)
-		if got != tt.want{
-			t.Errorf("Format(%v)\ngot:\n%v\nwant:\n%v",tt.input,got,tt.want)
+		got := formatter.Format(p, 0)
+		if got != tt.want {
+			t.Errorf("Format(%v)\ngot:\n%v\nwant:\n%v", tt.input, got, tt.want)
 		}
 
 		formatProgram := parse(got)
@@ -82,7 +92,7 @@ f(1, 4, 5);`},
 			if e1.Inspect() != e2.Inspect() {
 				t.Fatalf("eval(parse(Format(%v))) got %v, want %v", tt.input, e1, e2)
 			}
-		} else if !(e1 == nil && e2 == nil){
+		} else if !(e1 == nil && e2 == nil) {
 			t.Fatalf("eval(parse(Format(%v))) got %v, want %v", tt.input, e1, e2)
 		}
 	}
@@ -96,5 +106,5 @@ func parse(input string) *ast.Program {
 
 func eval(p *ast.Program) object.Object {
 	env := object.NewEnvironment()
-	return evaluator.Eval(p,env)
+	return evaluator.Eval(p, env)
 }

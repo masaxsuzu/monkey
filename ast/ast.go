@@ -163,7 +163,7 @@ func (es *ExpressionStatement) statementNode()       {}
 func (es *ExpressionStatement) TokenLiteral() string { return es.Token.Literal }
 func (es *ExpressionStatement) String() string {
 	if es.Expression != nil {
-		return es.Expression.String() +";"
+		return es.Expression.String() + ";"
 	}
 	return ""
 }
@@ -178,7 +178,7 @@ func (il *IntegerLiteral) String() string       { return il.Token.Literal }
 
 func (sl *StringLiteral) expressionNode()      {}
 func (sl *StringLiteral) TokenLiteral() string { return sl.Token.Literal }
-func (sl *StringLiteral) String() string       { return "\""+sl.Token.Literal+"\"" }
+func (sl *StringLiteral) String() string       { return "\"" + sl.Token.Literal + "\"" }
 
 func (pe *PrefixExpression) expressionNode()      {}
 func (pe *PrefixExpression) TokenLiteral() string { return pe.Token.Literal }
@@ -319,6 +319,31 @@ func (hl *HashLiteral) String() string {
 
 	out.WriteString("{")
 	out.WriteString(strings.Join(pairs, ", "))
+	out.WriteString("}")
+	return out.String()
+}
+
+type MacroLiteral struct {
+	Token      token.Token // The 'macro' token
+	Parameters []*Identifier
+	Body       *BlockStatement
+}
+
+func (ml *MacroLiteral) expressionNode()      {}
+func (ml *MacroLiteral) TokenLiteral() string { return ml.Token.Literal }
+func (ml *MacroLiteral) String() string {
+	var out bytes.Buffer
+
+	params := []string{}
+	for _, p := range ml.Parameters {
+		params = append(params, p.String())
+	}
+
+	out.WriteString(ml.TokenLiteral())
+	out.WriteString("(")
+	out.WriteString(strings.Join(params, ", "))
+	out.WriteString(") {")
+	out.WriteString(ml.Body.String())
 	out.WriteString("}")
 	return out.String()
 }
