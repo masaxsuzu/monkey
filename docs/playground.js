@@ -19943,7 +19943,7 @@ $packages["github.com/masa-suzu/monkey/token"] = (function() {
 	$init = function() {
 		$pkg.$init = function() {};
 		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
-		keywords = $makeMap($String.keyFor, [{ k: "fn", v: "FUNCTION" }, { k: "let", v: "LET" }, { k: "true", v: "TRUE" }, { k: "false", v: "FALSE" }, { k: "if", v: "IF" }, { k: "else", v: "ELSE" }, { k: "return", v: "RETURN" }]);
+		keywords = $makeMap($String.keyFor, [{ k: "fn", v: "FUNCTION" }, { k: "let", v: "LET" }, { k: "true", v: "TRUE" }, { k: "false", v: "FALSE" }, { k: "if", v: "IF" }, { k: "else", v: "ELSE" }, { k: "return", v: "RETURN" }, { k: "macro", v: "MACRO" }]);
 		/* */ } return; } if ($f === undefined) { $f = { $blk: $init }; } $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.$init = $init;
@@ -20071,10 +20071,11 @@ $packages["strings"] = (function() {
 	return $pkg;
 })();
 $packages["github.com/masa-suzu/monkey/ast"] = (function() {
-	var $pkg = {}, $init, bytes, token, strings, Statement, Expression, Program, LetStatement, ReturnStatement, ExpressionStatement, Identifier, IntegerLiteral, StringLiteral, PrefixExpression, InfixExpression, Boolean, IfExpression, BlockStatement, FunctionLiteral, ArrayLiteral, IndexExpression, CallExpression, HashLiteral, sliceType, arrayType, ptrType, sliceType$1, sliceType$2, ptrType$1, ptrType$2, ptrType$3, ptrType$4, ptrType$5, ptrType$6, ptrType$7, ptrType$8, ptrType$9, ptrType$10, ptrType$11, sliceType$3, ptrType$12, sliceType$4, ptrType$13, ptrType$14, ptrType$15, ptrType$16, mapType;
+	var $pkg = {}, $init, bytes, token, strings, Node, Statement, Expression, Program, LetStatement, ReturnStatement, ExpressionStatement, Identifier, IntegerLiteral, StringLiteral, PrefixExpression, InfixExpression, Boolean, IfExpression, BlockStatement, FunctionLiteral, ArrayLiteral, IndexExpression, CallExpression, HashLiteral, MacroLiteral, sliceType, arrayType, ptrType, sliceType$1, ptrType$1, ptrType$2, ptrType$3, ptrType$4, ptrType$5, ptrType$6, ptrType$7, ptrType$8, ptrType$9, ptrType$10, ptrType$11, ptrType$12, sliceType$2, ptrType$13, ptrType$14, ptrType$15, sliceType$3, sliceType$4, ptrType$16, mapType, ptrType$17, Modify;
 	bytes = $packages["bytes"];
 	token = $packages["github.com/masa-suzu/monkey/token"];
 	strings = $packages["strings"];
+	Node = $pkg.Node = $newType(8, $kindInterface, "ast.Node", true, "github.com/masa-suzu/monkey/ast", true, null);
 	Statement = $pkg.Statement = $newType(8, $kindInterface, "ast.Statement", true, "github.com/masa-suzu/monkey/ast", true, null);
 	Expression = $pkg.Expression = $newType(8, $kindInterface, "ast.Expression", true, "github.com/masa-suzu/monkey/ast", true, null);
 	Program = $pkg.Program = $newType(0, $kindStruct, "ast.Program", true, "github.com/masa-suzu/monkey/ast", true, function(Statements_) {
@@ -20089,7 +20090,7 @@ $packages["github.com/masa-suzu/monkey/ast"] = (function() {
 		this.$val = this;
 		if (arguments.length === 0) {
 			this.Token = new token.Token.ptr("", "");
-			this.Name = ptrType$2.nil;
+			this.Name = ptrType$12.nil;
 			this.Value = $ifaceNil;
 			return;
 		}
@@ -20263,30 +20264,43 @@ $packages["github.com/masa-suzu/monkey/ast"] = (function() {
 		this.Token = Token_;
 		this.Pairs = Pairs_;
 	});
+	MacroLiteral = $pkg.MacroLiteral = $newType(0, $kindStruct, "ast.MacroLiteral", true, "github.com/masa-suzu/monkey/ast", true, function(Token_, Parameters_, Body_) {
+		this.$val = this;
+		if (arguments.length === 0) {
+			this.Token = new token.Token.ptr("", "");
+			this.Parameters = sliceType$3.nil;
+			this.Body = ptrType.nil;
+			return;
+		}
+		this.Token = Token_;
+		this.Parameters = Parameters_;
+		this.Body = Body_;
+	});
 	sliceType = $sliceType($Uint8);
 	arrayType = $arrayType($Uint8, 64);
 	ptrType = $ptrType(BlockStatement);
 	sliceType$1 = $sliceType($String);
-	sliceType$2 = $sliceType(Statement);
 	ptrType$1 = $ptrType(Program);
-	ptrType$2 = $ptrType(Identifier);
+	ptrType$2 = $ptrType(ReturnStatement);
 	ptrType$3 = $ptrType(LetStatement);
-	ptrType$4 = $ptrType(ReturnStatement);
-	ptrType$5 = $ptrType(ExpressionStatement);
-	ptrType$6 = $ptrType(IntegerLiteral);
-	ptrType$7 = $ptrType(StringLiteral);
-	ptrType$8 = $ptrType(PrefixExpression);
-	ptrType$9 = $ptrType(InfixExpression);
-	ptrType$10 = $ptrType(Boolean);
-	ptrType$11 = $ptrType(IfExpression);
-	sliceType$3 = $sliceType(ptrType$2);
-	ptrType$12 = $ptrType(FunctionLiteral);
+	ptrType$4 = $ptrType(ExpressionStatement);
+	ptrType$5 = $ptrType(InfixExpression);
+	ptrType$6 = $ptrType(PrefixExpression);
+	ptrType$7 = $ptrType(IndexExpression);
+	ptrType$8 = $ptrType(IfExpression);
+	ptrType$9 = $ptrType(FunctionLiteral);
+	ptrType$10 = $ptrType(ArrayLiteral);
+	ptrType$11 = $ptrType(HashLiteral);
+	ptrType$12 = $ptrType(Identifier);
+	sliceType$2 = $sliceType(Statement);
+	ptrType$13 = $ptrType(IntegerLiteral);
+	ptrType$14 = $ptrType(StringLiteral);
+	ptrType$15 = $ptrType(Boolean);
+	sliceType$3 = $sliceType(ptrType$12);
 	sliceType$4 = $sliceType(Expression);
-	ptrType$13 = $ptrType(ArrayLiteral);
-	ptrType$14 = $ptrType(IndexExpression);
-	ptrType$15 = $ptrType(CallExpression);
-	ptrType$16 = $ptrType(HashLiteral);
+	ptrType$16 = $ptrType(CallExpression);
 	mapType = $mapType(Expression, Expression);
+	ptrType$17 = $ptrType(MacroLiteral);
 	Program.ptr.prototype.TokenLiteral = function() {
 		var _r, p, x, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; p = $f.p; x = $f.x; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
@@ -20699,27 +20713,223 @@ $packages["github.com/masa-suzu/monkey/ast"] = (function() {
 		/* */ } return; } if ($f === undefined) { $f = { $blk: HashLiteral.ptr.prototype.String }; } $f._entry = _entry; $f._i = _i; $f._keys = _keys; $f._r = _r; $f._r$1 = _r$1; $f._ref = _ref; $f.hl = hl; $f.key = key; $f.out = out; $f.pairs = pairs; $f.value = value; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	HashLiteral.prototype.String = function() { return this.$val.String(); };
+	MacroLiteral.ptr.prototype.TokenLiteral = function() {
+		var ml;
+		ml = this;
+		return ml.Token.Literal;
+	};
+	MacroLiteral.prototype.TokenLiteral = function() { return this.$val.TokenLiteral(); };
+	MacroLiteral.ptr.prototype.String = function() {
+		var _i, _r, _r$1, _ref, ml, out, p, params, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _r = $f._r; _r$1 = $f._r$1; _ref = $f._ref; ml = $f.ml; out = $f.out; p = $f.p; params = $f.params; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		ml = this;
+		out = new bytes.Buffer.ptr(sliceType.nil, 0, arrayType.zero(), 0);
+		params = new sliceType$1([]);
+		_ref = ml.Parameters;
+		_i = 0;
+		while (true) {
+			if (!(_i < _ref.$length)) { break; }
+			p = ((_i < 0 || _i >= _ref.$length) ? ($throwRuntimeError("index out of range"), undefined) : _ref.$array[_ref.$offset + _i]);
+			params = $append(params, p.String());
+			_i++;
+		}
+		out.WriteString(ml.TokenLiteral());
+		out.WriteString("(");
+		out.WriteString(strings.Join(params, ", "));
+		out.WriteString(") {");
+		_r = ml.Body.String(); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_r$1 = out.WriteString(_r); /* */ $s = 2; case 2: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+		_r$1;
+		out.WriteString("}");
+		$s = -1; return out.String();
+		/* */ } return; } if ($f === undefined) { $f = { $blk: MacroLiteral.ptr.prototype.String }; } $f._i = _i; $f._r = _r; $f._r$1 = _r$1; $f._ref = _ref; $f.ml = ml; $f.out = out; $f.p = p; $f.params = params; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	MacroLiteral.prototype.String = function() { return this.$val.String(); };
+	Modify = function(from, modify) {
+		var _entry, _i, _i$1, _i$2, _i$3, _i$4, _key, _keys, _r, _r$1, _r$10, _r$11, _r$12, _r$13, _r$14, _r$15, _r$16, _r$17, _r$18, _r$2, _r$3, _r$4, _r$5, _r$6, _r$7, _r$8, _r$9, _ref, _ref$1, _ref$2, _ref$3, _ref$4, _ref$5, _tuple, _tuple$1, _tuple$10, _tuple$11, _tuple$12, _tuple$13, _tuple$14, _tuple$15, _tuple$16, _tuple$17, _tuple$2, _tuple$3, _tuple$4, _tuple$5, _tuple$6, _tuple$7, _tuple$8, _tuple$9, from, from$1, from$10, from$11, from$12, from$2, from$3, from$4, from$5, from$6, from$7, from$8, from$9, i, i$1, i$2, i$3, key, modify, newKey, newPairs, newVal, statement, val, x, x$1, x$2, x$3, x$4, x$5, x$6, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _entry = $f._entry; _i = $f._i; _i$1 = $f._i$1; _i$2 = $f._i$2; _i$3 = $f._i$3; _i$4 = $f._i$4; _key = $f._key; _keys = $f._keys; _r = $f._r; _r$1 = $f._r$1; _r$10 = $f._r$10; _r$11 = $f._r$11; _r$12 = $f._r$12; _r$13 = $f._r$13; _r$14 = $f._r$14; _r$15 = $f._r$15; _r$16 = $f._r$16; _r$17 = $f._r$17; _r$18 = $f._r$18; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _r$7 = $f._r$7; _r$8 = $f._r$8; _r$9 = $f._r$9; _ref = $f._ref; _ref$1 = $f._ref$1; _ref$2 = $f._ref$2; _ref$3 = $f._ref$3; _ref$4 = $f._ref$4; _ref$5 = $f._ref$5; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; _tuple$10 = $f._tuple$10; _tuple$11 = $f._tuple$11; _tuple$12 = $f._tuple$12; _tuple$13 = $f._tuple$13; _tuple$14 = $f._tuple$14; _tuple$15 = $f._tuple$15; _tuple$16 = $f._tuple$16; _tuple$17 = $f._tuple$17; _tuple$2 = $f._tuple$2; _tuple$3 = $f._tuple$3; _tuple$4 = $f._tuple$4; _tuple$5 = $f._tuple$5; _tuple$6 = $f._tuple$6; _tuple$7 = $f._tuple$7; _tuple$8 = $f._tuple$8; _tuple$9 = $f._tuple$9; from = $f.from; from$1 = $f.from$1; from$10 = $f.from$10; from$11 = $f.from$11; from$12 = $f.from$12; from$2 = $f.from$2; from$3 = $f.from$3; from$4 = $f.from$4; from$5 = $f.from$5; from$6 = $f.from$6; from$7 = $f.from$7; from$8 = $f.from$8; from$9 = $f.from$9; i = $f.i; i$1 = $f.i$1; i$2 = $f.i$2; i$3 = $f.i$3; key = $f.key; modify = $f.modify; newKey = $f.newKey; newPairs = $f.newPairs; newVal = $f.newVal; statement = $f.statement; val = $f.val; x = $f.x; x$1 = $f.x$1; x$2 = $f.x$2; x$3 = $f.x$3; x$4 = $f.x$4; x$5 = $f.x$5; x$6 = $f.x$6; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		_ref = from;
+		/* */ if ($assertType(_ref, ptrType$1, true)[1]) { $s = 1; continue; }
+		/* */ if ($assertType(_ref, ptrType, true)[1]) { $s = 2; continue; }
+		/* */ if ($assertType(_ref, ptrType$2, true)[1]) { $s = 3; continue; }
+		/* */ if ($assertType(_ref, ptrType$3, true)[1]) { $s = 4; continue; }
+		/* */ if ($assertType(_ref, ptrType$4, true)[1]) { $s = 5; continue; }
+		/* */ if ($assertType(_ref, ptrType$5, true)[1]) { $s = 6; continue; }
+		/* */ if ($assertType(_ref, ptrType$6, true)[1]) { $s = 7; continue; }
+		/* */ if ($assertType(_ref, ptrType$7, true)[1]) { $s = 8; continue; }
+		/* */ if ($assertType(_ref, ptrType$8, true)[1]) { $s = 9; continue; }
+		/* */ if ($assertType(_ref, ptrType$9, true)[1]) { $s = 10; continue; }
+		/* */ if ($assertType(_ref, ptrType$10, true)[1]) { $s = 11; continue; }
+		/* */ if ($assertType(_ref, ptrType$11, true)[1]) { $s = 12; continue; }
+		/* */ $s = 13; continue;
+		/* if ($assertType(_ref, ptrType$1, true)[1]) { */ case 1:
+			from$1 = _ref.$val;
+			_ref$1 = from$1.Statements;
+			_i = 0;
+			/* while (true) { */ case 14:
+				/* if (!(_i < _ref$1.$length)) { break; } */ if(!(_i < _ref$1.$length)) { $s = 15; continue; }
+				i = _i;
+				_r = Modify((x = from$1.Statements, ((i < 0 || i >= x.$length) ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + i])), modify); /* */ $s = 16; case 16: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+				_tuple = $assertType(_r, Statement, true);
+				(x$1 = from$1.Statements, ((i < 0 || i >= x$1.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$1.$array[x$1.$offset + i] = _tuple[0]));
+				_i++;
+			/* } */ $s = 14; continue; case 15:
+			$s = 13; continue;
+		/* } else if ($assertType(_ref, ptrType, true)[1]) { */ case 2:
+			from$2 = _ref.$val;
+			_ref$2 = from$2.Statements;
+			_i$1 = 0;
+			/* while (true) { */ case 17:
+				/* if (!(_i$1 < _ref$2.$length)) { break; } */ if(!(_i$1 < _ref$2.$length)) { $s = 18; continue; }
+				i$1 = _i$1;
+				statement = ((_i$1 < 0 || _i$1 >= _ref$2.$length) ? ($throwRuntimeError("index out of range"), undefined) : _ref$2.$array[_ref$2.$offset + _i$1]);
+				_r$1 = Modify(statement, modify); /* */ $s = 19; case 19: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+				_tuple$1 = $assertType(_r$1, Statement, true);
+				(x$2 = from$2.Statements, ((i$1 < 0 || i$1 >= x$2.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$2.$array[x$2.$offset + i$1] = _tuple$1[0]));
+				_i$1++;
+			/* } */ $s = 17; continue; case 18:
+			$s = 13; continue;
+		/* } else if ($assertType(_ref, ptrType$2, true)[1]) { */ case 3:
+			from$3 = _ref.$val;
+			_r$2 = Modify(from$3.ReturnValue, modify); /* */ $s = 20; case 20: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+			_tuple$2 = $assertType(_r$2, Expression, true);
+			from$3.ReturnValue = _tuple$2[0];
+			$s = 13; continue;
+		/* } else if ($assertType(_ref, ptrType$3, true)[1]) { */ case 4:
+			from$4 = _ref.$val;
+			_r$3 = Modify(from$4.Value, modify); /* */ $s = 21; case 21: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+			_tuple$3 = $assertType(_r$3, Expression, true);
+			from$4.Value = _tuple$3[0];
+			$s = 13; continue;
+		/* } else if ($assertType(_ref, ptrType$4, true)[1]) { */ case 5:
+			from$5 = _ref.$val;
+			_r$4 = Modify(from$5.Expression, modify); /* */ $s = 22; case 22: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
+			_tuple$4 = $assertType(_r$4, Expression, true);
+			from$5.Expression = _tuple$4[0];
+			$s = 13; continue;
+		/* } else if ($assertType(_ref, ptrType$5, true)[1]) { */ case 6:
+			from$6 = _ref.$val;
+			_r$5 = Modify(from$6.Left, modify); /* */ $s = 23; case 23: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
+			_tuple$5 = $assertType(_r$5, Expression, true);
+			from$6.Left = _tuple$5[0];
+			_r$6 = Modify(from$6.Right, modify); /* */ $s = 24; case 24: if($c) { $c = false; _r$6 = _r$6.$blk(); } if (_r$6 && _r$6.$blk !== undefined) { break s; }
+			_tuple$6 = $assertType(_r$6, Expression, true);
+			from$6.Right = _tuple$6[0];
+			$s = 13; continue;
+		/* } else if ($assertType(_ref, ptrType$6, true)[1]) { */ case 7:
+			from$7 = _ref.$val;
+			_r$7 = Modify(from$7.Right, modify); /* */ $s = 25; case 25: if($c) { $c = false; _r$7 = _r$7.$blk(); } if (_r$7 && _r$7.$blk !== undefined) { break s; }
+			_tuple$7 = $assertType(_r$7, Expression, true);
+			from$7.Right = _tuple$7[0];
+			$s = 13; continue;
+		/* } else if ($assertType(_ref, ptrType$7, true)[1]) { */ case 8:
+			from$8 = _ref.$val;
+			_r$8 = Modify(from$8.Left, modify); /* */ $s = 26; case 26: if($c) { $c = false; _r$8 = _r$8.$blk(); } if (_r$8 && _r$8.$blk !== undefined) { break s; }
+			_tuple$8 = $assertType(_r$8, Expression, true);
+			from$8.Left = _tuple$8[0];
+			_r$9 = Modify(from$8.Index, modify); /* */ $s = 27; case 27: if($c) { $c = false; _r$9 = _r$9.$blk(); } if (_r$9 && _r$9.$blk !== undefined) { break s; }
+			_tuple$9 = $assertType(_r$9, Expression, true);
+			from$8.Index = _tuple$9[0];
+			$s = 13; continue;
+		/* } else if ($assertType(_ref, ptrType$8, true)[1]) { */ case 9:
+			from$9 = _ref.$val;
+			_r$10 = Modify(from$9.Condition, modify); /* */ $s = 28; case 28: if($c) { $c = false; _r$10 = _r$10.$blk(); } if (_r$10 && _r$10.$blk !== undefined) { break s; }
+			_tuple$10 = $assertType(_r$10, Expression, true);
+			from$9.Condition = _tuple$10[0];
+			_r$11 = Modify(from$9.Consequence, modify); /* */ $s = 29; case 29: if($c) { $c = false; _r$11 = _r$11.$blk(); } if (_r$11 && _r$11.$blk !== undefined) { break s; }
+			_tuple$11 = $assertType(_r$11, ptrType, true);
+			from$9.Consequence = _tuple$11[0];
+			/* */ if (!(from$9.Alternative === ptrType.nil)) { $s = 30; continue; }
+			/* */ $s = 31; continue;
+			/* if (!(from$9.Alternative === ptrType.nil)) { */ case 30:
+				_r$12 = Modify(from$9.Alternative, modify); /* */ $s = 32; case 32: if($c) { $c = false; _r$12 = _r$12.$blk(); } if (_r$12 && _r$12.$blk !== undefined) { break s; }
+				_tuple$12 = $assertType(_r$12, ptrType, true);
+				from$9.Alternative = _tuple$12[0];
+			/* } */ case 31:
+			$s = 13; continue;
+		/* } else if ($assertType(_ref, ptrType$9, true)[1]) { */ case 10:
+			from$10 = _ref.$val;
+			_ref$3 = from$10.Parameters;
+			_i$2 = 0;
+			/* while (true) { */ case 33:
+				/* if (!(_i$2 < _ref$3.$length)) { break; } */ if(!(_i$2 < _ref$3.$length)) { $s = 34; continue; }
+				i$2 = _i$2;
+				_r$13 = Modify((x$3 = from$10.Parameters, ((i$2 < 0 || i$2 >= x$3.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$3.$array[x$3.$offset + i$2])), modify); /* */ $s = 35; case 35: if($c) { $c = false; _r$13 = _r$13.$blk(); } if (_r$13 && _r$13.$blk !== undefined) { break s; }
+				_tuple$13 = $assertType(_r$13, ptrType$12, true);
+				(x$4 = from$10.Parameters, ((i$2 < 0 || i$2 >= x$4.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$4.$array[x$4.$offset + i$2] = _tuple$13[0]));
+				_i$2++;
+			/* } */ $s = 33; continue; case 34:
+			_r$14 = Modify(from$10.Body, modify); /* */ $s = 36; case 36: if($c) { $c = false; _r$14 = _r$14.$blk(); } if (_r$14 && _r$14.$blk !== undefined) { break s; }
+			_tuple$14 = $assertType(_r$14, ptrType, true);
+			from$10.Body = _tuple$14[0];
+			$s = 13; continue;
+		/* } else if ($assertType(_ref, ptrType$10, true)[1]) { */ case 11:
+			from$11 = _ref.$val;
+			_ref$4 = from$11.Elements;
+			_i$3 = 0;
+			/* while (true) { */ case 37:
+				/* if (!(_i$3 < _ref$4.$length)) { break; } */ if(!(_i$3 < _ref$4.$length)) { $s = 38; continue; }
+				i$3 = _i$3;
+				_r$15 = Modify((x$5 = from$11.Elements, ((i$3 < 0 || i$3 >= x$5.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$5.$array[x$5.$offset + i$3])), modify); /* */ $s = 39; case 39: if($c) { $c = false; _r$15 = _r$15.$blk(); } if (_r$15 && _r$15.$blk !== undefined) { break s; }
+				_tuple$15 = $assertType(_r$15, Expression, true);
+				(x$6 = from$11.Elements, ((i$3 < 0 || i$3 >= x$6.$length) ? ($throwRuntimeError("index out of range"), undefined) : x$6.$array[x$6.$offset + i$3] = _tuple$15[0]));
+				_i$3++;
+			/* } */ $s = 37; continue; case 38:
+			$s = 13; continue;
+		/* } else if ($assertType(_ref, ptrType$11, true)[1]) { */ case 12:
+			from$12 = _ref.$val;
+			newPairs = {};
+			_ref$5 = from$12.Pairs;
+			_i$4 = 0;
+			_keys = $keys(_ref$5);
+			/* while (true) { */ case 40:
+				/* if (!(_i$4 < _keys.length)) { break; } */ if(!(_i$4 < _keys.length)) { $s = 41; continue; }
+				_entry = _ref$5[_keys[_i$4]];
+				if (_entry === undefined) {
+					_i$4++;
+					/* continue; */ $s = 40; continue;
+				}
+				key = _entry.k;
+				val = _entry.v;
+				_r$16 = Modify(key, modify); /* */ $s = 42; case 42: if($c) { $c = false; _r$16 = _r$16.$blk(); } if (_r$16 && _r$16.$blk !== undefined) { break s; }
+				_tuple$16 = $assertType(_r$16, Expression, true);
+				newKey = _tuple$16[0];
+				_r$17 = Modify(val, modify); /* */ $s = 43; case 43: if($c) { $c = false; _r$17 = _r$17.$blk(); } if (_r$17 && _r$17.$blk !== undefined) { break s; }
+				_tuple$17 = $assertType(_r$17, Expression, true);
+				newVal = _tuple$17[0];
+				_key = newKey; (newPairs || $throwRuntimeError("assignment to entry in nil map"))[Expression.keyFor(_key)] = { k: _key, v: newVal };
+				_i$4++;
+			/* } */ $s = 40; continue; case 41:
+			from$12.Pairs = newPairs;
+		/* } */ case 13:
+		_r$18 = modify(from); /* */ $s = 44; case 44: if($c) { $c = false; _r$18 = _r$18.$blk(); } if (_r$18 && _r$18.$blk !== undefined) { break s; }
+		$s = -1; return _r$18;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Modify }; } $f._entry = _entry; $f._i = _i; $f._i$1 = _i$1; $f._i$2 = _i$2; $f._i$3 = _i$3; $f._i$4 = _i$4; $f._key = _key; $f._keys = _keys; $f._r = _r; $f._r$1 = _r$1; $f._r$10 = _r$10; $f._r$11 = _r$11; $f._r$12 = _r$12; $f._r$13 = _r$13; $f._r$14 = _r$14; $f._r$15 = _r$15; $f._r$16 = _r$16; $f._r$17 = _r$17; $f._r$18 = _r$18; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._r$7 = _r$7; $f._r$8 = _r$8; $f._r$9 = _r$9; $f._ref = _ref; $f._ref$1 = _ref$1; $f._ref$2 = _ref$2; $f._ref$3 = _ref$3; $f._ref$4 = _ref$4; $f._ref$5 = _ref$5; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f._tuple$10 = _tuple$10; $f._tuple$11 = _tuple$11; $f._tuple$12 = _tuple$12; $f._tuple$13 = _tuple$13; $f._tuple$14 = _tuple$14; $f._tuple$15 = _tuple$15; $f._tuple$16 = _tuple$16; $f._tuple$17 = _tuple$17; $f._tuple$2 = _tuple$2; $f._tuple$3 = _tuple$3; $f._tuple$4 = _tuple$4; $f._tuple$5 = _tuple$5; $f._tuple$6 = _tuple$6; $f._tuple$7 = _tuple$7; $f._tuple$8 = _tuple$8; $f._tuple$9 = _tuple$9; $f.from = from; $f.from$1 = from$1; $f.from$10 = from$10; $f.from$11 = from$11; $f.from$12 = from$12; $f.from$2 = from$2; $f.from$3 = from$3; $f.from$4 = from$4; $f.from$5 = from$5; $f.from$6 = from$6; $f.from$7 = from$7; $f.from$8 = from$8; $f.from$9 = from$9; $f.i = i; $f.i$1 = i$1; $f.i$2 = i$2; $f.i$3 = i$3; $f.key = key; $f.modify = modify; $f.newKey = newKey; $f.newPairs = newPairs; $f.newVal = newVal; $f.statement = statement; $f.val = val; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.x$3 = x$3; $f.x$4 = x$4; $f.x$5 = x$5; $f.x$6 = x$6; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	$pkg.Modify = Modify;
 	ptrType$1.methods = [{prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
 	ptrType$3.methods = [{prop: "statementNode", name: "statementNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
+	ptrType$2.methods = [{prop: "statementNode", name: "statementNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
 	ptrType$4.methods = [{prop: "statementNode", name: "statementNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
-	ptrType$5.methods = [{prop: "statementNode", name: "statementNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
-	ptrType$2.methods = [{prop: "expressionNode", name: "expressionNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
-	ptrType$6.methods = [{prop: "expressionNode", name: "expressionNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
-	ptrType$7.methods = [{prop: "expressionNode", name: "expressionNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
-	ptrType$8.methods = [{prop: "expressionNode", name: "expressionNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
-	ptrType$9.methods = [{prop: "expressionNode", name: "expressionNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
-	ptrType$10.methods = [{prop: "expressionNode", name: "expressionNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
-	ptrType$11.methods = [{prop: "expressionNode", name: "expressionNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
-	ptrType.methods = [{prop: "statementNode", name: "statementNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
 	ptrType$12.methods = [{prop: "expressionNode", name: "expressionNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
 	ptrType$13.methods = [{prop: "expressionNode", name: "expressionNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
 	ptrType$14.methods = [{prop: "expressionNode", name: "expressionNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
+	ptrType$6.methods = [{prop: "expressionNode", name: "expressionNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
+	ptrType$5.methods = [{prop: "expressionNode", name: "expressionNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
 	ptrType$15.methods = [{prop: "expressionNode", name: "expressionNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
+	ptrType$8.methods = [{prop: "expressionNode", name: "expressionNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
+	ptrType.methods = [{prop: "statementNode", name: "statementNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
+	ptrType$9.methods = [{prop: "expressionNode", name: "expressionNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
+	ptrType$10.methods = [{prop: "expressionNode", name: "expressionNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
+	ptrType$7.methods = [{prop: "expressionNode", name: "expressionNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
 	ptrType$16.methods = [{prop: "expressionNode", name: "expressionNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
+	ptrType$11.methods = [{prop: "expressionNode", name: "expressionNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
+	ptrType$17.methods = [{prop: "expressionNode", name: "expressionNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}];
+	Node.init([{prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}]);
 	Statement.init([{prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "statementNode", name: "statementNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}]);
 	Expression.init([{prop: "String", name: "String", pkg: "", typ: $funcType([], [$String], false)}, {prop: "TokenLiteral", name: "TokenLiteral", pkg: "", typ: $funcType([], [$String], false)}, {prop: "expressionNode", name: "expressionNode", pkg: "github.com/masa-suzu/monkey/ast", typ: $funcType([], [], false)}]);
 	Program.init("", [{prop: "Statements", name: "Statements", embedded: false, exported: true, typ: sliceType$2, tag: ""}]);
-	LetStatement.init("", [{prop: "Token", name: "Token", embedded: false, exported: true, typ: token.Token, tag: ""}, {prop: "Name", name: "Name", embedded: false, exported: true, typ: ptrType$2, tag: ""}, {prop: "Value", name: "Value", embedded: false, exported: true, typ: Expression, tag: ""}]);
+	LetStatement.init("", [{prop: "Token", name: "Token", embedded: false, exported: true, typ: token.Token, tag: ""}, {prop: "Name", name: "Name", embedded: false, exported: true, typ: ptrType$12, tag: ""}, {prop: "Value", name: "Value", embedded: false, exported: true, typ: Expression, tag: ""}]);
 	ReturnStatement.init("", [{prop: "Token", name: "Token", embedded: false, exported: true, typ: token.Token, tag: ""}, {prop: "ReturnValue", name: "ReturnValue", embedded: false, exported: true, typ: Expression, tag: ""}]);
 	ExpressionStatement.init("", [{prop: "Token", name: "Token", embedded: false, exported: true, typ: token.Token, tag: ""}, {prop: "Expression", name: "Expression", embedded: false, exported: true, typ: Expression, tag: ""}]);
 	Identifier.init("", [{prop: "Token", name: "Token", embedded: false, exported: true, typ: token.Token, tag: ""}, {prop: "Value", name: "Value", embedded: false, exported: true, typ: $String, tag: ""}]);
@@ -20735,6 +20945,7 @@ $packages["github.com/masa-suzu/monkey/ast"] = (function() {
 	IndexExpression.init("", [{prop: "Token", name: "Token", embedded: false, exported: true, typ: token.Token, tag: ""}, {prop: "Left", name: "Left", embedded: false, exported: true, typ: Expression, tag: ""}, {prop: "Index", name: "Index", embedded: false, exported: true, typ: Expression, tag: ""}]);
 	CallExpression.init("", [{prop: "Token", name: "Token", embedded: false, exported: true, typ: token.Token, tag: ""}, {prop: "Function", name: "Function", embedded: false, exported: true, typ: Expression, tag: ""}, {prop: "Arguments", name: "Arguments", embedded: false, exported: true, typ: sliceType$4, tag: ""}]);
 	HashLiteral.init("", [{prop: "Token", name: "Token", embedded: false, exported: true, typ: token.Token, tag: ""}, {prop: "Pairs", name: "Pairs", embedded: false, exported: true, typ: mapType, tag: ""}]);
+	MacroLiteral.init("", [{prop: "Token", name: "Token", embedded: false, exported: true, typ: token.Token, tag: ""}, {prop: "Parameters", name: "Parameters", embedded: false, exported: true, typ: sliceType$3, tag: ""}, {prop: "Body", name: "Body", embedded: false, exported: true, typ: ptrType, tag: ""}]);
 	$init = function() {
 		$pkg.$init = function() {};
 		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
@@ -20747,7 +20958,7 @@ $packages["github.com/masa-suzu/monkey/ast"] = (function() {
 	return $pkg;
 })();
 $packages["github.com/masa-suzu/monkey/formatter"] = (function() {
-	var $pkg = {}, $init, bytes, ast, strings, ptrType, ptrType$1, ptrType$2, ptrType$3, ptrType$4, ptrType$5, ptrType$6, ptrType$7, ptrType$8, ptrType$9, ptrType$10, ptrType$11, ptrType$12, ptrType$13, ptrType$14, ptrType$15, ptrType$16, sliceType, arrayType, sliceType$1, Format, indents;
+	var $pkg = {}, $init, bytes, ast, strings, ptrType, ptrType$1, ptrType$2, ptrType$3, ptrType$4, ptrType$5, ptrType$6, ptrType$7, ptrType$8, ptrType$9, ptrType$10, ptrType$11, ptrType$12, ptrType$13, ptrType$14, ptrType$15, ptrType$16, ptrType$17, sliceType, arrayType, sliceType$1, Format, indents;
 	bytes = $packages["bytes"];
 	ast = $packages["github.com/masa-suzu/monkey/ast"];
 	strings = $packages["strings"];
@@ -20763,17 +20974,18 @@ $packages["github.com/masa-suzu/monkey/formatter"] = (function() {
 	ptrType$9 = $ptrType(ast.ReturnStatement);
 	ptrType$10 = $ptrType(ast.LetStatement);
 	ptrType$11 = $ptrType(ast.FunctionLiteral);
-	ptrType$12 = $ptrType(ast.CallExpression);
-	ptrType$13 = $ptrType(ast.ArrayLiteral);
-	ptrType$14 = $ptrType(ast.IndexExpression);
-	ptrType$15 = $ptrType(ast.HashLiteral);
-	ptrType$16 = $ptrType(ast.Identifier);
+	ptrType$12 = $ptrType(ast.MacroLiteral);
+	ptrType$13 = $ptrType(ast.CallExpression);
+	ptrType$14 = $ptrType(ast.ArrayLiteral);
+	ptrType$15 = $ptrType(ast.IndexExpression);
+	ptrType$16 = $ptrType(ast.HashLiteral);
+	ptrType$17 = $ptrType(ast.Identifier);
 	sliceType = $sliceType($Uint8);
 	arrayType = $arrayType($Uint8, 64);
 	sliceType$1 = $sliceType($String);
 	Format = function(node, indent) {
-		var _i, _i$1, _i$2, _r, _r$1, _r$10, _r$11, _r$12, _r$13, _r$14, _r$15, _r$16, _r$17, _r$18, _r$19, _r$2, _r$20, _r$21, _r$22, _r$23, _r$24, _r$3, _r$4, _r$5, _r$6, _r$7, _r$8, _r$9, _ref, _ref$1, _ref$2, _ref$3, i, i$1, indent, node, out, out$1, out$2, out$3, out$4, out$5, p, params, s, s$1, v, v$1, v$10, v$11, v$12, v$13, v$14, v$15, v$16, v$17, v$2, v$3, v$4, v$5, v$6, v$7, v$8, v$9, x, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _i$1 = $f._i$1; _i$2 = $f._i$2; _r = $f._r; _r$1 = $f._r$1; _r$10 = $f._r$10; _r$11 = $f._r$11; _r$12 = $f._r$12; _r$13 = $f._r$13; _r$14 = $f._r$14; _r$15 = $f._r$15; _r$16 = $f._r$16; _r$17 = $f._r$17; _r$18 = $f._r$18; _r$19 = $f._r$19; _r$2 = $f._r$2; _r$20 = $f._r$20; _r$21 = $f._r$21; _r$22 = $f._r$22; _r$23 = $f._r$23; _r$24 = $f._r$24; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _r$7 = $f._r$7; _r$8 = $f._r$8; _r$9 = $f._r$9; _ref = $f._ref; _ref$1 = $f._ref$1; _ref$2 = $f._ref$2; _ref$3 = $f._ref$3; i = $f.i; i$1 = $f.i$1; indent = $f.indent; node = $f.node; out = $f.out; out$1 = $f.out$1; out$2 = $f.out$2; out$3 = $f.out$3; out$4 = $f.out$4; out$5 = $f.out$5; p = $f.p; params = $f.params; s = $f.s; s$1 = $f.s$1; v = $f.v; v$1 = $f.v$1; v$10 = $f.v$10; v$11 = $f.v$11; v$12 = $f.v$12; v$13 = $f.v$13; v$14 = $f.v$14; v$15 = $f.v$15; v$16 = $f.v$16; v$17 = $f.v$17; v$2 = $f.v$2; v$3 = $f.v$3; v$4 = $f.v$4; v$5 = $f.v$5; v$6 = $f.v$6; v$7 = $f.v$7; v$8 = $f.v$8; v$9 = $f.v$9; x = $f.x; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var _i, _i$1, _i$2, _i$3, _r, _r$1, _r$10, _r$11, _r$12, _r$13, _r$14, _r$15, _r$16, _r$17, _r$18, _r$19, _r$2, _r$20, _r$21, _r$22, _r$23, _r$24, _r$25, _r$3, _r$4, _r$5, _r$6, _r$7, _r$8, _r$9, _ref, _ref$1, _ref$2, _ref$3, _ref$4, i, i$1, indent, node, out, out$1, out$2, out$3, out$4, out$5, out$6, p, p$1, params, params$1, s, s$1, v, v$1, v$10, v$11, v$12, v$13, v$14, v$15, v$16, v$17, v$18, v$2, v$3, v$4, v$5, v$6, v$7, v$8, v$9, x, x$1, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _i$1 = $f._i$1; _i$2 = $f._i$2; _i$3 = $f._i$3; _r = $f._r; _r$1 = $f._r$1; _r$10 = $f._r$10; _r$11 = $f._r$11; _r$12 = $f._r$12; _r$13 = $f._r$13; _r$14 = $f._r$14; _r$15 = $f._r$15; _r$16 = $f._r$16; _r$17 = $f._r$17; _r$18 = $f._r$18; _r$19 = $f._r$19; _r$2 = $f._r$2; _r$20 = $f._r$20; _r$21 = $f._r$21; _r$22 = $f._r$22; _r$23 = $f._r$23; _r$24 = $f._r$24; _r$25 = $f._r$25; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _r$7 = $f._r$7; _r$8 = $f._r$8; _r$9 = $f._r$9; _ref = $f._ref; _ref$1 = $f._ref$1; _ref$2 = $f._ref$2; _ref$3 = $f._ref$3; _ref$4 = $f._ref$4; i = $f.i; i$1 = $f.i$1; indent = $f.indent; node = $f.node; out = $f.out; out$1 = $f.out$1; out$2 = $f.out$2; out$3 = $f.out$3; out$4 = $f.out$4; out$5 = $f.out$5; out$6 = $f.out$6; p = $f.p; p$1 = $f.p$1; params = $f.params; params$1 = $f.params$1; s = $f.s; s$1 = $f.s$1; v = $f.v; v$1 = $f.v$1; v$10 = $f.v$10; v$11 = $f.v$11; v$12 = $f.v$12; v$13 = $f.v$13; v$14 = $f.v$14; v$15 = $f.v$15; v$16 = $f.v$16; v$17 = $f.v$17; v$18 = $f.v$18; v$2 = $f.v$2; v$3 = $f.v$3; v$4 = $f.v$4; v$5 = $f.v$5; v$6 = $f.v$6; v$7 = $f.v$7; v$8 = $f.v$8; v$9 = $f.v$9; x = $f.x; x$1 = $f.x$1; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		_ref = node;
 		/* */ if ($assertType(_ref, ptrType, true)[1]) { $s = 1; continue; }
 		/* */ if ($assertType(_ref, ptrType$1, true)[1]) { $s = 2; continue; }
@@ -20792,46 +21004,47 @@ $packages["github.com/masa-suzu/monkey/formatter"] = (function() {
 		/* */ if ($assertType(_ref, ptrType$14, true)[1]) { $s = 15; continue; }
 		/* */ if ($assertType(_ref, ptrType$15, true)[1]) { $s = 16; continue; }
 		/* */ if ($assertType(_ref, ptrType$16, true)[1]) { $s = 17; continue; }
-		/* */ $s = 18; continue;
+		/* */ if ($assertType(_ref, ptrType$17, true)[1]) { $s = 18; continue; }
+		/* */ $s = 19; continue;
 		/* if ($assertType(_ref, ptrType, true)[1]) { */ case 1:
 			v = _ref.$val;
 			out = new bytes.Buffer.ptr(sliceType.nil, 0, arrayType.zero(), 0);
 			_ref$1 = v.Statements;
 			_i = 0;
-			/* while (true) { */ case 20:
-				/* if (!(_i < _ref$1.$length)) { break; } */ if(!(_i < _ref$1.$length)) { $s = 21; continue; }
+			/* while (true) { */ case 21:
+				/* if (!(_i < _ref$1.$length)) { break; } */ if(!(_i < _ref$1.$length)) { $s = 22; continue; }
 				i = _i;
 				s = ((_i < 0 || _i >= _ref$1.$length) ? ($throwRuntimeError("index out of range"), undefined) : _ref$1.$array[_ref$1.$offset + _i]);
 				if (!((i === 0))) {
 					out.WriteString("\n");
 				}
-				_r = Format(s, indent); /* */ $s = 22; case 22: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-				_r$1 = out.WriteString(_r); /* */ $s = 23; case 23: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+				_r = Format(s, indent); /* */ $s = 23; case 23: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+				_r$1 = out.WriteString(_r); /* */ $s = 24; case 24: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
 				_r$1;
 				_i++;
-			/* } */ $s = 20; continue; case 21:
+			/* } */ $s = 21; continue; case 22:
 			$s = -1; return out.String();
 		/* } else if ($assertType(_ref, ptrType$1, true)[1]) { */ case 2:
 			v$1 = _ref.$val;
-			_r$2 = Format(v$1.Expression, indent); /* */ $s = 24; case 24: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+			_r$2 = Format(v$1.Expression, indent); /* */ $s = 25; case 25: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
 			$s = -1; return _r$2 + ";";
 		/* } else if ($assertType(_ref, ptrType$2, true)[1]) { */ case 3:
 			v$2 = _ref.$val;
 			out$1 = new bytes.Buffer.ptr(sliceType.nil, 0, arrayType.zero(), 0);
 			_ref$2 = v$2.Statements;
 			_i$1 = 0;
-			/* while (true) { */ case 25:
-				/* if (!(_i$1 < _ref$2.$length)) { break; } */ if(!(_i$1 < _ref$2.$length)) { $s = 26; continue; }
+			/* while (true) { */ case 26:
+				/* if (!(_i$1 < _ref$2.$length)) { break; } */ if(!(_i$1 < _ref$2.$length)) { $s = 27; continue; }
 				i$1 = _i$1;
 				s$1 = ((_i$1 < 0 || _i$1 >= _ref$2.$length) ? ($throwRuntimeError("index out of range"), undefined) : _ref$2.$array[_ref$2.$offset + _i$1]);
 				if (!((i$1 === 0))) {
 					out$1.WriteString("\n");
 				}
-				_r$3 = Format(s$1, indent); /* */ $s = 27; case 27: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
-				_r$4 = out$1.WriteString(_r$3); /* */ $s = 28; case 28: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
+				_r$3 = Format(s$1, indent); /* */ $s = 28; case 28: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+				_r$4 = out$1.WriteString(_r$3); /* */ $s = 29; case 29: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
 				_r$4;
 				_i$1++;
-			/* } */ $s = 25; continue; case 26:
+			/* } */ $s = 26; continue; case 27:
 			$s = -1; return out$1.String();
 		/* } else if ($assertType(_ref, ptrType$3, true)[1]) { */ case 4:
 			v$3 = _ref.$val;
@@ -20844,43 +21057,43 @@ $packages["github.com/masa-suzu/monkey/formatter"] = (function() {
 			$s = -1; return indents(indent) + v$5.String();
 		/* } else if ($assertType(_ref, ptrType$6, true)[1]) { */ case 7:
 			v$6 = _ref.$val;
-			_r$5 = v$6.String(); /* */ $s = 29; case 29: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
+			_r$5 = v$6.String(); /* */ $s = 30; case 30: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
 			$s = -1; return indents(indent) + _r$5;
 		/* } else if ($assertType(_ref, ptrType$7, true)[1]) { */ case 8:
 			v$7 = _ref.$val;
-			_r$6 = v$7.String(); /* */ $s = 30; case 30: if($c) { $c = false; _r$6 = _r$6.$blk(); } if (_r$6 && _r$6.$blk !== undefined) { break s; }
+			_r$6 = v$7.String(); /* */ $s = 31; case 31: if($c) { $c = false; _r$6 = _r$6.$blk(); } if (_r$6 && _r$6.$blk !== undefined) { break s; }
 			$s = -1; return indents(indent) + _r$6;
 		/* } else if ($assertType(_ref, ptrType$8, true)[1]) { */ case 9:
 			v$8 = _ref.$val;
 			out$2 = new bytes.Buffer.ptr(sliceType.nil, 0, arrayType.zero(), 0);
 			out$2.WriteString(indents(indent) + "if(");
-			_r$7 = Format(v$8.Condition, 0); /* */ $s = 31; case 31: if($c) { $c = false; _r$7 = _r$7.$blk(); } if (_r$7 && _r$7.$blk !== undefined) { break s; }
-			_r$8 = out$2.WriteString(_r$7); /* */ $s = 32; case 32: if($c) { $c = false; _r$8 = _r$8.$blk(); } if (_r$8 && _r$8.$blk !== undefined) { break s; }
+			_r$7 = Format(v$8.Condition, 0); /* */ $s = 32; case 32: if($c) { $c = false; _r$7 = _r$7.$blk(); } if (_r$7 && _r$7.$blk !== undefined) { break s; }
+			_r$8 = out$2.WriteString(_r$7); /* */ $s = 33; case 33: if($c) { $c = false; _r$8 = _r$8.$blk(); } if (_r$8 && _r$8.$blk !== undefined) { break s; }
 			_r$8;
 			out$2.WriteString(") {\n");
-			_r$9 = Format(v$8.Consequence, indent + 1 >> 0); /* */ $s = 33; case 33: if($c) { $c = false; _r$9 = _r$9.$blk(); } if (_r$9 && _r$9.$blk !== undefined) { break s; }
-			_r$10 = out$2.WriteString(_r$9); /* */ $s = 34; case 34: if($c) { $c = false; _r$10 = _r$10.$blk(); } if (_r$10 && _r$10.$blk !== undefined) { break s; }
+			_r$9 = Format(v$8.Consequence, indent + 1 >> 0); /* */ $s = 34; case 34: if($c) { $c = false; _r$9 = _r$9.$blk(); } if (_r$9 && _r$9.$blk !== undefined) { break s; }
+			_r$10 = out$2.WriteString(_r$9); /* */ $s = 35; case 35: if($c) { $c = false; _r$10 = _r$10.$blk(); } if (_r$10 && _r$10.$blk !== undefined) { break s; }
 			_r$10;
 			out$2.WriteString("\n");
 			out$2.WriteString(indents(indent) + "}");
-			/* */ if (!(v$8.Alternative === ptrType$2.nil)) { $s = 35; continue; }
-			/* */ $s = 36; continue;
-			/* if (!(v$8.Alternative === ptrType$2.nil)) { */ case 35:
+			/* */ if (!(v$8.Alternative === ptrType$2.nil)) { $s = 36; continue; }
+			/* */ $s = 37; continue;
+			/* if (!(v$8.Alternative === ptrType$2.nil)) { */ case 36:
 				out$2.WriteString(indents(indent) + " else {\n");
-				_r$11 = Format(v$8.Alternative, indent + 1 >> 0); /* */ $s = 37; case 37: if($c) { $c = false; _r$11 = _r$11.$blk(); } if (_r$11 && _r$11.$blk !== undefined) { break s; }
-				_r$12 = out$2.WriteString(_r$11); /* */ $s = 38; case 38: if($c) { $c = false; _r$12 = _r$12.$blk(); } if (_r$12 && _r$12.$blk !== undefined) { break s; }
+				_r$11 = Format(v$8.Alternative, indent + 1 >> 0); /* */ $s = 38; case 38: if($c) { $c = false; _r$11 = _r$11.$blk(); } if (_r$11 && _r$11.$blk !== undefined) { break s; }
+				_r$12 = out$2.WriteString(_r$11); /* */ $s = 39; case 39: if($c) { $c = false; _r$12 = _r$12.$blk(); } if (_r$12 && _r$12.$blk !== undefined) { break s; }
 				_r$12;
 				out$2.WriteString("\n");
 				out$2.WriteString(indents(indent) + "}");
-			/* } */ case 36:
+			/* } */ case 37:
 			$s = -1; return out$2.String();
 		/* } else if ($assertType(_ref, ptrType$9, true)[1]) { */ case 10:
 			v$9 = _ref.$val;
 			out$3 = new bytes.Buffer.ptr(sliceType.nil, 0, arrayType.zero(), 0);
 			out$3.WriteString(indents(indent) + "return ");
-			_r$13 = Format(v$9.ReturnValue, indent); /* */ $s = 39; case 39: if($c) { $c = false; _r$13 = _r$13.$blk(); } if (_r$13 && _r$13.$blk !== undefined) { break s; }
-			_r$14 = strings.Replace(_r$13 + ";", indents(indent), "", 1); /* */ $s = 40; case 40: if($c) { $c = false; _r$14 = _r$14.$blk(); } if (_r$14 && _r$14.$blk !== undefined) { break s; }
-			_r$15 = out$3.WriteString(_r$14); /* */ $s = 41; case 41: if($c) { $c = false; _r$15 = _r$15.$blk(); } if (_r$15 && _r$15.$blk !== undefined) { break s; }
+			_r$13 = Format(v$9.ReturnValue, indent); /* */ $s = 40; case 40: if($c) { $c = false; _r$13 = _r$13.$blk(); } if (_r$13 && _r$13.$blk !== undefined) { break s; }
+			_r$14 = strings.Replace(_r$13 + ";", indents(indent), "", 1); /* */ $s = 41; case 41: if($c) { $c = false; _r$14 = _r$14.$blk(); } if (_r$14 && _r$14.$blk !== undefined) { break s; }
+			_r$15 = out$3.WriteString(_r$14); /* */ $s = 42; case 42: if($c) { $c = false; _r$15 = _r$15.$blk(); } if (_r$15 && _r$15.$blk !== undefined) { break s; }
 			_r$15;
 			$s = -1; return out$3.String();
 		/* } else if ($assertType(_ref, ptrType$10, true)[1]) { */ case 11:
@@ -20889,9 +21102,9 @@ $packages["github.com/masa-suzu/monkey/formatter"] = (function() {
 			out$4.WriteString(indents(indent) + "let ");
 			out$4.WriteString(v$10.Name.String());
 			out$4.WriteString(" = ");
-			_r$16 = Format(v$10.Value, indent); /* */ $s = 42; case 42: if($c) { $c = false; _r$16 = _r$16.$blk(); } if (_r$16 && _r$16.$blk !== undefined) { break s; }
-			_r$17 = strings.Replace(_r$16 + ";", indents(indent), "", 1); /* */ $s = 43; case 43: if($c) { $c = false; _r$17 = _r$17.$blk(); } if (_r$17 && _r$17.$blk !== undefined) { break s; }
-			_r$18 = out$4.WriteString(_r$17); /* */ $s = 44; case 44: if($c) { $c = false; _r$18 = _r$18.$blk(); } if (_r$18 && _r$18.$blk !== undefined) { break s; }
+			_r$16 = Format(v$10.Value, indent); /* */ $s = 43; case 43: if($c) { $c = false; _r$16 = _r$16.$blk(); } if (_r$16 && _r$16.$blk !== undefined) { break s; }
+			_r$17 = strings.Replace(_r$16 + ";", indents(indent), "", 1); /* */ $s = 44; case 44: if($c) { $c = false; _r$17 = _r$17.$blk(); } if (_r$17 && _r$17.$blk !== undefined) { break s; }
+			_r$18 = out$4.WriteString(_r$17); /* */ $s = 45; case 45: if($c) { $c = false; _r$18 = _r$18.$blk(); } if (_r$18 && _r$18.$blk !== undefined) { break s; }
 			_r$18;
 			$s = -1; return out$4.String();
 		/* } else if ($assertType(_ref, ptrType$11, true)[1]) { */ case 12:
@@ -20909,7 +21122,7 @@ $packages["github.com/masa-suzu/monkey/formatter"] = (function() {
 			out$5.WriteString(indents(indent) + "fn(");
 			out$5.WriteString(strings.Join(params, ", "));
 			out$5.WriteString(") {\n");
-			_r$19 = Format(v$11.Body, indent + 1 >> 0); /* */ $s = 45; case 45: if($c) { $c = false; _r$19 = _r$19.$blk(); } if (_r$19 && _r$19.$blk !== undefined) { break s; }
+			_r$19 = Format(v$11.Body, indent + 1 >> 0); /* */ $s = 46; case 46: if($c) { $c = false; _r$19 = _r$19.$blk(); } if (_r$19 && _r$19.$blk !== undefined) { break s; }
 			x = _r$19;
 			out$5.WriteString(x);
 			out$5.WriteString("\n");
@@ -20917,30 +21130,51 @@ $packages["github.com/masa-suzu/monkey/formatter"] = (function() {
 			$s = -1; return out$5.String();
 		/* } else if ($assertType(_ref, ptrType$12, true)[1]) { */ case 13:
 			v$12 = _ref.$val;
-			_r$20 = v$12.String(); /* */ $s = 46; case 46: if($c) { $c = false; _r$20 = _r$20.$blk(); } if (_r$20 && _r$20.$blk !== undefined) { break s; }
-			$s = -1; return indents(indent) + _r$20;
+			out$6 = new bytes.Buffer.ptr(sliceType.nil, 0, arrayType.zero(), 0);
+			params$1 = new sliceType$1([]);
+			_ref$4 = v$12.Parameters;
+			_i$3 = 0;
+			while (true) {
+				if (!(_i$3 < _ref$4.$length)) { break; }
+				p$1 = ((_i$3 < 0 || _i$3 >= _ref$4.$length) ? ($throwRuntimeError("index out of range"), undefined) : _ref$4.$array[_ref$4.$offset + _i$3]);
+				params$1 = $append(params$1, p$1.String());
+				_i$3++;
+			}
+			out$6.WriteString(indents(indent) + "macro(");
+			out$6.WriteString(strings.Join(params$1, ", "));
+			out$6.WriteString(") {\n");
+			_r$20 = Format(v$12.Body, indent + 1 >> 0); /* */ $s = 47; case 47: if($c) { $c = false; _r$20 = _r$20.$blk(); } if (_r$20 && _r$20.$blk !== undefined) { break s; }
+			x$1 = _r$20;
+			out$6.WriteString(x$1);
+			out$6.WriteString("\n");
+			out$6.WriteString(indents(indent) + "}");
+			$s = -1; return out$6.String();
 		/* } else if ($assertType(_ref, ptrType$13, true)[1]) { */ case 14:
 			v$13 = _ref.$val;
-			_r$21 = v$13.String(); /* */ $s = 47; case 47: if($c) { $c = false; _r$21 = _r$21.$blk(); } if (_r$21 && _r$21.$blk !== undefined) { break s; }
+			_r$21 = v$13.String(); /* */ $s = 48; case 48: if($c) { $c = false; _r$21 = _r$21.$blk(); } if (_r$21 && _r$21.$blk !== undefined) { break s; }
 			$s = -1; return indents(indent) + _r$21;
 		/* } else if ($assertType(_ref, ptrType$14, true)[1]) { */ case 15:
 			v$14 = _ref.$val;
-			_r$22 = v$14.String(); /* */ $s = 48; case 48: if($c) { $c = false; _r$22 = _r$22.$blk(); } if (_r$22 && _r$22.$blk !== undefined) { break s; }
+			_r$22 = v$14.String(); /* */ $s = 49; case 49: if($c) { $c = false; _r$22 = _r$22.$blk(); } if (_r$22 && _r$22.$blk !== undefined) { break s; }
 			$s = -1; return indents(indent) + _r$22;
 		/* } else if ($assertType(_ref, ptrType$15, true)[1]) { */ case 16:
 			v$15 = _ref.$val;
-			_r$23 = v$15.String(); /* */ $s = 49; case 49: if($c) { $c = false; _r$23 = _r$23.$blk(); } if (_r$23 && _r$23.$blk !== undefined) { break s; }
+			_r$23 = v$15.String(); /* */ $s = 50; case 50: if($c) { $c = false; _r$23 = _r$23.$blk(); } if (_r$23 && _r$23.$blk !== undefined) { break s; }
 			$s = -1; return indents(indent) + _r$23;
 		/* } else if ($assertType(_ref, ptrType$16, true)[1]) { */ case 17:
 			v$16 = _ref.$val;
-			$s = -1; return indents(indent) + v$16.String();
-		/* } else { */ case 18:
-			v$17 = _ref;
-			_r$24 = v$17.String(); /* */ $s = 50; case 50: if($c) { $c = false; _r$24 = _r$24.$blk(); } if (_r$24 && _r$24.$blk !== undefined) { break s; }
+			_r$24 = v$16.String(); /* */ $s = 51; case 51: if($c) { $c = false; _r$24 = _r$24.$blk(); } if (_r$24 && _r$24.$blk !== undefined) { break s; }
 			$s = -1; return indents(indent) + _r$24;
-		/* } */ case 19:
+		/* } else if ($assertType(_ref, ptrType$17, true)[1]) { */ case 18:
+			v$17 = _ref.$val;
+			$s = -1; return indents(indent) + v$17.String();
+		/* } else { */ case 19:
+			v$18 = _ref;
+			_r$25 = v$18.String(); /* */ $s = 52; case 52: if($c) { $c = false; _r$25 = _r$25.$blk(); } if (_r$25 && _r$25.$blk !== undefined) { break s; }
+			$s = -1; return indents(indent) + _r$25;
+		/* } */ case 20:
 		$s = -1; return "";
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Format }; } $f._i = _i; $f._i$1 = _i$1; $f._i$2 = _i$2; $f._r = _r; $f._r$1 = _r$1; $f._r$10 = _r$10; $f._r$11 = _r$11; $f._r$12 = _r$12; $f._r$13 = _r$13; $f._r$14 = _r$14; $f._r$15 = _r$15; $f._r$16 = _r$16; $f._r$17 = _r$17; $f._r$18 = _r$18; $f._r$19 = _r$19; $f._r$2 = _r$2; $f._r$20 = _r$20; $f._r$21 = _r$21; $f._r$22 = _r$22; $f._r$23 = _r$23; $f._r$24 = _r$24; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._r$7 = _r$7; $f._r$8 = _r$8; $f._r$9 = _r$9; $f._ref = _ref; $f._ref$1 = _ref$1; $f._ref$2 = _ref$2; $f._ref$3 = _ref$3; $f.i = i; $f.i$1 = i$1; $f.indent = indent; $f.node = node; $f.out = out; $f.out$1 = out$1; $f.out$2 = out$2; $f.out$3 = out$3; $f.out$4 = out$4; $f.out$5 = out$5; $f.p = p; $f.params = params; $f.s = s; $f.s$1 = s$1; $f.v = v; $f.v$1 = v$1; $f.v$10 = v$10; $f.v$11 = v$11; $f.v$12 = v$12; $f.v$13 = v$13; $f.v$14 = v$14; $f.v$15 = v$15; $f.v$16 = v$16; $f.v$17 = v$17; $f.v$2 = v$2; $f.v$3 = v$3; $f.v$4 = v$4; $f.v$5 = v$5; $f.v$6 = v$6; $f.v$7 = v$7; $f.v$8 = v$8; $f.v$9 = v$9; $f.x = x; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Format }; } $f._i = _i; $f._i$1 = _i$1; $f._i$2 = _i$2; $f._i$3 = _i$3; $f._r = _r; $f._r$1 = _r$1; $f._r$10 = _r$10; $f._r$11 = _r$11; $f._r$12 = _r$12; $f._r$13 = _r$13; $f._r$14 = _r$14; $f._r$15 = _r$15; $f._r$16 = _r$16; $f._r$17 = _r$17; $f._r$18 = _r$18; $f._r$19 = _r$19; $f._r$2 = _r$2; $f._r$20 = _r$20; $f._r$21 = _r$21; $f._r$22 = _r$22; $f._r$23 = _r$23; $f._r$24 = _r$24; $f._r$25 = _r$25; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._r$7 = _r$7; $f._r$8 = _r$8; $f._r$9 = _r$9; $f._ref = _ref; $f._ref$1 = _ref$1; $f._ref$2 = _ref$2; $f._ref$3 = _ref$3; $f._ref$4 = _ref$4; $f.i = i; $f.i$1 = i$1; $f.indent = indent; $f.node = node; $f.out = out; $f.out$1 = out$1; $f.out$2 = out$2; $f.out$3 = out$3; $f.out$4 = out$4; $f.out$5 = out$5; $f.out$6 = out$6; $f.p = p; $f.p$1 = p$1; $f.params = params; $f.params$1 = params$1; $f.s = s; $f.s$1 = s$1; $f.v = v; $f.v$1 = v$1; $f.v$10 = v$10; $f.v$11 = v$11; $f.v$12 = v$12; $f.v$13 = v$13; $f.v$14 = v$14; $f.v$15 = v$15; $f.v$16 = v$16; $f.v$17 = v$17; $f.v$18 = v$18; $f.v$2 = v$2; $f.v$3 = v$3; $f.v$4 = v$4; $f.v$5 = v$5; $f.v$6 = v$6; $f.v$7 = v$7; $f.v$8 = v$8; $f.v$9 = v$9; $f.x = x; $f.x$1 = x$1; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.Format = Format;
 	indents = function(level) {
@@ -21268,7 +21502,7 @@ $packages["hash/fnv"] = (function() {
 	return $pkg;
 })();
 $packages["github.com/masa-suzu/monkey/object"] = (function() {
-	var $pkg = {}, $init, bytes, fmt, ast, fnv, strings, ObjectType, Object, Integer, String, Boolean, Null, ReturnValue, Error, Function, BuiltinFunction, Builtin, Array, Environment, HashKey, HashPair, Hash, Hashable, ptrType, sliceType, sliceType$1, arrayType, sliceType$2, ptrType$1, ptrType$2, ptrType$3, ptrType$4, ptrType$5, ptrType$6, ptrType$7, sliceType$3, ptrType$8, ptrType$9, sliceType$4, ptrType$10, ptrType$11, mapType, ptrType$12, mapType$1, NewEnvironment, NewEnclosedEnvironment;
+	var $pkg = {}, $init, bytes, fmt, ast, fnv, strings, ObjectType, Object, Integer, String, Boolean, Null, ReturnValue, Error, Function, BuiltinFunction, Builtin, Array, Environment, Quote, Macro, HashKey, HashPair, Hash, Hashable, ptrType, sliceType, arrayType, sliceType$1, sliceType$2, ptrType$1, ptrType$2, ptrType$3, ptrType$4, ptrType$5, ptrType$6, ptrType$7, sliceType$3, ptrType$8, ptrType$9, sliceType$4, ptrType$10, ptrType$11, mapType, ptrType$12, ptrType$13, ptrType$14, mapType$1, NewEnvironment, NewEnclosedEnvironment;
 	bytes = $packages["bytes"];
 	fmt = $packages["fmt"];
 	ast = $packages["github.com/masa-suzu/monkey/ast"];
@@ -21361,6 +21595,26 @@ $packages["github.com/masa-suzu/monkey/object"] = (function() {
 		this.store = store_;
 		this.outer = outer_;
 	});
+	Quote = $pkg.Quote = $newType(0, $kindStruct, "object.Quote", true, "github.com/masa-suzu/monkey/object", true, function(Node_) {
+		this.$val = this;
+		if (arguments.length === 0) {
+			this.Node = $ifaceNil;
+			return;
+		}
+		this.Node = Node_;
+	});
+	Macro = $pkg.Macro = $newType(0, $kindStruct, "object.Macro", true, "github.com/masa-suzu/monkey/object", true, function(Parameters_, Body_, Env_) {
+		this.$val = this;
+		if (arguments.length === 0) {
+			this.Parameters = sliceType$3.nil;
+			this.Body = ptrType$8.nil;
+			this.Env = ptrType.nil;
+			return;
+		}
+		this.Parameters = Parameters_;
+		this.Body = Body_;
+		this.Env = Env_;
+	});
 	HashKey = $pkg.HashKey = $newType(0, $kindStruct, "object.HashKey", true, "github.com/masa-suzu/monkey/object", true, function(Type_, Value_) {
 		this.$val = this;
 		if (arguments.length === 0) {
@@ -21391,10 +21645,10 @@ $packages["github.com/masa-suzu/monkey/object"] = (function() {
 	});
 	Hashable = $pkg.Hashable = $newType(8, $kindInterface, "object.Hashable", true, "github.com/masa-suzu/monkey/object", true, null);
 	ptrType = $ptrType(Environment);
-	sliceType = $sliceType($emptyInterface);
-	sliceType$1 = $sliceType($Uint8);
+	sliceType = $sliceType($Uint8);
 	arrayType = $arrayType($Uint8, 64);
-	sliceType$2 = $sliceType($String);
+	sliceType$1 = $sliceType($String);
+	sliceType$2 = $sliceType($emptyInterface);
 	ptrType$1 = $ptrType(Integer);
 	ptrType$2 = $ptrType(String);
 	ptrType$3 = $ptrType(Boolean);
@@ -21409,8 +21663,25 @@ $packages["github.com/masa-suzu/monkey/object"] = (function() {
 	ptrType$10 = $ptrType(Builtin);
 	ptrType$11 = $ptrType(Array);
 	mapType = $mapType($String, Object);
-	ptrType$12 = $ptrType(Hash);
+	ptrType$12 = $ptrType(Quote);
+	ptrType$13 = $ptrType(Macro);
+	ptrType$14 = $ptrType(Hash);
 	mapType$1 = $mapType(HashKey, HashPair);
+	Quote.ptr.prototype.Type = function() {
+		var q;
+		q = this;
+		return "QUOTE";
+	};
+	Quote.prototype.Type = function() { return this.$val.Type(); };
+	Quote.ptr.prototype.Inspect = function() {
+		var _r, q, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; q = $f.q; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		q = this;
+		_r = q.Node.String(); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		$s = -1; return "QUOTE(" + _r + ")";
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Quote.ptr.prototype.Inspect }; } $f._r = _r; $f.q = q; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Quote.prototype.Inspect = function() { return this.$val.Inspect(); };
 	NewEnvironment = function() {
 		var s;
 		s = {};
@@ -21424,11 +21695,44 @@ $packages["github.com/masa-suzu/monkey/object"] = (function() {
 		return env;
 	};
 	$pkg.NewEnclosedEnvironment = NewEnclosedEnvironment;
+	Macro.ptr.prototype.Type = function() {
+		var m;
+		m = this;
+		return "MACRO";
+	};
+	Macro.prototype.Type = function() { return this.$val.Type(); };
+	Macro.ptr.prototype.Inspect = function() {
+		var _i, _r, _r$1, _ref, m, out, p, params, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _r = $f._r; _r$1 = $f._r$1; _ref = $f._ref; m = $f.m; out = $f.out; p = $f.p; params = $f.params; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		m = this;
+		out = new bytes.Buffer.ptr(sliceType.nil, 0, arrayType.zero(), 0);
+		params = new sliceType$1([]);
+		_ref = m.Parameters;
+		_i = 0;
+		while (true) {
+			if (!(_i < _ref.$length)) { break; }
+			p = ((_i < 0 || _i >= _ref.$length) ? ($throwRuntimeError("index out of range"), undefined) : _ref.$array[_ref.$offset + _i]);
+			params = $append(params, p.String());
+			_i++;
+		}
+		out.WriteString("macro");
+		out.WriteString("(");
+		out.WriteString(strings.Join(params, ","));
+		out.WriteString(") \n");
+		_r = m.Body.String(); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_r$1 = out.WriteString(_r); /* */ $s = 2; case 2: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+		_r$1;
+		out.WriteString("\n");
+		out.WriteString(")");
+		$s = -1; return out.String();
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Macro.ptr.prototype.Inspect }; } $f._i = _i; $f._r = _r; $f._r$1 = _r$1; $f._ref = _ref; $f.m = m; $f.out = out; $f.p = p; $f.params = params; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Macro.prototype.Inspect = function() { return this.$val.Inspect(); };
 	Integer.ptr.prototype.Inspect = function() {
 		var _r, i, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; i = $f.i; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		i = this;
-		_r = fmt.Sprintf("%d", new sliceType([i.Value])); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_r = fmt.Sprintf("%d", new sliceType$2([i.Value])); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		$s = -1; return _r;
 		/* */ } return; } if ($f === undefined) { $f = { $blk: Integer.ptr.prototype.Inspect }; } $f._r = _r; $f.i = i; $f.$s = $s; $f.$r = $r; return $f;
 	};
@@ -21455,7 +21759,7 @@ $packages["github.com/masa-suzu/monkey/object"] = (function() {
 		var _r, b, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; b = $f.b; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		b = this;
-		_r = fmt.Sprintf("%t", new sliceType([new $Bool(b.Value)])); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_r = fmt.Sprintf("%t", new sliceType$2([new $Bool(b.Value)])); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		$s = -1; return _r;
 		/* */ } return; } if ($f === undefined) { $f = { $blk: Boolean.ptr.prototype.Inspect }; } $f._r = _r; $f.b = b; $f.$s = $s; $f.$r = $r; return $f;
 	};
@@ -21470,7 +21774,7 @@ $packages["github.com/masa-suzu/monkey/object"] = (function() {
 		var _r, n, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; n = $f.n; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		n = this;
-		_r = fmt.Sprintf("null", new sliceType([])); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_r = fmt.Sprintf("null", new sliceType$2([])); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		$s = -1; return _r;
 		/* */ } return; } if ($f === undefined) { $f = { $blk: Null.ptr.prototype.Inspect }; } $f._r = _r; $f.n = n; $f.$s = $s; $f.$r = $r; return $f;
 	};
@@ -21518,8 +21822,8 @@ $packages["github.com/masa-suzu/monkey/object"] = (function() {
 		var _i, _r, _r$1, _ref, f, out, p, params, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _r = $f._r; _r$1 = $f._r$1; _ref = $f._ref; f = $f.f; out = $f.out; p = $f.p; params = $f.params; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		f = this;
-		out = new bytes.Buffer.ptr(sliceType$1.nil, 0, arrayType.zero(), 0);
-		params = new sliceType$2([]);
+		out = new bytes.Buffer.ptr(sliceType.nil, 0, arrayType.zero(), 0);
+		params = new sliceType$1([]);
 		_ref = f.Parameters;
 		_i = 0;
 		while (true) {
@@ -21563,8 +21867,8 @@ $packages["github.com/masa-suzu/monkey/object"] = (function() {
 		var _i, _r, _ref, ar, elements, item, out, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _r = $f._r; _ref = $f._ref; ar = $f.ar; elements = $f.elements; item = $f.item; out = $f.out; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		ar = this;
-		out = new bytes.Buffer.ptr(sliceType$1.nil, 0, arrayType.zero(), 0);
-		elements = new sliceType$2([]);
+		out = new bytes.Buffer.ptr(sliceType.nil, 0, arrayType.zero(), 0);
+		elements = new sliceType$1([]);
 		_ref = ar.Elements;
 		_i = 0;
 		/* while (true) { */ case 1:
@@ -21622,7 +21926,7 @@ $packages["github.com/masa-suzu/monkey/object"] = (function() {
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; h = $f.h; s = $f.s; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		s = this;
 		h = fnv.New64a();
-		_r = h.Write((new sliceType$1($stringToBytes(s.Value)))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		_r = h.Write((new sliceType($stringToBytes(s.Value)))); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_r;
 		_r$1 = h.Sum64(); /* */ $s = 2; case 2: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
 		$s = -1; return new HashKey.ptr(s.Type(), _r$1);
@@ -21639,8 +21943,8 @@ $packages["github.com/masa-suzu/monkey/object"] = (function() {
 		var _arg, _arg$1, _entry, _i, _keys, _r, _r$1, _r$2, _ref, h, out, pair, pairs, $s, $r;
 		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _arg = $f._arg; _arg$1 = $f._arg$1; _entry = $f._entry; _i = $f._i; _keys = $f._keys; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _ref = $f._ref; h = $f.h; out = $f.out; pair = $f.pair; pairs = $f.pairs; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		h = this;
-		out = new bytes.Buffer.ptr(sliceType$1.nil, 0, arrayType.zero(), 0);
-		pairs = new sliceType$2([]);
+		out = new bytes.Buffer.ptr(sliceType.nil, 0, arrayType.zero(), 0);
+		pairs = new sliceType$1([]);
 		_ref = h.Pairs;
 		_i = 0;
 		_keys = $keys(_ref);
@@ -21656,7 +21960,7 @@ $packages["github.com/masa-suzu/monkey/object"] = (function() {
 			_arg = new $String(_r);
 			_r$1 = pair.Value.Inspect(); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
 			_arg$1 = new $String(_r$1);
-			_r$2 = fmt.Sprintf("%s: %s", new sliceType([_arg, _arg$1])); /* */ $s = 5; case 5: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+			_r$2 = fmt.Sprintf("%s: %s", new sliceType$2([_arg, _arg$1])); /* */ $s = 5; case 5: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
 			pairs = $append(pairs, _r$2);
 			_i++;
 		/* } */ $s = 1; continue; case 2:
@@ -21678,6 +21982,8 @@ $packages["github.com/masa-suzu/monkey/object"] = (function() {
 	ptrType$11.methods = [{prop: "Type", name: "Type", pkg: "", typ: $funcType([], [ObjectType], false)}, {prop: "Inspect", name: "Inspect", pkg: "", typ: $funcType([], [$String], false)}];
 	ptrType.methods = [{prop: "Get", name: "Get", pkg: "", typ: $funcType([$String], [Object, $Bool], false)}, {prop: "Set", name: "Set", pkg: "", typ: $funcType([$String, Object], [], false)}];
 	ptrType$12.methods = [{prop: "Type", name: "Type", pkg: "", typ: $funcType([], [ObjectType], false)}, {prop: "Inspect", name: "Inspect", pkg: "", typ: $funcType([], [$String], false)}];
+	ptrType$13.methods = [{prop: "Type", name: "Type", pkg: "", typ: $funcType([], [ObjectType], false)}, {prop: "Inspect", name: "Inspect", pkg: "", typ: $funcType([], [$String], false)}];
+	ptrType$14.methods = [{prop: "Type", name: "Type", pkg: "", typ: $funcType([], [ObjectType], false)}, {prop: "Inspect", name: "Inspect", pkg: "", typ: $funcType([], [$String], false)}];
 	Object.init([{prop: "Inspect", name: "Inspect", pkg: "", typ: $funcType([], [$String], false)}, {prop: "Type", name: "Type", pkg: "", typ: $funcType([], [ObjectType], false)}]);
 	Integer.init("", [{prop: "Value", name: "Value", embedded: false, exported: true, typ: $Int64, tag: ""}]);
 	String.init("", [{prop: "Value", name: "Value", embedded: false, exported: true, typ: $String, tag: ""}]);
@@ -21690,6 +21996,8 @@ $packages["github.com/masa-suzu/monkey/object"] = (function() {
 	Builtin.init("", [{prop: "Fn", name: "Fn", embedded: false, exported: true, typ: BuiltinFunction, tag: ""}]);
 	Array.init("", [{prop: "Elements", name: "Elements", embedded: false, exported: true, typ: sliceType$4, tag: ""}]);
 	Environment.init("github.com/masa-suzu/monkey/object", [{prop: "store", name: "store", embedded: false, exported: false, typ: mapType, tag: ""}, {prop: "outer", name: "outer", embedded: false, exported: false, typ: ptrType, tag: ""}]);
+	Quote.init("", [{prop: "Node", name: "Node", embedded: false, exported: true, typ: ast.Node, tag: ""}]);
+	Macro.init("", [{prop: "Parameters", name: "Parameters", embedded: false, exported: true, typ: sliceType$3, tag: ""}, {prop: "Body", name: "Body", embedded: false, exported: true, typ: ptrType$8, tag: ""}, {prop: "Env", name: "Env", embedded: false, exported: true, typ: ptrType, tag: ""}]);
 	HashKey.init("", [{prop: "Type", name: "Type", embedded: false, exported: true, typ: ObjectType, tag: ""}, {prop: "Value", name: "Value", embedded: false, exported: true, typ: $Uint64, tag: ""}]);
 	HashPair.init("", [{prop: "Key", name: "Key", embedded: false, exported: true, typ: Object, tag: ""}, {prop: "Value", name: "Value", embedded: false, exported: true, typ: Object, tag: ""}]);
 	Hash.init("", [{prop: "Pairs", name: "Pairs", embedded: false, exported: true, typ: mapType$1, tag: ""}]);
@@ -21765,6 +22073,7 @@ $packages["github.com/masa-suzu/monkey/parser"] = (function() {
 		p.registerPrefix("FUNCTION", $methodVal(p, "parseFunctionLiteral"));
 		p.registerPrefix("[", $methodVal(p, "parseArrayLiteral"));
 		p.registerPrefix("{", $methodVal(p, "parseHashLiteral"));
+		p.registerPrefix("MACRO", $methodVal(p, "parseMacroLiteral"));
 		p.infixParseFunctions = {};
 		p.registerInfix("+", $methodVal(p, "parseInfixExpression"));
 		p.registerInfix("-", $methodVal(p, "parseInfixExpression"));
@@ -22143,7 +22452,9 @@ $packages["github.com/masa-suzu/monkey/parser"] = (function() {
 		list = new sliceType$4([]);
 		if (p.peekTokenIs(end)) {
 			p.nextToken();
-			p.nextToken();
+			if (!p.peekTokenIs("(")) {
+				p.nextToken();
+			}
 			$s = -1; return list;
 		}
 		p.nextToken();
@@ -22224,6 +22535,31 @@ $packages["github.com/masa-suzu/monkey/parser"] = (function() {
 		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseHashLiteral }; } $f._key = _key; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._v = _v; $f.hash = hash; $f.key = key; $f.p = p; $f.value = value; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	Parser.prototype.parseHashLiteral = function() { return this.$val.parseHashLiteral(); };
+	Parser.ptr.prototype.parseMacroLiteral = function() {
+		var _r, _r$1, _r$2, _r$3, lit, p, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; lit = $f.lit; p = $f.p; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		p = this;
+		lit = new ast.MacroLiteral.ptr($clone(p.currentToken, token.Token), sliceType$3.nil, ptrType$3.nil);
+		_r = p.expectPeek("("); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		/* */ if (!_r) { $s = 1; continue; }
+		/* */ $s = 2; continue;
+		/* if (!_r) { */ case 1:
+			$s = -1; return $ifaceNil;
+		/* } */ case 2:
+		_r$1 = p.parseFunctionParameters(); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+		lit.Parameters = _r$1;
+		_r$2 = p.expectPeek("{"); /* */ $s = 7; case 7: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+		/* */ if (!_r$2) { $s = 5; continue; }
+		/* */ $s = 6; continue;
+		/* if (!_r$2) { */ case 5:
+			$s = -1; return $ifaceNil;
+		/* } */ case 6:
+		_r$3 = p.parseBlockStatement(); /* */ $s = 8; case 8: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+		lit.Body = _r$3;
+		$s = -1; return lit;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Parser.ptr.prototype.parseMacroLiteral }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f.lit = lit; $f.p = p; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	Parser.prototype.parseMacroLiteral = function() { return this.$val.parseMacroLiteral(); };
 	Parser.ptr.prototype.nextToken = function() {
 		var p;
 		p = this;
@@ -22318,7 +22654,7 @@ $packages["github.com/masa-suzu/monkey/parser"] = (function() {
 		_key = t; (p.infixParseFunctions || $throwRuntimeError("assignment to entry in nil map"))[token.TokenType.keyFor(_key)] = { k: _key, v: fn };
 	};
 	Parser.prototype.registerInfix = function(t, fn) { return this.$val.registerInfix(t, fn); };
-	ptrType$7.methods = [{prop: "Errors", name: "Errors", pkg: "", typ: $funcType([], [sliceType], false)}, {prop: "ParseProgram", name: "ParseProgram", pkg: "", typ: $funcType([], [ptrType$4], false)}, {prop: "parseStatement", name: "parseStatement", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Statement], false)}, {prop: "parseLetStatement", name: "parseLetStatement", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ptrType$2], false)}, {prop: "parseReturnStatement", name: "parseReturnStatement", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ptrType$5], false)}, {prop: "parseExpressionStatement", name: "parseExpressionStatement", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ptrType$6], false)}, {prop: "parseExpression", name: "parseExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([$Int], [ast.Expression], false)}, {prop: "parseIdentifier", name: "parseIdentifier", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseIntegerLiteral", name: "parseIntegerLiteral", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseStringLiteral", name: "parseStringLiteral", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parsePrefixExpression", name: "parsePrefixExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseInfixExpression", name: "parseInfixExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([ast.Expression], [ast.Expression], false)}, {prop: "parseBoolean", name: "parseBoolean", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseGroupedExpression", name: "parseGroupedExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseIfExpression", name: "parseIfExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseBlockStatement", name: "parseBlockStatement", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ptrType$3], false)}, {prop: "parseFunctionLiteral", name: "parseFunctionLiteral", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseFunctionParameters", name: "parseFunctionParameters", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [sliceType$3], false)}, {prop: "parseCallExpression", name: "parseCallExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([ast.Expression], [ast.Expression], false)}, {prop: "parseArrayLiteral", name: "parseArrayLiteral", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseExpressionList", name: "parseExpressionList", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType], [sliceType$4], false)}, {prop: "parseIndexExpression", name: "parseIndexExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([ast.Expression], [ast.Expression], false)}, {prop: "parseHashLiteral", name: "parseHashLiteral", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "nextToken", name: "nextToken", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [], false)}, {prop: "currentTokenIs", name: "currentTokenIs", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType], [$Bool], false)}, {prop: "peekTokenIs", name: "peekTokenIs", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType], [$Bool], false)}, {prop: "expectPeek", name: "expectPeek", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType], [$Bool], false)}, {prop: "peekErrors", name: "peekErrors", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType], [], false)}, {prop: "peekPrecedence", name: "peekPrecedence", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [$Int], false)}, {prop: "currentPrecedence", name: "currentPrecedence", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [$Int], false)}, {prop: "noPrefixParseError", name: "noPrefixParseError", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType], [], false)}, {prop: "registerPrefix", name: "registerPrefix", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType, prefixParseFunction], [], false)}, {prop: "registerInfix", name: "registerInfix", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType, infixParseFunction], [], false)}];
+	ptrType$7.methods = [{prop: "Errors", name: "Errors", pkg: "", typ: $funcType([], [sliceType], false)}, {prop: "ParseProgram", name: "ParseProgram", pkg: "", typ: $funcType([], [ptrType$4], false)}, {prop: "parseStatement", name: "parseStatement", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Statement], false)}, {prop: "parseLetStatement", name: "parseLetStatement", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ptrType$2], false)}, {prop: "parseReturnStatement", name: "parseReturnStatement", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ptrType$5], false)}, {prop: "parseExpressionStatement", name: "parseExpressionStatement", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ptrType$6], false)}, {prop: "parseExpression", name: "parseExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([$Int], [ast.Expression], false)}, {prop: "parseIdentifier", name: "parseIdentifier", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseIntegerLiteral", name: "parseIntegerLiteral", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseStringLiteral", name: "parseStringLiteral", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parsePrefixExpression", name: "parsePrefixExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseInfixExpression", name: "parseInfixExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([ast.Expression], [ast.Expression], false)}, {prop: "parseBoolean", name: "parseBoolean", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseGroupedExpression", name: "parseGroupedExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseIfExpression", name: "parseIfExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseBlockStatement", name: "parseBlockStatement", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ptrType$3], false)}, {prop: "parseFunctionLiteral", name: "parseFunctionLiteral", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseFunctionParameters", name: "parseFunctionParameters", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [sliceType$3], false)}, {prop: "parseCallExpression", name: "parseCallExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([ast.Expression], [ast.Expression], false)}, {prop: "parseArrayLiteral", name: "parseArrayLiteral", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseExpressionList", name: "parseExpressionList", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType], [sliceType$4], false)}, {prop: "parseIndexExpression", name: "parseIndexExpression", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([ast.Expression], [ast.Expression], false)}, {prop: "parseHashLiteral", name: "parseHashLiteral", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "parseMacroLiteral", name: "parseMacroLiteral", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [ast.Expression], false)}, {prop: "nextToken", name: "nextToken", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [], false)}, {prop: "currentTokenIs", name: "currentTokenIs", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType], [$Bool], false)}, {prop: "peekTokenIs", name: "peekTokenIs", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType], [$Bool], false)}, {prop: "expectPeek", name: "expectPeek", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType], [$Bool], false)}, {prop: "peekErrors", name: "peekErrors", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType], [], false)}, {prop: "peekPrecedence", name: "peekPrecedence", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [$Int], false)}, {prop: "currentPrecedence", name: "currentPrecedence", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([], [$Int], false)}, {prop: "noPrefixParseError", name: "noPrefixParseError", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType], [], false)}, {prop: "registerPrefix", name: "registerPrefix", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType, prefixParseFunction], [], false)}, {prop: "registerInfix", name: "registerInfix", pkg: "github.com/masa-suzu/monkey/parser", typ: $funcType([token.TokenType, infixParseFunction], [], false)}];
 	prefixParseFunction.init([], [ast.Expression], false);
 	infixParseFunction.init([ast.Expression], [ast.Expression], false);
 	Parser.init("github.com/masa-suzu/monkey/parser", [{prop: "l", name: "l", embedded: false, exported: false, typ: ptrType, tag: ""}, {prop: "currentToken", name: "currentToken", embedded: false, exported: false, typ: token.Token, tag: ""}, {prop: "peekToken", name: "peekToken", embedded: false, exported: false, typ: token.Token, tag: ""}, {prop: "errors", name: "errors", embedded: false, exported: false, typ: sliceType, tag: ""}, {prop: "prefixParseFunctions", name: "prefixParseFunctions", embedded: false, exported: false, typ: mapType, tag: ""}, {prop: "infixParseFunctions", name: "infixParseFunctions", embedded: false, exported: false, typ: mapType$1, tag: ""}]);
@@ -22364,11 +22700,65 @@ $packages["bufio"] = (function() {
 	$pkg.$init = $init;
 	return $pkg;
 })();
+$packages["encoding/binary"] = (function() {
+	var $pkg = {}, $init, errors, io, math, reflect, overflow;
+	errors = $packages["errors"];
+	io = $packages["io"];
+	math = $packages["math"];
+	reflect = $packages["reflect"];
+	$init = function() {
+		$pkg.$init = function() {};
+		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		$r = errors.$init(); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = io.$init(); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = math.$init(); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = reflect.$init(); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		overflow = errors.New("binary: varint overflows a 64-bit integer");
+		/* */ } return; } if ($f === undefined) { $f = { $blk: $init }; } $f.$s = $s; $f.$r = $r; return $f;
+	};
+	$pkg.$init = $init;
+	return $pkg;
+})();
+$packages["github.com/masa-suzu/monkey/code"] = (function() {
+	var $pkg = {}, $init, bytes, binary, fmt;
+	bytes = $packages["bytes"];
+	binary = $packages["encoding/binary"];
+	fmt = $packages["fmt"];
+	$init = function() {
+		$pkg.$init = function() {};
+		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		$r = bytes.$init(); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = binary.$init(); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = fmt.$init(); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		/* */ } return; } if ($f === undefined) { $f = { $blk: $init }; } $f.$s = $s; $f.$r = $r; return $f;
+	};
+	$pkg.$init = $init;
+	return $pkg;
+})();
+$packages["github.com/masa-suzu/monkey/compiler"] = (function() {
+	var $pkg = {}, $init, fmt, ast, code, object;
+	fmt = $packages["fmt"];
+	ast = $packages["github.com/masa-suzu/monkey/ast"];
+	code = $packages["github.com/masa-suzu/monkey/code"];
+	object = $packages["github.com/masa-suzu/monkey/object"];
+	$init = function() {
+		$pkg.$init = function() {};
+		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		$r = fmt.$init(); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = ast.$init(); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = code.$init(); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = object.$init(); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		/* */ } return; } if ($f === undefined) { $f = { $blk: $init }; } $f.$s = $s; $f.$r = $r; return $f;
+	};
+	$pkg.$init = $init;
+	return $pkg;
+})();
 $packages["github.com/masa-suzu/monkey/evaluator"] = (function() {
-	var $pkg = {}, $init, fmt, ast, object, os, sliceType, ptrType, ptrType$1, sliceType$1, ptrType$2, ptrType$3, ptrType$4, ptrType$5, ptrType$6, ptrType$7, ptrType$8, ptrType$9, ptrType$10, ptrType$11, ptrType$12, ptrType$13, ptrType$14, ptrType$15, ptrType$16, ptrType$17, ptrType$18, sliceType$2, ptrType$19, ptrType$20, ptrType$21, ptrType$22, ptrType$23, ptrType$24, ptrType$25, builtIns, Eval, evalProgram, evalBlockStatement, nativeBoolToBooleanObject, evalPrefixExpression, evalInfixOperatorExpression, evalBangOperatorExpression, evalMinusPrefixOperatorExpression, evalIntegerInfixExpression, evalStringInfixExpression, evalIfExpression, evalIdentifier, evalExpressions, applyFunction, evalIndexExpression, evalArrayIndexExpression, evalHashIndexExpression, extendFunctionEnv, unwrapReturnValue, evalHashLiteral, asTrue, newError, isError;
+	var $pkg = {}, $init, fmt, ast, object, token, os, sliceType, ptrType, ptrType$1, sliceType$1, ptrType$2, ptrType$3, ptrType$4, ptrType$5, ptrType$6, ptrType$7, ptrType$8, ptrType$9, ptrType$10, ptrType$11, ptrType$12, ptrType$13, ptrType$14, ptrType$15, ptrType$16, ptrType$17, ptrType$18, sliceType$2, ptrType$19, ptrType$20, ptrType$21, ptrType$22, ptrType$23, ptrType$24, ptrType$25, sliceType$3, ptrType$26, ptrType$27, ptrType$28, sliceType$4, ptrType$29, builtIns, Eval, evalProgram, evalBlockStatement, nativeBoolToBooleanObject, evalPrefixExpression, evalInfixOperatorExpression, evalBangOperatorExpression, evalMinusPrefixOperatorExpression, evalIntegerInfixExpression, evalStringInfixExpression, evalIfExpression, evalIdentifier, evalExpressions, applyFunction, evalIndexExpression, evalArrayIndexExpression, evalHashIndexExpression, extendFunctionEnv, unwrapReturnValue, evalHashLiteral, asTrue, newError, isError, DefineMacros, isMacroDefinition, addMacro, ExpandMacros, isMacroCall, quoteArgs, extendMacroEnv, quote, evalUnquoteCalls, isUnquoteCall, nodeFrom;
 	fmt = $packages["fmt"];
 	ast = $packages["github.com/masa-suzu/monkey/ast"];
 	object = $packages["github.com/masa-suzu/monkey/object"];
+	token = $packages["github.com/masa-suzu/monkey/token"];
 	os = $packages["os"];
 	sliceType = $sliceType($emptyInterface);
 	ptrType = $ptrType(object.Array);
@@ -22399,9 +22789,15 @@ $packages["github.com/masa-suzu/monkey/evaluator"] = (function() {
 	ptrType$23 = $ptrType(object.Builtin);
 	ptrType$24 = $ptrType(object.Function);
 	ptrType$25 = $ptrType(object.Hash);
+	sliceType$3 = $sliceType($Int);
+	ptrType$26 = $ptrType(ast.MacroLiteral);
+	ptrType$27 = $ptrType(object.Quote);
+	ptrType$28 = $ptrType(object.Macro);
+	sliceType$4 = $sliceType(ptrType$27);
+	ptrType$29 = $ptrType(object.Boolean);
 	Eval = function(node, env) {
-		var _r, _r$1, _r$10, _r$11, _r$12, _r$13, _r$14, _r$15, _r$16, _r$17, _r$18, _r$19, _r$2, _r$20, _r$21, _r$22, _r$23, _r$24, _r$25, _r$26, _r$27, _r$28, _r$3, _r$4, _r$5, _r$6, _r$7, _r$8, _r$9, _ref, _v, _v$1, args, body, elements, env, function$1, index, left, left$1, node, node$1, node$10, node$11, node$12, node$13, node$14, node$15, node$16, node$17, node$2, node$3, node$4, node$5, node$6, node$7, node$8, node$9, params, right, right$1, val, val$1, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$10 = $f._r$10; _r$11 = $f._r$11; _r$12 = $f._r$12; _r$13 = $f._r$13; _r$14 = $f._r$14; _r$15 = $f._r$15; _r$16 = $f._r$16; _r$17 = $f._r$17; _r$18 = $f._r$18; _r$19 = $f._r$19; _r$2 = $f._r$2; _r$20 = $f._r$20; _r$21 = $f._r$21; _r$22 = $f._r$22; _r$23 = $f._r$23; _r$24 = $f._r$24; _r$25 = $f._r$25; _r$26 = $f._r$26; _r$27 = $f._r$27; _r$28 = $f._r$28; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _r$7 = $f._r$7; _r$8 = $f._r$8; _r$9 = $f._r$9; _ref = $f._ref; _v = $f._v; _v$1 = $f._v$1; args = $f.args; body = $f.body; elements = $f.elements; env = $f.env; function$1 = $f.function$1; index = $f.index; left = $f.left; left$1 = $f.left$1; node = $f.node; node$1 = $f.node$1; node$10 = $f.node$10; node$11 = $f.node$11; node$12 = $f.node$12; node$13 = $f.node$13; node$14 = $f.node$14; node$15 = $f.node$15; node$16 = $f.node$16; node$17 = $f.node$17; node$2 = $f.node$2; node$3 = $f.node$3; node$4 = $f.node$4; node$5 = $f.node$5; node$6 = $f.node$6; node$7 = $f.node$7; node$8 = $f.node$8; node$9 = $f.node$9; params = $f.params; right = $f.right; right$1 = $f.right$1; val = $f.val; val$1 = $f.val$1; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var _r, _r$1, _r$10, _r$11, _r$12, _r$13, _r$14, _r$15, _r$16, _r$17, _r$18, _r$19, _r$2, _r$20, _r$21, _r$22, _r$23, _r$24, _r$25, _r$26, _r$27, _r$28, _r$29, _r$3, _r$30, _r$4, _r$5, _r$6, _r$7, _r$8, _r$9, _ref, _v, _v$1, args, body, elements, env, function$1, index, left, left$1, node, node$1, node$10, node$11, node$12, node$13, node$14, node$15, node$16, node$17, node$2, node$3, node$4, node$5, node$6, node$7, node$8, node$9, params, right, right$1, val, val$1, x, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$10 = $f._r$10; _r$11 = $f._r$11; _r$12 = $f._r$12; _r$13 = $f._r$13; _r$14 = $f._r$14; _r$15 = $f._r$15; _r$16 = $f._r$16; _r$17 = $f._r$17; _r$18 = $f._r$18; _r$19 = $f._r$19; _r$2 = $f._r$2; _r$20 = $f._r$20; _r$21 = $f._r$21; _r$22 = $f._r$22; _r$23 = $f._r$23; _r$24 = $f._r$24; _r$25 = $f._r$25; _r$26 = $f._r$26; _r$27 = $f._r$27; _r$28 = $f._r$28; _r$29 = $f._r$29; _r$3 = $f._r$3; _r$30 = $f._r$30; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _r$7 = $f._r$7; _r$8 = $f._r$8; _r$9 = $f._r$9; _ref = $f._ref; _v = $f._v; _v$1 = $f._v$1; args = $f.args; body = $f.body; elements = $f.elements; env = $f.env; function$1 = $f.function$1; index = $f.index; left = $f.left; left$1 = $f.left$1; node = $f.node; node$1 = $f.node$1; node$10 = $f.node$10; node$11 = $f.node$11; node$12 = $f.node$12; node$13 = $f.node$13; node$14 = $f.node$14; node$15 = $f.node$15; node$16 = $f.node$16; node$17 = $f.node$17; node$2 = $f.node$2; node$3 = $f.node$3; node$4 = $f.node$4; node$5 = $f.node$5; node$6 = $f.node$6; node$7 = $f.node$7; node$8 = $f.node$8; node$9 = $f.node$9; params = $f.params; right = $f.right; right$1 = $f.right$1; val = $f.val; val$1 = $f.val$1; x = $f.x; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		_ref = node;
 		/* */ if ($assertType(_ref, ptrType$2, true)[1]) { $s = 1; continue; }
 		/* */ if ($assertType(_ref, ptrType$3, true)[1]) { $s = 2; continue; }
@@ -22502,70 +22898,77 @@ $packages["github.com/masa-suzu/monkey/evaluator"] = (function() {
 			$s = -1; return new object.Function.ptr(params, body, env);
 		/* } else if ($assertType(_ref, ptrType$14, true)[1]) { */ case 13:
 			node$13 = _ref.$val;
-			_r$15 = Eval(node$13.Function, env); /* */ $s = 42; case 42: if($c) { $c = false; _r$15 = _r$15.$blk(); } if (_r$15 && _r$15.$blk !== undefined) { break s; }
-			function$1 = _r$15;
-			_r$16 = isError(function$1); /* */ $s = 45; case 45: if($c) { $c = false; _r$16 = _r$16.$blk(); } if (_r$16 && _r$16.$blk !== undefined) { break s; }
-			/* */ if (_r$16) { $s = 43; continue; }
-			/* */ $s = 44; continue;
-			/* if (_r$16) { */ case 43:
-				$s = -1; return function$1;
-			/* } */ case 44:
-			_r$17 = evalExpressions(node$13.Arguments, env); /* */ $s = 46; case 46: if($c) { $c = false; _r$17 = _r$17.$blk(); } if (_r$17 && _r$17.$blk !== undefined) { break s; }
-			args = _r$17;
-			if (!(args.$length === 1)) { _v = false; $s = 49; continue s; }
-			_r$18 = isError((0 >= args.$length ? ($throwRuntimeError("index out of range"), undefined) : args.$array[args.$offset + 0])); /* */ $s = 50; case 50: if($c) { $c = false; _r$18 = _r$18.$blk(); } if (_r$18 && _r$18.$blk !== undefined) { break s; }
-			_v = _r$18; case 49:
-			/* */ if (_v) { $s = 47; continue; }
+			_r$15 = node$13.Function.TokenLiteral(); /* */ $s = 44; case 44: if($c) { $c = false; _r$15 = _r$15.$blk(); } if (_r$15 && _r$15.$blk !== undefined) { break s; }
+			/* */ if (_r$15 === "quote") { $s = 42; continue; }
+			/* */ $s = 43; continue;
+			/* if (_r$15 === "quote") { */ case 42:
+				_r$16 = quote((x = node$13.Arguments, (0 >= x.$length ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + 0])), env); /* */ $s = 45; case 45: if($c) { $c = false; _r$16 = _r$16.$blk(); } if (_r$16 && _r$16.$blk !== undefined) { break s; }
+				$s = -1; return _r$16;
+			/* } */ case 43:
+			_r$17 = Eval(node$13.Function, env); /* */ $s = 46; case 46: if($c) { $c = false; _r$17 = _r$17.$blk(); } if (_r$17 && _r$17.$blk !== undefined) { break s; }
+			function$1 = _r$17;
+			_r$18 = isError(function$1); /* */ $s = 49; case 49: if($c) { $c = false; _r$18 = _r$18.$blk(); } if (_r$18 && _r$18.$blk !== undefined) { break s; }
+			/* */ if (_r$18) { $s = 47; continue; }
 			/* */ $s = 48; continue;
-			/* if (_v) { */ case 47:
-				$s = -1; return (0 >= args.$length ? ($throwRuntimeError("index out of range"), undefined) : args.$array[args.$offset + 0]);
+			/* if (_r$18) { */ case 47:
+				$s = -1; return function$1;
 			/* } */ case 48:
-			_r$19 = applyFunction(function$1, args); /* */ $s = 51; case 51: if($c) { $c = false; _r$19 = _r$19.$blk(); } if (_r$19 && _r$19.$blk !== undefined) { break s; }
-			$s = -1; return _r$19;
+			_r$19 = evalExpressions(node$13.Arguments, env); /* */ $s = 50; case 50: if($c) { $c = false; _r$19 = _r$19.$blk(); } if (_r$19 && _r$19.$blk !== undefined) { break s; }
+			args = _r$19;
+			if (!(args.$length === 1)) { _v = false; $s = 53; continue s; }
+			_r$20 = isError((0 >= args.$length ? ($throwRuntimeError("index out of range"), undefined) : args.$array[args.$offset + 0])); /* */ $s = 54; case 54: if($c) { $c = false; _r$20 = _r$20.$blk(); } if (_r$20 && _r$20.$blk !== undefined) { break s; }
+			_v = _r$20; case 53:
+			/* */ if (_v) { $s = 51; continue; }
+			/* */ $s = 52; continue;
+			/* if (_v) { */ case 51:
+				$s = -1; return (0 >= args.$length ? ($throwRuntimeError("index out of range"), undefined) : args.$array[args.$offset + 0]);
+			/* } */ case 52:
+			_r$21 = applyFunction(function$1, args); /* */ $s = 55; case 55: if($c) { $c = false; _r$21 = _r$21.$blk(); } if (_r$21 && _r$21.$blk !== undefined) { break s; }
+			$s = -1; return _r$21;
 		/* } else if ($assertType(_ref, ptrType$15, true)[1]) { */ case 14:
 			node$14 = _ref.$val;
-			_r$20 = evalExpressions(node$14.Elements, env); /* */ $s = 52; case 52: if($c) { $c = false; _r$20 = _r$20.$blk(); } if (_r$20 && _r$20.$blk !== undefined) { break s; }
-			elements = _r$20;
-			if (!(elements.$length === 1)) { _v$1 = false; $s = 55; continue s; }
-			_r$21 = isError((0 >= elements.$length ? ($throwRuntimeError("index out of range"), undefined) : elements.$array[elements.$offset + 0])); /* */ $s = 56; case 56: if($c) { $c = false; _r$21 = _r$21.$blk(); } if (_r$21 && _r$21.$blk !== undefined) { break s; }
-			_v$1 = _r$21; case 55:
-			/* */ if (_v$1) { $s = 53; continue; }
-			/* */ $s = 54; continue;
-			/* if (_v$1) { */ case 53:
+			_r$22 = evalExpressions(node$14.Elements, env); /* */ $s = 56; case 56: if($c) { $c = false; _r$22 = _r$22.$blk(); } if (_r$22 && _r$22.$blk !== undefined) { break s; }
+			elements = _r$22;
+			if (!(elements.$length === 1)) { _v$1 = false; $s = 59; continue s; }
+			_r$23 = isError((0 >= elements.$length ? ($throwRuntimeError("index out of range"), undefined) : elements.$array[elements.$offset + 0])); /* */ $s = 60; case 60: if($c) { $c = false; _r$23 = _r$23.$blk(); } if (_r$23 && _r$23.$blk !== undefined) { break s; }
+			_v$1 = _r$23; case 59:
+			/* */ if (_v$1) { $s = 57; continue; }
+			/* */ $s = 58; continue;
+			/* if (_v$1) { */ case 57:
 				$s = -1; return (0 >= elements.$length ? ($throwRuntimeError("index out of range"), undefined) : elements.$array[elements.$offset + 0]);
-			/* } */ case 54:
+			/* } */ case 58:
 			$s = -1; return new object.Array.ptr(elements);
 		/* } else if ($assertType(_ref, ptrType$16, true)[1]) { */ case 15:
 			node$15 = _ref.$val;
-			_r$22 = Eval(node$15.Left, env); /* */ $s = 57; case 57: if($c) { $c = false; _r$22 = _r$22.$blk(); } if (_r$22 && _r$22.$blk !== undefined) { break s; }
-			left$1 = _r$22;
-			_r$23 = isError(left$1); /* */ $s = 60; case 60: if($c) { $c = false; _r$23 = _r$23.$blk(); } if (_r$23 && _r$23.$blk !== undefined) { break s; }
-			/* */ if (_r$23) { $s = 58; continue; }
-			/* */ $s = 59; continue;
-			/* if (_r$23) { */ case 58:
-				$s = -1; return left$1;
-			/* } */ case 59:
-			_r$24 = Eval(node$15.Index, env); /* */ $s = 61; case 61: if($c) { $c = false; _r$24 = _r$24.$blk(); } if (_r$24 && _r$24.$blk !== undefined) { break s; }
-			index = _r$24;
-			_r$25 = isError(index); /* */ $s = 64; case 64: if($c) { $c = false; _r$25 = _r$25.$blk(); } if (_r$25 && _r$25.$blk !== undefined) { break s; }
+			_r$24 = Eval(node$15.Left, env); /* */ $s = 61; case 61: if($c) { $c = false; _r$24 = _r$24.$blk(); } if (_r$24 && _r$24.$blk !== undefined) { break s; }
+			left$1 = _r$24;
+			_r$25 = isError(left$1); /* */ $s = 64; case 64: if($c) { $c = false; _r$25 = _r$25.$blk(); } if (_r$25 && _r$25.$blk !== undefined) { break s; }
 			/* */ if (_r$25) { $s = 62; continue; }
 			/* */ $s = 63; continue;
 			/* if (_r$25) { */ case 62:
-				$s = -1; return index;
+				$s = -1; return left$1;
 			/* } */ case 63:
-			_r$26 = evalIndexExpression(left$1, index); /* */ $s = 65; case 65: if($c) { $c = false; _r$26 = _r$26.$blk(); } if (_r$26 && _r$26.$blk !== undefined) { break s; }
-			$s = -1; return _r$26;
+			_r$26 = Eval(node$15.Index, env); /* */ $s = 65; case 65: if($c) { $c = false; _r$26 = _r$26.$blk(); } if (_r$26 && _r$26.$blk !== undefined) { break s; }
+			index = _r$26;
+			_r$27 = isError(index); /* */ $s = 68; case 68: if($c) { $c = false; _r$27 = _r$27.$blk(); } if (_r$27 && _r$27.$blk !== undefined) { break s; }
+			/* */ if (_r$27) { $s = 66; continue; }
+			/* */ $s = 67; continue;
+			/* if (_r$27) { */ case 66:
+				$s = -1; return index;
+			/* } */ case 67:
+			_r$28 = evalIndexExpression(left$1, index); /* */ $s = 69; case 69: if($c) { $c = false; _r$28 = _r$28.$blk(); } if (_r$28 && _r$28.$blk !== undefined) { break s; }
+			$s = -1; return _r$28;
 		/* } else if ($assertType(_ref, ptrType$17, true)[1]) { */ case 16:
 			node$16 = _ref.$val;
-			_r$27 = evalHashLiteral(node$16, env); /* */ $s = 66; case 66: if($c) { $c = false; _r$27 = _r$27.$blk(); } if (_r$27 && _r$27.$blk !== undefined) { break s; }
-			$s = -1; return _r$27;
+			_r$29 = evalHashLiteral(node$16, env); /* */ $s = 70; case 70: if($c) { $c = false; _r$29 = _r$29.$blk(); } if (_r$29 && _r$29.$blk !== undefined) { break s; }
+			$s = -1; return _r$29;
 		/* } else if ($assertType(_ref, ptrType$18, true)[1]) { */ case 17:
 			node$17 = _ref.$val;
-			_r$28 = evalIdentifier(node$17, env); /* */ $s = 67; case 67: if($c) { $c = false; _r$28 = _r$28.$blk(); } if (_r$28 && _r$28.$blk !== undefined) { break s; }
-			$s = -1; return _r$28;
+			_r$30 = evalIdentifier(node$17, env); /* */ $s = 71; case 71: if($c) { $c = false; _r$30 = _r$30.$blk(); } if (_r$30 && _r$30.$blk !== undefined) { break s; }
+			$s = -1; return _r$30;
 		/* } */ case 18:
 		$s = -1; return $ifaceNil;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Eval }; } $f._r = _r; $f._r$1 = _r$1; $f._r$10 = _r$10; $f._r$11 = _r$11; $f._r$12 = _r$12; $f._r$13 = _r$13; $f._r$14 = _r$14; $f._r$15 = _r$15; $f._r$16 = _r$16; $f._r$17 = _r$17; $f._r$18 = _r$18; $f._r$19 = _r$19; $f._r$2 = _r$2; $f._r$20 = _r$20; $f._r$21 = _r$21; $f._r$22 = _r$22; $f._r$23 = _r$23; $f._r$24 = _r$24; $f._r$25 = _r$25; $f._r$26 = _r$26; $f._r$27 = _r$27; $f._r$28 = _r$28; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._r$7 = _r$7; $f._r$8 = _r$8; $f._r$9 = _r$9; $f._ref = _ref; $f._v = _v; $f._v$1 = _v$1; $f.args = args; $f.body = body; $f.elements = elements; $f.env = env; $f.function$1 = function$1; $f.index = index; $f.left = left; $f.left$1 = left$1; $f.node = node; $f.node$1 = node$1; $f.node$10 = node$10; $f.node$11 = node$11; $f.node$12 = node$12; $f.node$13 = node$13; $f.node$14 = node$14; $f.node$15 = node$15; $f.node$16 = node$16; $f.node$17 = node$17; $f.node$2 = node$2; $f.node$3 = node$3; $f.node$4 = node$4; $f.node$5 = node$5; $f.node$6 = node$6; $f.node$7 = node$7; $f.node$8 = node$8; $f.node$9 = node$9; $f.params = params; $f.right = right; $f.right$1 = right$1; $f.val = val; $f.val$1 = val$1; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Eval }; } $f._r = _r; $f._r$1 = _r$1; $f._r$10 = _r$10; $f._r$11 = _r$11; $f._r$12 = _r$12; $f._r$13 = _r$13; $f._r$14 = _r$14; $f._r$15 = _r$15; $f._r$16 = _r$16; $f._r$17 = _r$17; $f._r$18 = _r$18; $f._r$19 = _r$19; $f._r$2 = _r$2; $f._r$20 = _r$20; $f._r$21 = _r$21; $f._r$22 = _r$22; $f._r$23 = _r$23; $f._r$24 = _r$24; $f._r$25 = _r$25; $f._r$26 = _r$26; $f._r$27 = _r$27; $f._r$28 = _r$28; $f._r$29 = _r$29; $f._r$3 = _r$3; $f._r$30 = _r$30; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._r$7 = _r$7; $f._r$8 = _r$8; $f._r$9 = _r$9; $f._ref = _ref; $f._v = _v; $f._v$1 = _v$1; $f.args = args; $f.body = body; $f.elements = elements; $f.env = env; $f.function$1 = function$1; $f.index = index; $f.left = left; $f.left$1 = left$1; $f.node = node; $f.node$1 = node$1; $f.node$10 = node$10; $f.node$11 = node$11; $f.node$12 = node$12; $f.node$13 = node$13; $f.node$14 = node$14; $f.node$15 = node$15; $f.node$16 = node$16; $f.node$17 = node$17; $f.node$2 = node$2; $f.node$3 = node$3; $f.node$4 = node$4; $f.node$5 = node$5; $f.node$6 = node$6; $f.node$7 = node$7; $f.node$8 = node$8; $f.node$9 = node$9; $f.params = params; $f.right = right; $f.right$1 = right$1; $f.val = val; $f.val$1 = val$1; $f.x = x; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.Eval = Eval;
 	evalProgram = function(program, env) {
@@ -22732,8 +23135,8 @@ $packages["github.com/masa-suzu/monkey/evaluator"] = (function() {
 		/* */ } return; } if ($f === undefined) { $f = { $blk: evalMinusPrefixOperatorExpression }; } $f._arg = _arg; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f.right = right; $f.value = value; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	evalIntegerInfixExpression = function(operator, left, right) {
-		var _1, _arg, _arg$1, _arg$2, _r, _r$1, _r$2, left, leftVal, operator, right, rightVal, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _1 = $f._1; _arg = $f._arg; _arg$1 = $f._arg$1; _arg$2 = $f._arg$2; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; left = $f.left; leftVal = $f.leftVal; operator = $f.operator; right = $f.right; rightVal = $f.rightVal; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var _1, _arg, _arg$1, _arg$2, _r, _r$1, _r$2, _r$3, left, leftVal, operator, right, rightVal, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _1 = $f._1; _arg = $f._arg; _arg$1 = $f._arg$1; _arg$2 = $f._arg$2; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; left = $f.left; leftVal = $f.leftVal; operator = $f.operator; right = $f.right; rightVal = $f.rightVal; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		leftVal = $assertType(left, ptrType$22).Value;
 		rightVal = $assertType(right, ptrType$22).Value;
 			_1 = operator;
@@ -22753,6 +23156,12 @@ $packages["github.com/masa-suzu/monkey/evaluator"] = (function() {
 			/* } else if (_1 === ("*")) { */ case 4:
 				$s = -1; return new object.Integer.ptr($mul64(leftVal, rightVal));
 			/* } else if (_1 === ("/")) { */ case 5:
+				/* */ if ((rightVal.$high === 0 && rightVal.$low === 0)) { $s = 12; continue; }
+				/* */ $s = 13; continue;
+				/* if ((rightVal.$high === 0 && rightVal.$low === 0)) { */ case 12:
+					_r = newError("zero division error: %d / 0", new sliceType([leftVal])); /* */ $s = 14; case 14: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+					$s = -1; return _r;
+				/* } */ case 13:
 				$s = -1; return new object.Integer.ptr($div64(leftVal, rightVal, false));
 			/* } else if (_1 === ("<")) { */ case 6:
 				$s = -1; return nativeBoolToBooleanObject((leftVal.$high < rightVal.$high || (leftVal.$high === rightVal.$high && leftVal.$low < rightVal.$low)));
@@ -22763,17 +23172,17 @@ $packages["github.com/masa-suzu/monkey/evaluator"] = (function() {
 			/* } else if (_1 === ("!=")) { */ case 9:
 				$s = -1; return nativeBoolToBooleanObject(!((leftVal.$high === rightVal.$high && leftVal.$low === rightVal.$low)));
 			/* } else { */ case 10:
-				_r = left.Type(); /* */ $s = 12; case 12: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
-				_arg = new object.ObjectType(_r);
+				_r$1 = left.Type(); /* */ $s = 15; case 15: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+				_arg = new object.ObjectType(_r$1);
 				_arg$1 = new $String(operator);
-				_r$1 = right.Type(); /* */ $s = 13; case 13: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
-				_arg$2 = new object.ObjectType(_r$1);
-				_r$2 = newError("unknown operator: %s %s %s", new sliceType([_arg, _arg$1, _arg$2])); /* */ $s = 14; case 14: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
-				$s = -1; return _r$2;
+				_r$2 = right.Type(); /* */ $s = 16; case 16: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+				_arg$2 = new object.ObjectType(_r$2);
+				_r$3 = newError("unknown operator: %s %s %s", new sliceType([_arg, _arg$1, _arg$2])); /* */ $s = 17; case 17: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+				$s = -1; return _r$3;
 			/* } */ case 11:
 		case 1:
 		$s = -1; return $ifaceNil;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: evalIntegerInfixExpression }; } $f._1 = _1; $f._arg = _arg; $f._arg$1 = _arg$1; $f._arg$2 = _arg$2; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f.left = left; $f.leftVal = leftVal; $f.operator = operator; $f.right = right; $f.rightVal = rightVal; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: evalIntegerInfixExpression }; } $f._1 = _1; $f._arg = _arg; $f._arg$1 = _arg$1; $f._arg$2 = _arg$2; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f.left = left; $f.leftVal = leftVal; $f.operator = operator; $f.right = right; $f.rightVal = rightVal; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	evalStringInfixExpression = function(operator, left, right) {
 		var _arg, _arg$1, _arg$2, _r, _r$1, _r$2, left, leftVal, operator, right, rightVal, $s, $r;
@@ -23057,13 +23466,231 @@ $packages["github.com/masa-suzu/monkey/evaluator"] = (function() {
 		$s = -1; return false;
 		/* */ } return; } if ($f === undefined) { $f = { $blk: isError }; } $f._r = _r; $f.obj = obj; $f.$s = $s; $f.$r = $r; return $f;
 	};
+	DefineMacros = function(program, env) {
+		var _i, _ref, definitionIndex, definitions, env, i, i$1, program, statement;
+		definitions = new sliceType$3([]);
+		_ref = program.Statements;
+		_i = 0;
+		while (true) {
+			if (!(_i < _ref.$length)) { break; }
+			i = _i;
+			statement = ((_i < 0 || _i >= _ref.$length) ? ($throwRuntimeError("index out of range"), undefined) : _ref.$array[_ref.$offset + _i]);
+			if (isMacroDefinition(statement)) {
+				addMacro(statement, env);
+				definitions = $append(definitions, i);
+			}
+			_i++;
+		}
+		i$1 = definitions.$length - 1 >> 0;
+		while (true) {
+			if (!(i$1 >= 0)) { break; }
+			definitionIndex = ((i$1 < 0 || i$1 >= definitions.$length) ? ($throwRuntimeError("index out of range"), undefined) : definitions.$array[definitions.$offset + i$1]);
+			program.Statements = $appendSlice($subslice(program.Statements, 0, definitionIndex), $subslice(program.Statements, (definitionIndex + 1 >> 0)));
+			i$1 = i$1 - 1 >> 0;
+		}
+	};
+	$pkg.DefineMacros = DefineMacros;
+	isMacroDefinition = function(node) {
+		var _tuple, _tuple$1, letStatement, node, ok;
+		_tuple = $assertType(node, ptrType$12, true);
+		letStatement = _tuple[0];
+		ok = _tuple[1];
+		if (!ok) {
+			return false;
+		}
+		_tuple$1 = $assertType(letStatement.Value, ptrType$26, true);
+		ok = _tuple$1[1];
+		if (!ok) {
+			return false;
+		}
+		return true;
+	};
+	addMacro = function(stmt, env) {
+		var _tuple, _tuple$1, env, letStatement, macro, macroLiteral, stmt;
+		_tuple = $assertType(stmt, ptrType$12, true);
+		letStatement = _tuple[0];
+		_tuple$1 = $assertType(letStatement.Value, ptrType$26, true);
+		macroLiteral = _tuple$1[0];
+		macro = new object.Macro.ptr(macroLiteral.Parameters, macroLiteral.Body, env);
+		env.Set(letStatement.Name.Value, macro);
+	};
+	ExpandMacros = function(program, env) {
+		var _r, env, program, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; env = $f.env; program = $f.program; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		env = [env];
+		_r = ast.Modify(program, (function(env) { return function $b(node) {
+			var _r, _tuple, _tuple$1, _tuple$2, args, callExpression, evalEnv, evaluated, macro, node, ok, quote$1, $s, $r;
+			/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; _tuple$1 = $f._tuple$1; _tuple$2 = $f._tuple$2; args = $f.args; callExpression = $f.callExpression; evalEnv = $f.evalEnv; evaluated = $f.evaluated; macro = $f.macro; node = $f.node; ok = $f.ok; quote$1 = $f.quote$1; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+			_tuple = $assertType(node, ptrType$14, true);
+			callExpression = _tuple[0];
+			ok = _tuple[1];
+			if (!ok) {
+				$s = -1; return node;
+			}
+			_tuple$1 = isMacroCall(callExpression, env[0]);
+			macro = _tuple$1[0];
+			ok = _tuple$1[1];
+			if (!ok) {
+				$s = -1; return node;
+			}
+			args = quoteArgs(callExpression);
+			evalEnv = extendMacroEnv(macro, args);
+			_r = Eval(macro.Body, evalEnv); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+			evaluated = _r;
+			_tuple$2 = $assertType(evaluated, ptrType$27, true);
+			quote$1 = _tuple$2[0];
+			ok = _tuple$2[1];
+			if (!ok) {
+				$panic(new $String("we only support returning AST-nodes from macros"));
+			}
+			$s = -1; return quote$1.Node;
+			/* */ } return; } if ($f === undefined) { $f = { $blk: $b }; } $f._r = _r; $f._tuple = _tuple; $f._tuple$1 = _tuple$1; $f._tuple$2 = _tuple$2; $f.args = args; $f.callExpression = callExpression; $f.evalEnv = evalEnv; $f.evaluated = evaluated; $f.macro = macro; $f.node = node; $f.ok = ok; $f.quote$1 = quote$1; $f.$s = $s; $f.$r = $r; return $f;
+		}; })(env)); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		$s = -1; return _r;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: ExpandMacros }; } $f._r = _r; $f.env = env; $f.program = program; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	$pkg.ExpandMacros = ExpandMacros;
+	isMacroCall = function(exp, env) {
+		var _tuple, _tuple$1, _tuple$2, env, exp, identifier, macro, obj, ok;
+		_tuple = $assertType(exp.Function, ptrType$18, true);
+		identifier = _tuple[0];
+		ok = _tuple[1];
+		if (!ok) {
+			return [ptrType$28.nil, false];
+		}
+		_tuple$1 = env.Get(identifier.Value);
+		obj = _tuple$1[0];
+		ok = _tuple$1[1];
+		if (!ok) {
+			return [ptrType$28.nil, false];
+		}
+		_tuple$2 = $assertType(obj, ptrType$28, true);
+		macro = _tuple$2[0];
+		ok = _tuple$2[1];
+		if (!ok) {
+			return [ptrType$28.nil, false];
+		}
+		return [macro, true];
+	};
+	quoteArgs = function(exp) {
+		var _i, _ref, a, args, exp;
+		args = new sliceType$4([]);
+		_ref = exp.Arguments;
+		_i = 0;
+		while (true) {
+			if (!(_i < _ref.$length)) { break; }
+			a = ((_i < 0 || _i >= _ref.$length) ? ($throwRuntimeError("index out of range"), undefined) : _ref.$array[_ref.$offset + _i]);
+			args = $append(args, new object.Quote.ptr(a));
+			_i++;
+		}
+		return args;
+	};
+	extendMacroEnv = function(macro, args) {
+		var _i, _ref, args, extended, macro, param, paramIdx;
+		extended = object.NewEnclosedEnvironment(macro.Env);
+		_ref = macro.Parameters;
+		_i = 0;
+		while (true) {
+			if (!(_i < _ref.$length)) { break; }
+			paramIdx = _i;
+			param = ((_i < 0 || _i >= _ref.$length) ? ($throwRuntimeError("index out of range"), undefined) : _ref.$array[_ref.$offset + _i]);
+			extended.Set(param.Value, ((paramIdx < 0 || paramIdx >= args.$length) ? ($throwRuntimeError("index out of range"), undefined) : args.$array[args.$offset + paramIdx]));
+			_i++;
+		}
+		return extended;
+	};
+	quote = function(node, env) {
+		var _r, env, node, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; env = $f.env; node = $f.node; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		_r = evalUnquoteCalls(node, env); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		node = _r;
+		$s = -1; return new object.Quote.ptr(node);
+		/* */ } return; } if ($f === undefined) { $f = { $blk: quote }; } $f._r = _r; $f.env = env; $f.node = node; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	evalUnquoteCalls = function(quoted, env) {
+		var _r, env, quoted, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; env = $f.env; quoted = $f.quoted; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		env = [env];
+		_r = ast.Modify(quoted, (function(env) { return function $b(node) {
+			var _r, _r$1, _r$2, _tuple, call, node, ok, unquoted, x, $s, $r;
+			/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _tuple = $f._tuple; call = $f.call; node = $f.node; ok = $f.ok; unquoted = $f.unquoted; x = $f.x; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+			_r = isUnquoteCall(node); /* */ $s = 3; case 3: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+			/* */ if (!_r) { $s = 1; continue; }
+			/* */ $s = 2; continue;
+			/* if (!_r) { */ case 1:
+				$s = -1; return node;
+			/* } */ case 2:
+			_tuple = $assertType(node, ptrType$14, true);
+			call = _tuple[0];
+			ok = _tuple[1];
+			if (!ok) {
+				$s = -1; return node;
+			}
+			if (!((call.Arguments.$length === 1))) {
+				$s = -1; return node;
+			}
+			_r$1 = Eval((x = call.Arguments, (0 >= x.$length ? ($throwRuntimeError("index out of range"), undefined) : x.$array[x.$offset + 0])), env[0]); /* */ $s = 4; case 4: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+			unquoted = _r$1;
+			_r$2 = nodeFrom(unquoted); /* */ $s = 5; case 5: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+			$s = -1; return _r$2;
+			/* */ } return; } if ($f === undefined) { $f = { $blk: $b }; } $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._tuple = _tuple; $f.call = call; $f.node = node; $f.ok = ok; $f.unquoted = unquoted; $f.x = x; $f.$s = $s; $f.$r = $r; return $f;
+		}; })(env)); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		$s = -1; return _r;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: evalUnquoteCalls }; } $f._r = _r; $f.env = env; $f.quoted = quoted; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	isUnquoteCall = function(node) {
+		var _r, _tuple, callExp, node, ok, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _tuple = $f._tuple; callExp = $f.callExp; node = $f.node; ok = $f.ok; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		_tuple = $assertType(node, ptrType$14, true);
+		callExp = _tuple[0];
+		ok = _tuple[1];
+		if (!ok) {
+			$s = -1; return false;
+		}
+		_r = callExp.Function.TokenLiteral(); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+		$s = -1; return _r === "unquote";
+		/* */ } return; } if ($f === undefined) { $f = { $blk: isUnquoteCall }; } $f._r = _r; $f._tuple = _tuple; $f.callExp = callExp; $f.node = node; $f.ok = ok; $f.$s = $s; $f.$r = $r; return $f;
+	};
+	nodeFrom = function(obj) {
+		var _r, _ref, obj, obj$1, obj$2, obj$3, obj$4, t, t$1, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; _ref = $f._ref; obj = $f.obj; obj$1 = $f.obj$1; obj$2 = $f.obj$2; obj$3 = $f.obj$3; obj$4 = $f.obj$4; t = $f.t; t$1 = $f.t$1; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		_ref = obj;
+		/* */ if ($assertType(_ref, ptrType$22, true)[1]) { $s = 1; continue; }
+		/* */ if ($assertType(_ref, ptrType$29, true)[1]) { $s = 2; continue; }
+		/* */ if ($assertType(_ref, ptrType$27, true)[1]) { $s = 3; continue; }
+		/* */ $s = 4; continue;
+		/* if ($assertType(_ref, ptrType$22, true)[1]) { */ case 1:
+			obj$1 = _ref.$val;
+			_r = fmt.Sprintf("%d", new sliceType([obj$1.Value])); /* */ $s = 6; case 6: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
+			t = new token.Token.ptr("INT", _r);
+			$s = -1; return new ast.IntegerLiteral.ptr($clone(t, token.Token), obj$1.Value);
+		/* } else if ($assertType(_ref, ptrType$29, true)[1]) { */ case 2:
+			obj$2 = _ref.$val;
+			t$1 = new token.Token.ptr("", "");
+			if (obj$2.Value) {
+				token.Token.copy(t$1, new token.Token.ptr("TRUE", "true"));
+			} else {
+				token.Token.copy(t$1, new token.Token.ptr("FALSE", "false"));
+			}
+			$s = -1; return new ast.Boolean.ptr($clone(t$1, token.Token), obj$2.Value);
+		/* } else if ($assertType(_ref, ptrType$27, true)[1]) { */ case 3:
+			obj$3 = _ref.$val;
+			$s = -1; return obj$3.Node;
+		/* } else { */ case 4:
+			obj$4 = _ref;
+			$s = -1; return $ifaceNil;
+		/* } */ case 5:
+		$s = -1; return $ifaceNil;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: nodeFrom }; } $f._r = _r; $f._ref = _ref; $f.obj = obj; $f.obj$1 = obj$1; $f.obj$2 = obj$2; $f.obj$3 = obj$3; $f.obj$4 = obj$4; $f.t = t; $f.t$1 = t$1; $f.$s = $s; $f.$r = $r; return $f;
+	};
 	$init = function() {
 		$pkg.$init = function() {};
 		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		$r = fmt.$init(); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		$r = ast.$init(); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		$r = object.$init(); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = os.$init(); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = token.$init(); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = os.$init(); /* */ $s = 5; case 5: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		$pkg.NULL = new object.Null.ptr();
 		builtIns = $makeMap($String.keyFor, [{ k: "len", v: new object.Builtin.ptr((function $b(args) {
 			var _arg, _r, _r$1, _r$2, _ref, arg, arg$1, arg$2, args, $s, $r;
@@ -23206,18 +23833,40 @@ $packages["github.com/masa-suzu/monkey/evaluator"] = (function() {
 	$pkg.$init = $init;
 	return $pkg;
 })();
+$packages["github.com/masa-suzu/monkey/vm"] = (function() {
+	var $pkg = {}, $init, fmt, code, compiler, object;
+	fmt = $packages["fmt"];
+	code = $packages["github.com/masa-suzu/monkey/code"];
+	compiler = $packages["github.com/masa-suzu/monkey/compiler"];
+	object = $packages["github.com/masa-suzu/monkey/object"];
+	$init = function() {
+		$pkg.$init = function() {};
+		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		$r = fmt.$init(); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = code.$init(); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = compiler.$init(); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = object.$init(); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		/* */ } return; } if ($f === undefined) { $f = { $blk: $init }; } $f.$s = $s; $f.$r = $r; return $f;
+	};
+	$pkg.$init = $init;
+	return $pkg;
+})();
 $packages["github.com/masa-suzu/monkey/repl"] = (function() {
-	var $pkg = {}, $init, bufio, fmt, evaluator, lexer, object, parser, io, Rep, printParserErrorsWithMonkeyFace;
+	var $pkg = {}, $init, bufio, fmt, compiler, evaluator, lexer, object, parser, vm, io, sliceType, sliceType$1, Rep, printErrorsWithMonkeyFace;
 	bufio = $packages["bufio"];
 	fmt = $packages["fmt"];
+	compiler = $packages["github.com/masa-suzu/monkey/compiler"];
 	evaluator = $packages["github.com/masa-suzu/monkey/evaluator"];
 	lexer = $packages["github.com/masa-suzu/monkey/lexer"];
 	object = $packages["github.com/masa-suzu/monkey/object"];
 	parser = $packages["github.com/masa-suzu/monkey/parser"];
+	vm = $packages["github.com/masa-suzu/monkey/vm"];
 	io = $packages["io"];
-	Rep = function(in$1, out, prompt, env) {
-		var _arg, _arg$1, _r, _r$1, _r$2, _r$3, _r$4, env, evaluated, in$1, l, out, p, program, prompt, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _arg = $f._arg; _arg$1 = $f._arg$1; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; env = $f.env; evaluated = $f.evaluated; in$1 = $f.in$1; l = $f.l; out = $f.out; p = $f.p; program = $f.program; prompt = $f.prompt; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+	sliceType = $sliceType($emptyInterface);
+	sliceType$1 = $sliceType($String);
+	Rep = function(in$1, out, env, macros) {
+		var _arg, _arg$1, _arg$2, _arg$3, _r, _r$1, _r$2, _r$3, _r$4, _r$5, _r$6, _r$7, env, evaluated, expanded, in$1, l, macros, out, p, program, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _arg = $f._arg; _arg$1 = $f._arg$1; _arg$2 = $f._arg$2; _arg$3 = $f._arg$3; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _r$7 = $f._r$7; env = $f.env; evaluated = $f.evaluated; expanded = $f.expanded; in$1 = $f.in$1; l = $f.l; macros = $f.macros; out = $f.out; p = $f.p; program = $f.program; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		l = lexer.New(in$1);
 		p = parser.New(l);
 		_r = p.ParseProgram(); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
@@ -23225,57 +23874,75 @@ $packages["github.com/masa-suzu/monkey/repl"] = (function() {
 		/* */ if (!((p.Errors().$length === 0))) { $s = 2; continue; }
 		/* */ $s = 3; continue;
 		/* if (!((p.Errors().$length === 0))) { */ case 2:
-			$r = printParserErrorsWithMonkeyFace(out, p.Errors()); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+			$r = printErrorsWithMonkeyFace(out, p.Errors(), "Parser"); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 			$s = -1; return;
 		/* } */ case 3:
-		_r$1 = evaluator.Eval(program, env); /* */ $s = 5; case 5: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
-		evaluated = _r$1;
-		/* */ if (!($interfaceIsEqual(evaluated, $ifaceNil))) { $s = 6; continue; }
-		/* */ $s = 7; continue;
-		/* if (!($interfaceIsEqual(evaluated, $ifaceNil))) { */ case 6:
-			_arg = out;
-			_r$2 = evaluated.Inspect(); /* */ $s = 8; case 8: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
-			_arg$1 = _r$2;
-			_r$3 = io.WriteString(_arg, _arg$1); /* */ $s = 9; case 9: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
-			_r$3;
-			_r$4 = io.WriteString(out, "\n"); /* */ $s = 10; case 10: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
-			_r$4;
-		/* } */ case 7:
+		evaluator.DefineMacros(program, macros);
+		_r$1 = evaluator.ExpandMacros(program, macros); /* */ $s = 5; case 5: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
+		expanded = _r$1;
+		_r$2 = evaluator.Eval(expanded, env); /* */ $s = 6; case 6: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+		evaluated = _r$2;
+		/* */ if (!($interfaceIsEqual(evaluated, $ifaceNil))) { $s = 7; continue; }
+		/* */ $s = 8; continue;
+		/* if (!($interfaceIsEqual(evaluated, $ifaceNil))) { */ case 7:
+			_r$3 = evaluated.Type(); /* */ $s = 11; case 11: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+			/* */ if (_r$3 === "ERROR") { $s = 9; continue; }
+			/* */ $s = 10; continue;
+			/* if (_r$3 === "ERROR") { */ case 9:
+				_arg = out;
+				_r$4 = evaluated.Inspect(); /* */ $s = 12; case 12: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
+				_arg$1 = new sliceType$1([_r$4]);
+				$r = printErrorsWithMonkeyFace(_arg, _arg$1, "Run time"); /* */ $s = 13; case 13: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+				$s = -1; return;
+			/* } */ case 10:
+			_arg$2 = out;
+			_r$5 = evaluated.Inspect(); /* */ $s = 14; case 14: if($c) { $c = false; _r$5 = _r$5.$blk(); } if (_r$5 && _r$5.$blk !== undefined) { break s; }
+			_arg$3 = _r$5;
+			_r$6 = io.WriteString(_arg$2, _arg$3); /* */ $s = 15; case 15: if($c) { $c = false; _r$6 = _r$6.$blk(); } if (_r$6 && _r$6.$blk !== undefined) { break s; }
+			_r$6;
+			_r$7 = io.WriteString(out, "\n"); /* */ $s = 16; case 16: if($c) { $c = false; _r$7 = _r$7.$blk(); } if (_r$7 && _r$7.$blk !== undefined) { break s; }
+			_r$7;
+		/* } */ case 8:
 		$s = -1; return;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Rep }; } $f._arg = _arg; $f._arg$1 = _arg$1; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f.env = env; $f.evaluated = evaluated; $f.in$1 = in$1; $f.l = l; $f.out = out; $f.p = p; $f.program = program; $f.prompt = prompt; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Rep }; } $f._arg = _arg; $f._arg$1 = _arg$1; $f._arg$2 = _arg$2; $f._arg$3 = _arg$3; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._r$7 = _r$7; $f.env = env; $f.evaluated = evaluated; $f.expanded = expanded; $f.in$1 = in$1; $f.l = l; $f.macros = macros; $f.out = out; $f.p = p; $f.program = program; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.Rep = Rep;
-	printParserErrorsWithMonkeyFace = function(out, errors) {
-		var _i, _r, _r$1, _r$2, _r$3, _ref, errors, msg, out, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _ref = $f._ref; errors = $f.errors; msg = $f.msg; out = $f.out; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+	printErrorsWithMonkeyFace = function(out, errors, label) {
+		var _arg, _arg$1, _i, _r, _r$1, _r$2, _r$3, _r$4, _ref, errors, label, msg, out, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _arg = $f._arg; _arg$1 = $f._arg$1; _i = $f._i; _r = $f._r; _r$1 = $f._r$1; _r$2 = $f._r$2; _r$3 = $f._r$3; _r$4 = $f._r$4; _ref = $f._ref; errors = $f.errors; label = $f.label; msg = $f.msg; out = $f.out; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		_r = io.WriteString(out, "            __,__\n   .--.  .-\"     \"-.  .--.\n  / .. \\/  .-. .-.  \\/ .. \\\n | |  '|  /   Y   \\  |'  | |\n | \\   \\  \\ 0 | 0 /  /   / |\n  \\ '- ,\\.-\"\"\"\"\"\"\"-./, -' /\n   ''-' /_   ^ ^   _\\ '-''\n       |  \\._   _./  |\n       \\   \\ '~' /   /\n        '._ '-=-' _.'\n           '-----'\n"); /* */ $s = 1; case 1: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		_r;
 		_r$1 = io.WriteString(out, "Woops! We ran into some monkey business here!\n"); /* */ $s = 2; case 2: if($c) { $c = false; _r$1 = _r$1.$blk(); } if (_r$1 && _r$1.$blk !== undefined) { break s; }
 		_r$1;
-		_r$2 = io.WriteString(out, " parser errors:\n"); /* */ $s = 3; case 3: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
-		_r$2;
+		_arg = out;
+		_r$2 = fmt.Sprintf("%s errors:\n", new sliceType([new $String(label)])); /* */ $s = 3; case 3: if($c) { $c = false; _r$2 = _r$2.$blk(); } if (_r$2 && _r$2.$blk !== undefined) { break s; }
+		_arg$1 = _r$2;
+		_r$3 = io.WriteString(_arg, _arg$1); /* */ $s = 4; case 4: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
+		_r$3;
 		_ref = errors;
 		_i = 0;
-		/* while (true) { */ case 4:
-			/* if (!(_i < _ref.$length)) { break; } */ if(!(_i < _ref.$length)) { $s = 5; continue; }
+		/* while (true) { */ case 5:
+			/* if (!(_i < _ref.$length)) { break; } */ if(!(_i < _ref.$length)) { $s = 6; continue; }
 			msg = ((_i < 0 || _i >= _ref.$length) ? ($throwRuntimeError("index out of range"), undefined) : _ref.$array[_ref.$offset + _i]);
-			_r$3 = io.WriteString(out, "\t" + msg + "\n"); /* */ $s = 6; case 6: if($c) { $c = false; _r$3 = _r$3.$blk(); } if (_r$3 && _r$3.$blk !== undefined) { break s; }
-			_r$3;
+			_r$4 = io.WriteString(out, "\t" + msg + "\n"); /* */ $s = 7; case 7: if($c) { $c = false; _r$4 = _r$4.$blk(); } if (_r$4 && _r$4.$blk !== undefined) { break s; }
+			_r$4;
 			_i++;
-		/* } */ $s = 4; continue; case 5:
+		/* } */ $s = 5; continue; case 6:
 		$s = -1; return;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: printParserErrorsWithMonkeyFace }; } $f._i = _i; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._ref = _ref; $f.errors = errors; $f.msg = msg; $f.out = out; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: printErrorsWithMonkeyFace }; } $f._arg = _arg; $f._arg$1 = _arg$1; $f._i = _i; $f._r = _r; $f._r$1 = _r$1; $f._r$2 = _r$2; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._ref = _ref; $f.errors = errors; $f.label = label; $f.msg = msg; $f.out = out; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$init = function() {
 		$pkg.$init = function() {};
 		/* */ var $f, $c = false, $s = 0, $r; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		$r = bufio.$init(); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		$r = fmt.$init(); /* */ $s = 2; case 2: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = evaluator.$init(); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = lexer.$init(); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = object.$init(); /* */ $s = 5; case 5: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = parser.$init(); /* */ $s = 6; case 6: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
-		$r = io.$init(); /* */ $s = 7; case 7: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = compiler.$init(); /* */ $s = 3; case 3: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = evaluator.$init(); /* */ $s = 4; case 4: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = lexer.$init(); /* */ $s = 5; case 5: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = object.$init(); /* */ $s = 6; case 6: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = parser.$init(); /* */ $s = 7; case 7: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = vm.$init(); /* */ $s = 8; case 8: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		$r = io.$init(); /* */ $s = 9; case 9: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		/* */ } return; } if ($f === undefined) { $f = { $blk: $init }; } $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.$init = $init;
@@ -23298,14 +23965,15 @@ $packages["main"] = (function() {
 		$global.fmt = $externalize(startFormat, funcType);
 	};
 	startRep = function(source) {
-		var _r, env, out, source, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; env = $f.env; out = $f.out; source = $f.source; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var _r, env, macros, out, source, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _r = $f._r; env = $f.env; macros = $f.macros; out = $f.out; source = $f.source; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		out = bytes.NewBufferString("");
 		env = object.NewEnvironment();
-		$r = repl.Rep(source, out, "", env); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
+		macros = object.NewEnvironment();
+		$r = repl.Rep(source, out, env, macros); /* */ $s = 1; case 1: if($c) { $c = false; $r = $r.$blk(); } if ($r && $r.$blk !== undefined) { break s; }
 		_r = fmt.Sprint(new sliceType([out])); /* */ $s = 2; case 2: if($c) { $c = false; _r = _r.$blk(); } if (_r && _r.$blk !== undefined) { break s; }
 		$s = -1; return _r;
-		/* */ } return; } if ($f === undefined) { $f = { $blk: startRep }; } $f._r = _r; $f.env = env; $f.out = out; $f.source = source; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: startRep }; } $f._r = _r; $f.env = env; $f.macros = macros; $f.out = out; $f.source = source; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	startFormat = function(source) {
 		var _r, _r$1, _r$2, _r$3, ast, l, out, p, source, $s, $r;

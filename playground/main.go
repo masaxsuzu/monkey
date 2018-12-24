@@ -21,7 +21,8 @@ func main() {
 func startRep(source string) string {
 	out := bytes.NewBufferString("")
 	env := object.NewEnvironment()
-	repl.Rep(source, out, env)
+	macros := object.NewEnvironment()
+	repl.Rep(source, out, env,macros)
 	return fmt.Sprint(out)
 }
 

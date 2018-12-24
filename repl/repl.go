@@ -15,7 +15,7 @@ import (
 func Start(in io.Reader, out io.Writer, prompt string, useVM bool, debugMode bool) {
 	scanner := bufio.NewScanner(in)
 	env := object.NewEnvironment()
-
+	macroEnv := object.NewEnvironment()
 	for {
 		fmt.Printf(prompt)
 		scanned := scanner.Scan()
@@ -26,12 +26,12 @@ func Start(in io.Reader, out io.Writer, prompt string, useVM bool, debugMode boo
 		if useVM {
 			Rep_VM(line, out, debugMode)
 		} else {
-			Rep(line, out, env)
+			Rep(line, out, env,macroEnv)
 		}
 	}
 }
 
-func Rep(in string, out io.Writer, env *object.Environment) {
+func Rep(in string, out io.Writer, env *object.Environment,macros *object.Environment) {
 	l := lexer.New(in)
 	p := parser.New(l)
 	program := p.ParseProgram()
@@ -40,7 +40,10 @@ func Rep(in string, out io.Writer, env *object.Environment) {
 		return
 	}
 
-	evaluated := evaluator.Eval(program, env)
+	evaluator.DefineMacros(program, macros)
+	expanded := evaluator.ExpandMacros(program, macros)
+
+	evaluated := evaluator.Eval(expanded,env)
 
 	if evaluated != nil {
 		if evaluated.Type() == object.ERROR_OBJ {
