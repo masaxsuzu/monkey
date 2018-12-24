@@ -42,9 +42,11 @@ f(1,4,5);`,
 };
 f(1, 4, 5);`},
 		{`{"a":1};`, `{"a":1};`},
-		{`if(true){ if(false){1}}`,
+		{`if(true){ if(false){1}else{1}}`,
 			`if(true) {
     if(false) {
+        1;
+    } else {
         1;
     };
 };`},
@@ -74,6 +76,23 @@ f(1, 4, 5);`},
     fn() {
         x;
     };
+};`,
+		},
+		{
+			`
+let p = macro(x) {
+    quote(if (unquote(x)) {
+    unquote(x);
+} else {
+    "not truthy";
+});
+};`,
+			`let p = macro(x) {
+    quote(if(unquote(x)) {
+        unquote(x);
+    } else {
+        "not truthy";
+    });
 };`,
 		},
 	}

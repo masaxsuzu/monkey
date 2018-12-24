@@ -48,7 +48,7 @@ func Format(node ast.Node, indent int) string {
 		out.WriteString("\n")
 		out.WriteString(indents(indent) + "}")
 		if v.Alternative != nil {
-			out.WriteString(indents(indent) + " else {\n")
+			out.WriteString(" else {\n")
 			out.WriteString(Format(v.Alternative, indent+1))
 			out.WriteString("\n")
 			out.WriteString(indents(indent) + "}")
@@ -99,7 +99,14 @@ func Format(node ast.Node, indent int) string {
 		out.WriteString(indents(indent) + "}")
 		return out.String()
 	case *ast.CallExpression:
-		// TODO: for quote/unquote
+		if v.Function.TokenLiteral() == "quote" {
+			var out bytes.Buffer
+			out.WriteString(indents(indent) + "quote(")
+			arg := Format(v.Arguments[0], indent)
+			out.WriteString(strings.Replace(arg, indents(indent), "", 1))
+			out.WriteString(")")
+			return out.String()
+		}
 		return indents(indent) + v.String()
 	case *ast.ArrayLiteral:
 		return indents(indent) + v.String()

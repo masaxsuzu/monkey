@@ -20984,8 +20984,8 @@ $packages["github.com/masa-suzu/monkey/formatter"] = (function() {
 	arrayType = $arrayType($Uint8, 64);
 	sliceType$1 = $sliceType($String);
 	Format = function(node, indent) {
-		var _i, _i$1, _i$2, _i$3, _r, _r$1, _r$10, _r$11, _r$12, _r$13, _r$14, _r$15, _r$16, _r$17, _r$18, _r$19, _r$2, _r$20, _r$21, _r$22, _r$23, _r$24, _r$25, _r$3, _r$4, _r$5, _r$6, _r$7, _r$8, _r$9, _ref, _ref$1, _ref$2, _ref$3, _ref$4, i, i$1, indent, node, out, out$1, out$2, out$3, out$4, out$5, out$6, p, p$1, params, params$1, s, s$1, v, v$1, v$10, v$11, v$12, v$13, v$14, v$15, v$16, v$17, v$18, v$2, v$3, v$4, v$5, v$6, v$7, v$8, v$9, x, x$1, $s, $r;
-		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _i$1 = $f._i$1; _i$2 = $f._i$2; _i$3 = $f._i$3; _r = $f._r; _r$1 = $f._r$1; _r$10 = $f._r$10; _r$11 = $f._r$11; _r$12 = $f._r$12; _r$13 = $f._r$13; _r$14 = $f._r$14; _r$15 = $f._r$15; _r$16 = $f._r$16; _r$17 = $f._r$17; _r$18 = $f._r$18; _r$19 = $f._r$19; _r$2 = $f._r$2; _r$20 = $f._r$20; _r$21 = $f._r$21; _r$22 = $f._r$22; _r$23 = $f._r$23; _r$24 = $f._r$24; _r$25 = $f._r$25; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _r$7 = $f._r$7; _r$8 = $f._r$8; _r$9 = $f._r$9; _ref = $f._ref; _ref$1 = $f._ref$1; _ref$2 = $f._ref$2; _ref$3 = $f._ref$3; _ref$4 = $f._ref$4; i = $f.i; i$1 = $f.i$1; indent = $f.indent; node = $f.node; out = $f.out; out$1 = $f.out$1; out$2 = $f.out$2; out$3 = $f.out$3; out$4 = $f.out$4; out$5 = $f.out$5; out$6 = $f.out$6; p = $f.p; p$1 = $f.p$1; params = $f.params; params$1 = $f.params$1; s = $f.s; s$1 = $f.s$1; v = $f.v; v$1 = $f.v$1; v$10 = $f.v$10; v$11 = $f.v$11; v$12 = $f.v$12; v$13 = $f.v$13; v$14 = $f.v$14; v$15 = $f.v$15; v$16 = $f.v$16; v$17 = $f.v$17; v$18 = $f.v$18; v$2 = $f.v$2; v$3 = $f.v$3; v$4 = $f.v$4; v$5 = $f.v$5; v$6 = $f.v$6; v$7 = $f.v$7; v$8 = $f.v$8; v$9 = $f.v$9; x = $f.x; x$1 = $f.x$1; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
+		var _i, _i$1, _i$2, _i$3, _r, _r$1, _r$10, _r$11, _r$12, _r$13, _r$14, _r$15, _r$16, _r$17, _r$18, _r$19, _r$2, _r$20, _r$21, _r$22, _r$23, _r$24, _r$25, _r$26, _r$27, _r$3, _r$4, _r$5, _r$6, _r$7, _r$8, _r$9, _ref, _ref$1, _ref$2, _ref$3, _ref$4, arg, i, i$1, indent, node, out, out$1, out$2, out$3, out$4, out$5, out$6, out$7, p, p$1, params, params$1, s, s$1, v, v$1, v$10, v$11, v$12, v$13, v$14, v$15, v$16, v$17, v$18, v$2, v$3, v$4, v$5, v$6, v$7, v$8, v$9, x, x$1, x$2, $s, $r;
+		/* */ $s = 0; var $f, $c = false; if (this !== undefined && this.$blk !== undefined) { $f = this; $c = true; _i = $f._i; _i$1 = $f._i$1; _i$2 = $f._i$2; _i$3 = $f._i$3; _r = $f._r; _r$1 = $f._r$1; _r$10 = $f._r$10; _r$11 = $f._r$11; _r$12 = $f._r$12; _r$13 = $f._r$13; _r$14 = $f._r$14; _r$15 = $f._r$15; _r$16 = $f._r$16; _r$17 = $f._r$17; _r$18 = $f._r$18; _r$19 = $f._r$19; _r$2 = $f._r$2; _r$20 = $f._r$20; _r$21 = $f._r$21; _r$22 = $f._r$22; _r$23 = $f._r$23; _r$24 = $f._r$24; _r$25 = $f._r$25; _r$26 = $f._r$26; _r$27 = $f._r$27; _r$3 = $f._r$3; _r$4 = $f._r$4; _r$5 = $f._r$5; _r$6 = $f._r$6; _r$7 = $f._r$7; _r$8 = $f._r$8; _r$9 = $f._r$9; _ref = $f._ref; _ref$1 = $f._ref$1; _ref$2 = $f._ref$2; _ref$3 = $f._ref$3; _ref$4 = $f._ref$4; arg = $f.arg; i = $f.i; i$1 = $f.i$1; indent = $f.indent; node = $f.node; out = $f.out; out$1 = $f.out$1; out$2 = $f.out$2; out$3 = $f.out$3; out$4 = $f.out$4; out$5 = $f.out$5; out$6 = $f.out$6; out$7 = $f.out$7; p = $f.p; p$1 = $f.p$1; params = $f.params; params$1 = $f.params$1; s = $f.s; s$1 = $f.s$1; v = $f.v; v$1 = $f.v$1; v$10 = $f.v$10; v$11 = $f.v$11; v$12 = $f.v$12; v$13 = $f.v$13; v$14 = $f.v$14; v$15 = $f.v$15; v$16 = $f.v$16; v$17 = $f.v$17; v$18 = $f.v$18; v$2 = $f.v$2; v$3 = $f.v$3; v$4 = $f.v$4; v$5 = $f.v$5; v$6 = $f.v$6; v$7 = $f.v$7; v$8 = $f.v$8; v$9 = $f.v$9; x = $f.x; x$1 = $f.x$1; x$2 = $f.x$2; $s = $f.$s; $r = $f.$r; } s: while (true) { switch ($s) { case 0:
 		_ref = node;
 		/* */ if ($assertType(_ref, ptrType, true)[1]) { $s = 1; continue; }
 		/* */ if ($assertType(_ref, ptrType$1, true)[1]) { $s = 2; continue; }
@@ -21079,7 +21079,7 @@ $packages["github.com/masa-suzu/monkey/formatter"] = (function() {
 			/* */ if (!(v$8.Alternative === ptrType$2.nil)) { $s = 36; continue; }
 			/* */ $s = 37; continue;
 			/* if (!(v$8.Alternative === ptrType$2.nil)) { */ case 36:
-				out$2.WriteString(indents(indent) + " else {\n");
+				out$2.WriteString(" else {\n");
 				_r$11 = Format(v$8.Alternative, indent + 1 >> 0); /* */ $s = 38; case 38: if($c) { $c = false; _r$11 = _r$11.$blk(); } if (_r$11 && _r$11.$blk !== undefined) { break s; }
 				_r$12 = out$2.WriteString(_r$11); /* */ $s = 39; case 39: if($c) { $c = false; _r$12 = _r$12.$blk(); } if (_r$12 && _r$12.$blk !== undefined) { break s; }
 				_r$12;
@@ -21151,30 +21151,42 @@ $packages["github.com/masa-suzu/monkey/formatter"] = (function() {
 			$s = -1; return out$6.String();
 		/* } else if ($assertType(_ref, ptrType$13, true)[1]) { */ case 14:
 			v$13 = _ref.$val;
-			_r$21 = v$13.String(); /* */ $s = 48; case 48: if($c) { $c = false; _r$21 = _r$21.$blk(); } if (_r$21 && _r$21.$blk !== undefined) { break s; }
-			$s = -1; return indents(indent) + _r$21;
+			_r$21 = v$13.Function.TokenLiteral(); /* */ $s = 50; case 50: if($c) { $c = false; _r$21 = _r$21.$blk(); } if (_r$21 && _r$21.$blk !== undefined) { break s; }
+			/* */ if (_r$21 === "quote") { $s = 48; continue; }
+			/* */ $s = 49; continue;
+			/* if (_r$21 === "quote") { */ case 48:
+				out$7 = new bytes.Buffer.ptr(sliceType.nil, 0, arrayType.zero(), 0);
+				out$7.WriteString(indents(indent) + "quote(");
+				_r$22 = Format((x$2 = v$13.Arguments, (0 >= x$2.$length ? ($throwRuntimeError("index out of range"), undefined) : x$2.$array[x$2.$offset + 0])), indent); /* */ $s = 51; case 51: if($c) { $c = false; _r$22 = _r$22.$blk(); } if (_r$22 && _r$22.$blk !== undefined) { break s; }
+				arg = _r$22;
+				out$7.WriteString(strings.Replace(arg, indents(indent), "", 1));
+				out$7.WriteString(")");
+				$s = -1; return out$7.String();
+			/* } */ case 49:
+			_r$23 = v$13.String(); /* */ $s = 52; case 52: if($c) { $c = false; _r$23 = _r$23.$blk(); } if (_r$23 && _r$23.$blk !== undefined) { break s; }
+			$s = -1; return indents(indent) + _r$23;
 		/* } else if ($assertType(_ref, ptrType$14, true)[1]) { */ case 15:
 			v$14 = _ref.$val;
-			_r$22 = v$14.String(); /* */ $s = 49; case 49: if($c) { $c = false; _r$22 = _r$22.$blk(); } if (_r$22 && _r$22.$blk !== undefined) { break s; }
-			$s = -1; return indents(indent) + _r$22;
+			_r$24 = v$14.String(); /* */ $s = 53; case 53: if($c) { $c = false; _r$24 = _r$24.$blk(); } if (_r$24 && _r$24.$blk !== undefined) { break s; }
+			$s = -1; return indents(indent) + _r$24;
 		/* } else if ($assertType(_ref, ptrType$15, true)[1]) { */ case 16:
 			v$15 = _ref.$val;
-			_r$23 = v$15.String(); /* */ $s = 50; case 50: if($c) { $c = false; _r$23 = _r$23.$blk(); } if (_r$23 && _r$23.$blk !== undefined) { break s; }
-			$s = -1; return indents(indent) + _r$23;
+			_r$25 = v$15.String(); /* */ $s = 54; case 54: if($c) { $c = false; _r$25 = _r$25.$blk(); } if (_r$25 && _r$25.$blk !== undefined) { break s; }
+			$s = -1; return indents(indent) + _r$25;
 		/* } else if ($assertType(_ref, ptrType$16, true)[1]) { */ case 17:
 			v$16 = _ref.$val;
-			_r$24 = v$16.String(); /* */ $s = 51; case 51: if($c) { $c = false; _r$24 = _r$24.$blk(); } if (_r$24 && _r$24.$blk !== undefined) { break s; }
-			$s = -1; return indents(indent) + _r$24;
+			_r$26 = v$16.String(); /* */ $s = 55; case 55: if($c) { $c = false; _r$26 = _r$26.$blk(); } if (_r$26 && _r$26.$blk !== undefined) { break s; }
+			$s = -1; return indents(indent) + _r$26;
 		/* } else if ($assertType(_ref, ptrType$17, true)[1]) { */ case 18:
 			v$17 = _ref.$val;
 			$s = -1; return indents(indent) + v$17.String();
 		/* } else { */ case 19:
 			v$18 = _ref;
-			_r$25 = v$18.String(); /* */ $s = 52; case 52: if($c) { $c = false; _r$25 = _r$25.$blk(); } if (_r$25 && _r$25.$blk !== undefined) { break s; }
-			$s = -1; return indents(indent) + _r$25;
+			_r$27 = v$18.String(); /* */ $s = 56; case 56: if($c) { $c = false; _r$27 = _r$27.$blk(); } if (_r$27 && _r$27.$blk !== undefined) { break s; }
+			$s = -1; return indents(indent) + _r$27;
 		/* } */ case 20:
 		$s = -1; return "";
-		/* */ } return; } if ($f === undefined) { $f = { $blk: Format }; } $f._i = _i; $f._i$1 = _i$1; $f._i$2 = _i$2; $f._i$3 = _i$3; $f._r = _r; $f._r$1 = _r$1; $f._r$10 = _r$10; $f._r$11 = _r$11; $f._r$12 = _r$12; $f._r$13 = _r$13; $f._r$14 = _r$14; $f._r$15 = _r$15; $f._r$16 = _r$16; $f._r$17 = _r$17; $f._r$18 = _r$18; $f._r$19 = _r$19; $f._r$2 = _r$2; $f._r$20 = _r$20; $f._r$21 = _r$21; $f._r$22 = _r$22; $f._r$23 = _r$23; $f._r$24 = _r$24; $f._r$25 = _r$25; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._r$7 = _r$7; $f._r$8 = _r$8; $f._r$9 = _r$9; $f._ref = _ref; $f._ref$1 = _ref$1; $f._ref$2 = _ref$2; $f._ref$3 = _ref$3; $f._ref$4 = _ref$4; $f.i = i; $f.i$1 = i$1; $f.indent = indent; $f.node = node; $f.out = out; $f.out$1 = out$1; $f.out$2 = out$2; $f.out$3 = out$3; $f.out$4 = out$4; $f.out$5 = out$5; $f.out$6 = out$6; $f.p = p; $f.p$1 = p$1; $f.params = params; $f.params$1 = params$1; $f.s = s; $f.s$1 = s$1; $f.v = v; $f.v$1 = v$1; $f.v$10 = v$10; $f.v$11 = v$11; $f.v$12 = v$12; $f.v$13 = v$13; $f.v$14 = v$14; $f.v$15 = v$15; $f.v$16 = v$16; $f.v$17 = v$17; $f.v$18 = v$18; $f.v$2 = v$2; $f.v$3 = v$3; $f.v$4 = v$4; $f.v$5 = v$5; $f.v$6 = v$6; $f.v$7 = v$7; $f.v$8 = v$8; $f.v$9 = v$9; $f.x = x; $f.x$1 = x$1; $f.$s = $s; $f.$r = $r; return $f;
+		/* */ } return; } if ($f === undefined) { $f = { $blk: Format }; } $f._i = _i; $f._i$1 = _i$1; $f._i$2 = _i$2; $f._i$3 = _i$3; $f._r = _r; $f._r$1 = _r$1; $f._r$10 = _r$10; $f._r$11 = _r$11; $f._r$12 = _r$12; $f._r$13 = _r$13; $f._r$14 = _r$14; $f._r$15 = _r$15; $f._r$16 = _r$16; $f._r$17 = _r$17; $f._r$18 = _r$18; $f._r$19 = _r$19; $f._r$2 = _r$2; $f._r$20 = _r$20; $f._r$21 = _r$21; $f._r$22 = _r$22; $f._r$23 = _r$23; $f._r$24 = _r$24; $f._r$25 = _r$25; $f._r$26 = _r$26; $f._r$27 = _r$27; $f._r$3 = _r$3; $f._r$4 = _r$4; $f._r$5 = _r$5; $f._r$6 = _r$6; $f._r$7 = _r$7; $f._r$8 = _r$8; $f._r$9 = _r$9; $f._ref = _ref; $f._ref$1 = _ref$1; $f._ref$2 = _ref$2; $f._ref$3 = _ref$3; $f._ref$4 = _ref$4; $f.arg = arg; $f.i = i; $f.i$1 = i$1; $f.indent = indent; $f.node = node; $f.out = out; $f.out$1 = out$1; $f.out$2 = out$2; $f.out$3 = out$3; $f.out$4 = out$4; $f.out$5 = out$5; $f.out$6 = out$6; $f.out$7 = out$7; $f.p = p; $f.p$1 = p$1; $f.params = params; $f.params$1 = params$1; $f.s = s; $f.s$1 = s$1; $f.v = v; $f.v$1 = v$1; $f.v$10 = v$10; $f.v$11 = v$11; $f.v$12 = v$12; $f.v$13 = v$13; $f.v$14 = v$14; $f.v$15 = v$15; $f.v$16 = v$16; $f.v$17 = v$17; $f.v$18 = v$18; $f.v$2 = v$2; $f.v$3 = v$3; $f.v$4 = v$4; $f.v$5 = v$5; $f.v$6 = v$6; $f.v$7 = v$7; $f.v$8 = v$8; $f.v$9 = v$9; $f.x = x; $f.x$1 = x$1; $f.x$2 = x$2; $f.$s = $s; $f.$r = $r; return $f;
 	};
 	$pkg.Format = Format;
 	indents = function(level) {
