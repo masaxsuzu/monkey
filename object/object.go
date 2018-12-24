@@ -3,8 +3,8 @@ package object
 import (
 	"bytes"
 	"fmt"
-	"hash/fnv"
 	"github.com/masa-suzu/monkey/ast"
+	"hash/fnv"
 	"strings"
 )
 
@@ -21,6 +21,7 @@ const (
 	BUILTIN_OBJ      = "BUILTIN"
 	ARRAY_OBJ        = "ARRAY"
 	HASH_OBJ         = "HASH"
+	QUOTE_OBJ        = "QUOTE"
 )
 
 type Object interface {
@@ -68,6 +69,15 @@ type Array struct {
 type Environment struct {
 	store map[string]Object
 	outer *Environment
+}
+
+type Quote struct {
+	Node ast.Node
+}
+
+func (q *Quote) Type() ObjectType { return QUOTE_OBJ }
+func (q *Quote) Inspect() string {
+	return "QUOTE(" + q.Node.String() + ")"
 }
 
 func NewEnvironment() *Environment {

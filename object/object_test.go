@@ -15,6 +15,7 @@ func TestObjects(t *testing.T) {
 		{input: &ReturnValue{}, expectedObjectType: RETURN_VALUE_OBJ},
 		{input: &Error{}, expectedObjectType: ERROR_OBJ},
 		{input: &Null{}, expectedObjectType: NULL_OBJ},
+		{input: &Quote{}, expectedObjectType: QUOTE_OBJ},
 	}
 
 	for _, tt := range tests {
