@@ -32,6 +32,8 @@ const (
 	Jump
 	JumpNotTruthy
 	Null
+	GetGlobal
+	SetGlobal
 )
 
 var definitions = map[OperandCode]*Definition{
@@ -51,6 +53,8 @@ var definitions = map[OperandCode]*Definition{
 	Jump:          {"Jump", []int{2}},
 	JumpNotTruthy: {"JumpNotTruthy", []int{2}},
 	Null:          {"Null", []int{}},
+	GetGlobal:     {"GetGlobal", []int{2}},
+	SetGlobal:     {"SetGlobal", []int{2}},
 }
 
 func (ins Instructions) String() string {

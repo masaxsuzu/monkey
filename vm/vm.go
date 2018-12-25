@@ -8,18 +8,20 @@ import (
 )
 
 const StackSize = 2048
+const GlobalSize = 65536
 
 var True = &object.Boolean{Value: true}
 var False = &object.Boolean{Value: false}
 var Null = &object.Null{}
 
 type VirtualMachine struct {
+	DebugMode    bool
 	constants    []object.Object
 	instructions code.Instructions
 
-	stack     []object.Object
-	sp        int // Points to the next value. Top of stack is stack[sp-1]
-	debugMode bool
+	stack   []object.Object
+	sp      int // Points to the next value. Top of stack is stack[sp-1]
+	globals []object.Object
 }
 
 func New(byteCode *compiler.ByteCode) *VirtualMachine {
@@ -28,13 +30,14 @@ func New(byteCode *compiler.ByteCode) *VirtualMachine {
 		constants:    byteCode.Constants,
 		stack:        make([]object.Object, StackSize),
 		sp:           0,
-		debugMode:    false,
+		globals:      make([]object.Object, GlobalSize),
+		DebugMode:    false,
 	}
 }
 
-func DebugMode(byteCode *compiler.ByteCode) *VirtualMachine {
+func NewWithGlobalScope(byteCode *compiler.ByteCode, s []object.Object) *VirtualMachine {
 	vm := New(byteCode)
-	vm.debugMode = true
+	vm.globals = s
 	return vm
 }
 
@@ -46,7 +49,7 @@ func (vm *VirtualMachine) StackTop() object.Object {
 }
 
 func (vm *VirtualMachine) Run() error {
-	if vm.debugMode {
+	if vm.DebugMode {
 		vm.dumpInstructions()
 	}
 	for ip := 0; ip < len(vm.instructions); ip++ {
@@ -93,7 +96,17 @@ func (vm *VirtualMachine) Run() error {
 		case code.Jump:
 			pos := int(code.ReadUint16(vm.instructions[ip+1:]))
 			ip = pos - 1
-
+		case code.GetGlobal:
+			globalIndex := code.ReadUint16(vm.instructions[ip+1:])
+			ip += 2
+			err := vm.push(vm.globals[globalIndex])
+			if err != nil {
+				return err
+			}
+		case code.SetGlobal:
+			globalIndex := code.ReadUint16(vm.instructions[ip+1:])
+			ip += 2
+			vm.globals[globalIndex] = vm.pop()
 		case code.Pop:
 			vm.pop()
 		case code.True:

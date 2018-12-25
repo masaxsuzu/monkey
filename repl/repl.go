@@ -16,6 +16,9 @@ func Start(in io.Reader, out io.Writer, prompt string, useVM bool, debugMode boo
 	scanner := bufio.NewScanner(in)
 	env := object.NewEnvironment()
 	macroEnv := object.NewEnvironment()
+	constants := []object.Object{}
+	globals := make([]object.Object, vm.GlobalSize)
+	symbolTable := compiler.NewSymbolTable()
 	for {
 		fmt.Printf(prompt)
 		scanned := scanner.Scan()
@@ -24,14 +27,14 @@ func Start(in io.Reader, out io.Writer, prompt string, useVM bool, debugMode boo
 		}
 		line := scanner.Text()
 		if useVM {
-			Rep_VM(line, out, debugMode)
+			Rep_VM(line, out, debugMode, constants, globals, symbolTable)
 		} else {
-			Rep(line, out, env,macroEnv)
+			Rep(line, out, env, macroEnv)
 		}
 	}
 }
 
-func Rep(in string, out io.Writer, env *object.Environment,macros *object.Environment) {
+func Rep(in string, out io.Writer, env *object.Environment, macros *object.Environment) {
 	l := lexer.New(in)
 	p := parser.New(l)
 	program := p.ParseProgram()
@@ -43,7 +46,7 @@ func Rep(in string, out io.Writer, env *object.Environment,macros *object.Enviro
 	evaluator.DefineMacros(program, macros)
 	expanded := evaluator.ExpandMacros(program, macros)
 
-	evaluated := evaluator.Eval(expanded,env)
+	evaluated := evaluator.Eval(expanded, env)
 
 	if evaluated != nil {
 		if evaluated.Type() == object.ERROR_OBJ {
@@ -55,7 +58,7 @@ func Rep(in string, out io.Writer, env *object.Environment,macros *object.Enviro
 	}
 }
 
-func Rep_VM(in string, out io.Writer, debugMode bool) {
+func Rep_VM(in string, out io.Writer, debugMode bool, constants []object.Object, scope []object.Object, st *compiler.SymbolTable) {
 	l := lexer.New(in)
 	p := parser.New(l)
 	program := p.ParseProgram()
@@ -64,7 +67,7 @@ func Rep_VM(in string, out io.Writer, debugMode bool) {
 		return
 	}
 
-	c := compiler.New()
+	c := compiler.NewWithState(st, constants)
 
 	err := c.Compile(program)
 
@@ -74,11 +77,10 @@ func Rep_VM(in string, out io.Writer, debugMode bool) {
 	}
 
 	var vMachine *vm.VirtualMachine
-	if debugMode {
-		vMachine = vm.DebugMode(c.ByteCode())
-	} else {
-		vMachine = vm.New(c.ByteCode())
-	}
+	code := c.ByteCode()
+	constants = code.Constants
+	vMachine = vm.NewWithGlobalScope(code, scope)
+	vMachine.DebugMode = debugMode
 	err = vMachine.Run()
 
 	if err != nil {

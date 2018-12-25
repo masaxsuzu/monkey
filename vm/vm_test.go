@@ -65,6 +65,15 @@ func TestConditionals(t *testing.T) {
 	testRun(t, tests)
 }
 
+func TestGlobalLetStatements(t *testing.T) {
+	tests := []testCase{
+		{"let one = 1;one", 1},
+		{"let one = 1 let two = 2; one + two;", 3},
+		{"let one = 1 let two = one +one; one + two;", 3},
+	}
+	testRun(t, tests)
+}
+
 func testRun(t *testing.T, tests []testCase) {
 	t.Helper()
 
