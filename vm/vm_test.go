@@ -55,6 +55,14 @@ func TestBooleanExpressions(t *testing.T) {
 	testRun(t, tests)
 }
 
+func TestStringExpressions(t *testing.T) {
+	tests := []testCase{
+		{`"monkey"`, "monkey"},
+		{`"foo"+ "bar"`, "foobar"},
+	}
+	testRun(t, tests)
+}
+
 func TestConditionals(t *testing.T) {
 	tests := []testCase{
 		{"if(true){10}", 10},
@@ -136,6 +144,11 @@ func testExpectedObject(
 		if err != nil {
 			t.Errorf("%s failed: %s", name, err)
 		}
+	case string:
+		err := testStringObject(string(want), got)
+		if err != nil {
+			t.Errorf("%s failed: %s", name, err)
+		}
 	case *object.Null:
 		if want != Null {
 			t.Errorf("object is not Null: %T (%+v)", got, want)
@@ -163,6 +176,17 @@ func testIntegerObject(expected int64, actual object.Object) error {
 
 func testBooleanObject(expected bool, actual object.Object) error {
 	ret, ok := actual.(*object.Boolean)
+	if !ok {
+		return fmt.Errorf("object is not Boolean.got=%T (%+v)", actual, actual)
+	}
+	if ret.Value != expected {
+		return fmt.Errorf("object has wrong value. want=%v,got=%v", expected, ret.Value)
+	}
+	return nil
+}
+
+func testStringObject(expected string, actual object.Object) error {
+	ret, ok := actual.(*object.String)
 	if !ok {
 		return fmt.Errorf("object is not Boolean.got=%T (%+v)", actual, actual)
 	}

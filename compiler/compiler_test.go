@@ -168,6 +168,30 @@ func TestBooleanExpressions(t *testing.T) {
 	runCompilerTest(t, tests)
 }
 
+func TestStringExpressions(t *testing.T) {
+	tests := []compilerTestCase{
+		{
+			input:             `"monkey"`,
+			expectedConstants: []interface{}{"monkey"},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.Constant, 0),
+				code.Make(code.Pop),
+			},
+		},
+		{
+			input:             `"mon" + "key"`,
+			expectedConstants: []interface{}{"mon", "key"},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.Constant, 0),
+				code.Make(code.Constant, 1),
+				code.Make(code.Add),
+				code.Make(code.Pop),
+			},
+		},
+	}
+	runCompilerTest(t, tests)
+}
+
 func TestConditionals(t *testing.T) {
 	tests := []compilerTestCase{
 		{
@@ -311,6 +335,11 @@ func testConstants(
 			if err != nil {
 				return fmt.Errorf("constant %d - testIntegerObject failed: %s", i, err)
 			}
+		case string:
+			err := testStringObject(constant, actual[i])
+			if err != nil {
+				return fmt.Errorf("constant %d - testStringObject faild : %s", i, err)
+			}
 		}
 	}
 	return nil
@@ -331,6 +360,17 @@ func testIntegerObject(expected int64, actual object.Object) error {
 	}
 	if ret.Value != expected {
 		return fmt.Errorf("object has wrong value. want=%d,got=%d", expected, ret.Value)
+	}
+	return nil
+}
+
+func testStringObject(expected string, actual object.Object) error {
+	ret, ok := actual.(*object.String)
+	if !ok {
+		return fmt.Errorf("object is not string.want=%q,got=%d", expected, actual)
+	}
+	if ret.Value != expected {
+		return fmt.Errorf("object has wrong value. want=%q,got=%q", expected, ret.Value)
 	}
 	return nil
 }
