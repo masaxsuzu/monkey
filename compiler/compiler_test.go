@@ -317,6 +317,47 @@ func TestArrayLiterals(t *testing.T) {
 	runCompilerTest(t, tests)
 }
 
+func TestHashLiterals(t *testing.T) {
+	tests := []compilerTestCase{
+		{
+			input:             `{}`,
+			expectedConstants: []interface{}{},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.Hash, 0),
+				code.Make(code.Pop),
+			},
+		},
+		{
+			input:             `{1:2,3:4,5:6}`,
+			expectedConstants: []interface{}{1, 2, 3, 4, 5, 6},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.Constant, 0),
+				code.Make(code.Constant, 1),
+				code.Make(code.Constant, 2),
+				code.Make(code.Constant, 3),
+				code.Make(code.Constant, 4),
+				code.Make(code.Constant, 5),
+				code.Make(code.Hash, 6),
+				code.Make(code.Pop),
+			},
+		},
+		{
+
+			input:             `{1:2+3}`,
+			expectedConstants: []interface{}{1, 2, 3},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.Constant, 0),
+				code.Make(code.Constant, 1),
+				code.Make(code.Constant, 2),
+				code.Make(code.Add),
+				code.Make(code.Hash, 2),
+				code.Make(code.Pop),
+			},
+		},
+	}
+	runCompilerTest(t, tests)
+}
+
 func runCompilerTest(t *testing.T, tests []compilerTestCase) {
 	t.Helper()
 

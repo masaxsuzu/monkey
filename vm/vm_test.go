@@ -82,6 +82,13 @@ func TestArrayLiterals(t *testing.T) {
 	testRun(t, tests)
 }
 
+func TestHashLiterals(t *testing.T) {
+	tests := []testCase{
+		{"{}", map[object.HashKey]int64{}},
+	}
+	testRun(t, tests)
+}
+
 func TestGlobalLetStatements(t *testing.T) {
 	tests := []testCase{
 		{"let one = 1;one", 1},
@@ -168,6 +175,24 @@ func testExpectedObject(
 		}
 		for key, value := range want {
 			err := testIntegerObject(int64(value), array.Elements[key])
+			if err != nil {
+				t.Errorf("testIntegerObject failed: %s", err)
+			}
+		}
+	case map[object.HashKey]int64:
+		hash, ok := got.(*object.Hash)
+		if !ok {
+			t.Errorf("object is not Hash. got=%T (%+v)", got, got)
+		}
+		if len(hash.Pairs) != len(want) {
+			t.Errorf("wrong num of pairs. want=%d, got=%d", len(want), len(hash.Pairs))
+		}
+		for key, value := range want {
+			pair, ok := hash.Pairs[key]
+			if !ok {
+				t.Errorf("no pair for given key `%v` in pairs", key.Value)
+			}
+			err := testIntegerObject(value, pair.Value)
 			if err != nil {
 				t.Errorf("testIntegerObject failed: %s", err)
 			}

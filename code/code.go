@@ -35,6 +35,7 @@ const (
 	GetGlobal
 	SetGlobal
 	Array
+	Hash
 )
 
 var definitions = map[OperandCode]*Definition{
@@ -57,6 +58,7 @@ var definitions = map[OperandCode]*Definition{
 	GetGlobal:     {"GetGlobal", []int{2}},
 	SetGlobal:     {"SetGlobal", []int{2}},
 	Array:         {"Array", []int{2}},
+	Hash:          {"Hash", []int{2}},
 }
 
 func (ins Instructions) String() string {

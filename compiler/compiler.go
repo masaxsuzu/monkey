@@ -5,6 +5,7 @@ import (
 	"github.com/masa-suzu/monkey/ast"
 	"github.com/masa-suzu/monkey/code"
 	"github.com/masa-suzu/monkey/object"
+	"sort"
 )
 
 type EmittedInstruction struct {
@@ -204,6 +205,31 @@ func (c *Compiler) Compile(node ast.Node) error {
 			}
 		}
 		c.emit(code.Array, len(node.Elements))
+	case *ast.HashLiteral:
+		var err error = nil
+		compileNode := func(n ast.Node) {
+			if err == nil {
+				err = c.Compile(n)
+			}
+		}
+		keys := []ast.Expression{}
+		for key := range node.Pairs {
+			keys = append(keys, key)
+		}
+
+		sort.Slice(keys, func(i, j int) bool {
+			return keys[i].String() < keys[j].String()
+		})
+
+		for _, key := range keys {
+			compileNode(key)
+			compileNode(node.Pairs[key])
+			if err != nil {
+				return err
+			}
+		}
+
+		c.emit(code.Hash, len(node.Pairs)*2)
 	}
 	return nil
 }
