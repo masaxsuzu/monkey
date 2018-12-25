@@ -73,6 +73,15 @@ func TestConditionals(t *testing.T) {
 	testRun(t, tests)
 }
 
+func TestArrayLiterals(t *testing.T) {
+	tests := []testCase{
+		{"[]", []int{}},
+		{"[1,2,3]", []int{1, 2, 3}},
+		{"[1+2,3*4]", []int{3, 12}},
+	}
+	testRun(t, tests)
+}
+
 func TestGlobalLetStatements(t *testing.T) {
 	tests := []testCase{
 		{"let one = 1;one", 1},
@@ -149,6 +158,21 @@ func testExpectedObject(
 		if err != nil {
 			t.Errorf("%s failed: %s", name, err)
 		}
+	case []int:
+		array, ok := got.(*object.Array)
+		if !ok {
+			t.Errorf("object not Array:%T (%+v)", got, got)
+		}
+		if len(array.Elements) != len(want) {
+			t.Errorf("wrong num of elements. want=%d, got=%d", len(want), len(array.Elements))
+		}
+		for key, value := range want {
+			err := testIntegerObject(int64(value), array.Elements[key])
+			if err != nil {
+				t.Errorf("testIntegerObject failed: %s", err)
+			}
+		}
+
 	case *object.Null:
 		if want != Null {
 			t.Errorf("object is not Null: %T (%+v)", got, want)

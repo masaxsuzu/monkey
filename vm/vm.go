@@ -107,6 +107,17 @@ func (vm *VirtualMachine) Run() error {
 			globalIndex := code.ReadUint16(vm.instructions[ip+1:])
 			ip += 2
 			vm.globals[globalIndex] = vm.pop()
+		case code.Array:
+			numElements := int(code.ReadUint16(vm.instructions[ip+1:]))
+			ip += 2
+			array := vm.buildArray(vm.sp-numElements, vm.sp)
+			vm.sp = vm.sp - numElements
+
+			err := vm.push(array)
+
+			if err != nil {
+				return err
+			}
 		case code.Pop:
 			vm.pop()
 		case code.True:
@@ -279,6 +290,14 @@ func nativeBoolToBooleanObject(ret bool) *object.Boolean {
 		return True
 	}
 	return False
+}
+
+func (vm *VirtualMachine) buildArray(startIndex, endIndex int) object.Object {
+	elements := make([]object.Object, endIndex-startIndex)
+	for i := startIndex; i < endIndex; i++ {
+		elements[i-startIndex] = vm.stack[i]
+	}
+	return &object.Array{Elements: elements}
 }
 
 func (vm *VirtualMachine) dumpInstructions() {

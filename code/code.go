@@ -34,6 +34,7 @@ const (
 	Null
 	GetGlobal
 	SetGlobal
+	Array
 )
 
 var definitions = map[OperandCode]*Definition{
@@ -55,6 +56,7 @@ var definitions = map[OperandCode]*Definition{
 	Null:          {"Null", []int{}},
 	GetGlobal:     {"GetGlobal", []int{2}},
 	SetGlobal:     {"SetGlobal", []int{2}},
+	Array:         {"Array", []int{2}},
 }
 
 func (ins Instructions) String() string {
