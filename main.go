@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/masa-suzu/monkey/repl"
 	"os"
-	"os/user"
 )
 
 var (
@@ -14,15 +13,10 @@ var (
 )
 
 func main() {
-	u, err := user.Current()
-	if err != nil {
-		panic(err)
-	}
 
 	flag.Parse()
 
-	fmt.Printf("Hello %s! This is the Monkey programming language!\n", u.Username)
-	fmt.Printf("Execute exit() then exit monkey!\n")
+	fmt.Printf("Hello! This is the Monkey programming language!\n")
 
-	repl.Start(os.Stdin, os.Stdout, "$ ", *useVM, *debugMode)
+	repl.Start(os.Stdin, os.Stdout, ">> ", *useVM, *debugMode)
 }

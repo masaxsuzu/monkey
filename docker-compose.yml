@@ -2,6 +2,7 @@ version: '3'
 services:
   dev:
     build: .
-    volumes: 
+    hostname: monkey
+    volumes:
       - .:/go/src/github.com/masa-suzu/monkey
     working_dir: /go/src/github.com/masa-suzu/monkey

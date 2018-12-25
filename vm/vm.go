@@ -49,9 +49,6 @@ func (vm *VirtualMachine) StackTop() object.Object {
 }
 
 func (vm *VirtualMachine) Run() error {
-	if vm.DebugMode {
-		vm.dumpInstructions()
-	}
 	for ip := 0; ip < len(vm.instructions); ip++ {
 		op := code.OperandCode(vm.instructions[ip])
 		switch op {
@@ -162,6 +159,9 @@ func (vm *VirtualMachine) Run() error {
 				return err
 			}
 		}
+	}
+	if vm.DebugMode {
+		vm.dump()
 	}
 	return nil
 }
@@ -383,6 +383,13 @@ func (vm *VirtualMachine) buildHash(startIndex, endIndex int) (object.Object, er
 	return &object.Hash{Pairs: hashedPairs}, nil
 }
 
-func (vm *VirtualMachine) dumpInstructions() {
-	fmt.Printf("[dump]\n%s[out]\n", vm.instructions)
+func (vm *VirtualMachine) dump() {
+	fmt.Printf("[instructions]\n%s", vm.instructions)
+	fmt.Println("[global scope]")
+	for i, v := range vm.globals {
+		if v != nil {
+			fmt.Printf("%04d %v\n", i, v.Inspect())
+		}
+	}
+	fmt.Println("[out]")
 }
