@@ -29,22 +29,26 @@ const (
 	GreaterThan
 	Minus
 	Bang
+	Jump
+	JumpNotTruthy
 )
 
 var definitions = map[OperandCode]*Definition{
-	Constant:    {"Constant", []int{2}},
-	Add:         {"Add", []int{}},
-	Sub:         {"Sub", []int{}},
-	Mul:         {"Mul", []int{}},
-	Div:         {"Div", []int{}},
-	Pop:         {"Pop", []int{}},
-	True:        {"True", []int{}},
-	False:       {"False", []int{}},
-	Equal:       {"Equal", []int{}},
-	NotEqual:    {"NotEqual", []int{}},
-	GreaterThan: {"GreaterThan", []int{}},
-	Minus:       {"Minus", []int{}},
-	Bang:        {"Bang", []int{}},
+	Constant:      {"Constant", []int{2}},
+	Add:           {"Add", []int{}},
+	Sub:           {"Sub", []int{}},
+	Mul:           {"Mul", []int{}},
+	Div:           {"Div", []int{}},
+	Pop:           {"Pop", []int{}},
+	True:          {"True", []int{}},
+	False:         {"False", []int{}},
+	Equal:         {"Equal", []int{}},
+	NotEqual:      {"NotEqual", []int{}},
+	GreaterThan:   {"GreaterThan", []int{}},
+	Minus:         {"Minus", []int{}},
+	Bang:          {"Bang", []int{}},
+	Jump:          {"Jump", []int{2}},
+	JumpNotTruthy: {"JumpNotTruthy", []int{2}},
 }
 
 func (ins Instructions) String() string {

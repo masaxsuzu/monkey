@@ -45,6 +45,8 @@ func TestInstructionsString(t *testing.T) {
 		Make(False),
 		Make(Minus),
 		Make(Bang),
+		Make(Jump, 1),
+		Make(JumpNotTruthy, 2),
 	}
 	expected := `0000 Add
 0001 Constant 2
@@ -60,6 +62,8 @@ func TestInstructionsString(t *testing.T) {
 0015 False
 0016 Minus
 0017 Bang
+0018 Jump 1
+0021 JumpNotTruthy 2
 `
 
 	concatted := Instructions{}
@@ -91,6 +95,8 @@ func TestReadOperands(t *testing.T) {
 		{GreaterThan, []int{}, 0},
 		{Minus, []int{}, 0},
 		{Bang, []int{}, 0},
+		{Jump, []int{}, 2},
+		{JumpNotTruthy, []int{}, 2},
 	}
 
 	for _, tt := range tests {

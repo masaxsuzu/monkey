@@ -7,21 +7,37 @@ import (
 	"github.com/masa-suzu/monkey/object"
 )
 
+type EmittedInstruction struct {
+	Code     code.OperandCode
+	Position int
+}
+
 type Compiler struct {
-	instructions code.Instructions
-	constants    []object.Object
+	instructions        code.Instructions
+	constants           []object.Object
+	lastInstruction     EmittedInstruction
+	previousInstruction EmittedInstruction
 }
 
 func New() *Compiler {
 	return &Compiler{
-		instructions: code.Instructions{},
-		constants:    []object.Object{},
+		instructions:        code.Instructions{},
+		constants:           []object.Object{},
+		lastInstruction:     EmittedInstruction{},
+		previousInstruction: EmittedInstruction{},
 	}
 }
 
 func (c *Compiler) Compile(node ast.Node) error {
 	switch node := node.(type) {
 	case *ast.Program:
+		for _, s := range node.Statements {
+			err := c.Compile(s)
+			if err != nil {
+				return err
+			}
+		}
+	case *ast.BlockStatement:
 		for _, s := range node.Statements {
 			err := c.Compile(s)
 			if err != nil {
@@ -93,6 +109,56 @@ func (c *Compiler) Compile(node ast.Node) error {
 		default:
 			return fmt.Errorf("unknown operator %s", node.Operator)
 		}
+	case *ast.IfExpression:
+		var err error = nil
+		compileNode := func(n ast.Node) {
+			if err == nil {
+				err = c.Compile(n)
+			}
+		}
+
+		compileNode(node.Condition)
+
+		if err != nil {
+			return err
+		}
+
+		jumpNotTruthyPos := c.emit(code.JumpNotTruthy, -1)
+
+		compileNode(node.Consequence)
+
+		if err != nil {
+			return err
+		}
+
+		if c.lastInstructionIsPop() {
+			c.removeLastPop()
+		}
+
+		changeOperandAtXByTail := func(x int) {
+			tailPos := len(c.instructions)
+			c.changeOperand(x, tailPos)
+		}
+		if node.Alternative == nil {
+			changeOperandAtXByTail(jumpNotTruthyPos)
+		} else {
+			jumpPos := c.emit(code.Jump, -1)
+
+			changeOperandAtXByTail(jumpNotTruthyPos)
+
+			err = c.Compile(node.Alternative)
+
+			if err != nil {
+				return err
+			}
+
+			if c.lastInstructionIsPop() {
+				c.removeLastPop()
+			}
+
+			changeOperandAtXByTail(jumpPos)
+		}
+
 	case *ast.IntegerLiteral:
 		integer := &object.Integer{Value: node.Value}
 		c.emit(code.Constant, c.addConstant(integer))
@@ -121,6 +187,8 @@ type ByteCode struct {
 func (c *Compiler) emit(op code.OperandCode, operand ...int) int {
 	ins := code.Make(op, operand...)
 	pos := c.addInstruction(ins)
+
+	c.setLastInstruction(op, pos)
 	return pos
 }
 
@@ -128,6 +196,35 @@ func (c *Compiler) addInstruction(ins []byte) int {
 	posNewInstruction := len(c.instructions)
 	c.instructions = append(c.instructions, ins...)
 	return posNewInstruction
+}
+
+func (c *Compiler) setLastInstruction(op code.OperandCode, pos int) {
+	prev := c.lastInstruction
+	last := EmittedInstruction{op, pos}
+
+	c.previousInstruction = prev
+	c.lastInstruction = last
+}
+
+func (c *Compiler) lastInstructionIsPop() bool {
+	return c.lastInstruction.Code == code.Pop
+}
+
+func (c *Compiler) removeLastPop() {
+	c.instructions = c.instructions[:c.lastInstruction.Position]
+	c.lastInstruction = c.previousInstruction
+}
+
+func (c *Compiler) replaceInstruction(opPos int, new []byte) {
+	for i := 0; i < len(new); i++ {
+		c.instructions[opPos+i] = new[i]
+	}
+}
+
+func (c *Compiler) changeOperand(opPos int, operand int) {
+	op := code.OperandCode(c.instructions[opPos])
+	newIns := code.Make(op, operand)
+	c.replaceInstruction(opPos, newIns)
 }
 
 func (c *Compiler) addConstant(obj object.Object) int {
