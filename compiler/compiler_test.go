@@ -358,6 +358,51 @@ func TestHashLiterals(t *testing.T) {
 	runCompilerTest(t, tests)
 }
 
+func TestIndexExpressions(t *testing.T) {
+	tests := []compilerTestCase{
+		{
+
+			input:             `[1+2,3-4,5*6][1+2]`,
+			expectedConstants: []interface{}{1, 2, 3, 4, 5, 6, 1, 2},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.Constant, 0),
+				code.Make(code.Constant, 1),
+				code.Make(code.Add),
+				code.Make(code.Constant, 2),
+				code.Make(code.Constant, 3),
+				code.Make(code.Sub),
+				code.Make(code.Constant, 4),
+				code.Make(code.Constant, 5),
+				code.Make(code.Mul),
+				code.Make(code.Array, 3),
+				code.Make(code.Constant, 6),
+				code.Make(code.Constant, 7),
+				code.Make(code.Add),
+				code.Make(code.Index),
+				code.Make(code.Pop),
+			},
+		},
+
+		{
+			input:             `{1:2,3:4,5:6}[1]`,
+			expectedConstants: []interface{}{1, 2, 3, 4, 5, 6, 1},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.Constant, 0),
+				code.Make(code.Constant, 1),
+				code.Make(code.Constant, 2),
+				code.Make(code.Constant, 3),
+				code.Make(code.Constant, 4),
+				code.Make(code.Constant, 5),
+				code.Make(code.Hash, 6),
+				code.Make(code.Constant, 6),
+				code.Make(code.Index),
+				code.Make(code.Pop),
+			},
+		},
+	}
+	runCompilerTest(t, tests)
+}
+
 func runCompilerTest(t *testing.T, tests []compilerTestCase) {
 	t.Helper()
 

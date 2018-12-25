@@ -230,6 +230,20 @@ func (c *Compiler) Compile(node ast.Node) error {
 		}
 
 		c.emit(code.Hash, len(node.Pairs)*2)
+	case *ast.IndexExpression:
+		var err error = nil
+		compileNode := func(n ast.Node) {
+			if err == nil {
+				err = c.Compile(n)
+			}
+		}
+		compileNode(node.Left)
+		compileNode(node.Index)
+
+		if err != nil {
+			return err
+		}
+		c.emit(code.Index)
 	}
 	return nil
 }

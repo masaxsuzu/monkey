@@ -89,6 +89,21 @@ func TestHashLiterals(t *testing.T) {
 	testRun(t, tests)
 }
 
+func TestIndexExpression(t *testing.T) {
+	tests := []testCase{
+		{"[1,2,3][1]", 2},
+		{"[[1,2,3]][0][0]", 1},
+		// TODO : fix a bug of parser.
+		//{"[][0]", Null},
+		{"[1][10]", Null},
+		{"{1:1,2:2}[1]", 1},
+		{"{1:1,2:2}[2]", 2},
+		{"{1:1}[0]", Null},
+		{"{}[0]", Null},
+	}
+	testRun(t, tests)
+}
+
 func TestGlobalLetStatements(t *testing.T) {
 	tests := []testCase{
 		{"let one = 1;one", 1},
@@ -102,23 +117,25 @@ func testRun(t *testing.T, tests []testCase) {
 	t.Helper()
 
 	for _, tt := range tests {
-		p := parse(tt.in)
-		c := compiler.New()
-		err := c.Compile(p)
-		if err != nil {
-			t.Fatalf("compiler got error: %s", err)
-		}
+		t.Run(tt.in, func(t *testing.T) {
+			p := parse(tt.in)
+			c := compiler.New()
+			err := c.Compile(p)
+			if err != nil {
+				t.Fatalf("compiler got error: %s", err)
+			}
 
-		vm := New(c.ByteCode())
-		err = vm.Run()
+			vm := New(c.ByteCode())
+			err = vm.Run()
 
-		if err != nil {
-			t.Fatalf("vm.Run got error: %s", err)
-		}
+			if err != nil {
+				t.Fatalf("vm.Run got error: %s", err)
+			}
 
-		stackElem := vm.LastPoppedStackElement()
+			stackElem := vm.LastPoppedStackElement()
 
-		testExpectedObject(t, tt.in, tt.want, stackElem)
+			testExpectedObject(t, tt.in, tt.want, stackElem)
+		})
 	}
 }
 
