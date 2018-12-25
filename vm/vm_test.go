@@ -93,8 +93,7 @@ func TestIndexExpression(t *testing.T) {
 	tests := []testCase{
 		{"[1,2,3][1]", 2},
 		{"[[1,2,3]][0][0]", 1},
-		// TODO : fix a bug of parser.
-		//{"[][0]", Null},
+		{"[][0]", Null},
 		{"[1][10]", Null},
 		{"{1:1,2:2}[1]", 1},
 		{"{1:1,2:2}[2]", 2},

@@ -656,6 +656,32 @@ func TestParsingIndexExpressions(t *testing.T) {
 	}
 }
 
+func TestParsingEmptyArrayIndex(t *testing.T) {
+	input := "[][0]"
+
+	l := lexer.New(input)
+	p := New(l)
+	program := p.ParseProgram()
+	checkParserErrors(t, p)
+
+	stmt, ok := program.Statements[0].(*ast.ExpressionStatement)
+	indexExp, ok := stmt.Expression.(*ast.IndexExpression)
+	if !ok {
+		t.Fatalf("exp not *ast.IndexExpression. got=%T", stmt.Expression)
+	}
+
+	if !testIntegerLiteral(t, indexExp.Index, 0) {
+		return
+	}
+
+	_, ok = indexExp.Left.(*ast.ArrayLiteral)
+
+	if !ok {
+		t.Fatalf("stmt not *ast.ArrayLiteral. got=%T", stmt.Expression)
+	}
+
+}
+
 func TestParsingEmptyHashLiteral(t *testing.T) {
 	input := "{}"
 
