@@ -50,6 +50,17 @@ func TestBooleanExpressions(t *testing.T) {
 		{"!true", false},
 		{"!!true", true},
 		{"!1", false},
+		{"!(if(false){5;})", true},
+	}
+	testRun(t, tests)
+}
+
+func TestConditionals(t *testing.T) {
+	tests := []testCase{
+		{"if(true){10}", 10},
+		{"if(true){10}else{20}", 10},
+		{"if(false){10}else{20}", 20},
+		{"if((if(false){10})){10}else{20}", 20},
 	}
 	testRun(t, tests)
 }
@@ -115,6 +126,10 @@ func testExpectedObject(
 		err := testBooleanObject(bool(want), got)
 		if err != nil {
 			t.Errorf("%s failed: %s", name, err)
+		}
+	case *object.Null:
+		if want != Null {
+			t.Errorf("object is not Null: %T (%+v)", got, want)
 		}
 	}
 }

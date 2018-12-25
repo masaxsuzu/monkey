@@ -174,26 +174,28 @@ func TestConditionals(t *testing.T) {
 			input:             "if(true){10}3333",
 			expectedConstants: []interface{}{10, 3333},
 			expectedInstructions: []code.Instructions{
-				code.Make(code.True),             //0000
-				code.Make(code.JumpNotTruthy, 7), //0001
-				code.Make(code.Constant, 0),      //0004
-				code.Make(code.Pop),              //0007
-				code.Make(code.Constant, 1),      //0008
-				code.Make(code.Pop),              //0011
+				code.Make(code.True),
+				code.Make(code.JumpNotTruthy, 10),
+				code.Make(code.Constant, 0),
+				code.Make(code.Jump, 11),
+				code.Make(code.Null),
+				code.Make(code.Pop),
+				code.Make(code.Constant, 1),
+				code.Make(code.Pop),
 			},
 		},
 		{
 			input:             "if(true){10}else{20}3333",
 			expectedConstants: []interface{}{10, 20, 3333},
 			expectedInstructions: []code.Instructions{
-				code.Make(code.True),              //0000
-				code.Make(code.JumpNotTruthy, 10), //0001
-				code.Make(code.Constant, 0),       //0004
-				code.Make(code.Jump, 13),          //0007
-				code.Make(code.Constant, 1),       //0010
-				code.Make(code.Pop),               //0013
-				code.Make(code.Constant, 2),       //0014
-				code.Make(code.Pop),               //0017
+				code.Make(code.True),
+				code.Make(code.JumpNotTruthy, 10),
+				code.Make(code.Constant, 0),
+				code.Make(code.Jump, 13),
+				code.Make(code.Constant, 1),
+				code.Make(code.Pop),
+				code.Make(code.Constant, 2),
+				code.Make(code.Pop),
 			},
 		},
 	}

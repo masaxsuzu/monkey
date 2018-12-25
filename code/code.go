@@ -31,6 +31,7 @@ const (
 	Bang
 	Jump
 	JumpNotTruthy
+	Null
 )
 
 var definitions = map[OperandCode]*Definition{
@@ -49,6 +50,7 @@ var definitions = map[OperandCode]*Definition{
 	Bang:          {"Bang", []int{}},
 	Jump:          {"Jump", []int{2}},
 	JumpNotTruthy: {"JumpNotTruthy", []int{2}},
+	Null:          {"Null", []int{}},
 }
 
 func (ins Instructions) String() string {

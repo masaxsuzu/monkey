@@ -47,6 +47,7 @@ func TestInstructionsString(t *testing.T) {
 		Make(Bang),
 		Make(Jump, 1),
 		Make(JumpNotTruthy, 2),
+		Make(Null),
 	}
 	expected := `0000 Add
 0001 Constant 2
@@ -64,6 +65,7 @@ func TestInstructionsString(t *testing.T) {
 0017 Bang
 0018 Jump 1
 0021 JumpNotTruthy 2
+0024 Null
 `
 
 	concatted := Instructions{}

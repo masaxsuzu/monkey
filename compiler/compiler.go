@@ -139,12 +139,14 @@ func (c *Compiler) Compile(node ast.Node) error {
 			tailPos := len(c.instructions)
 			c.changeOperand(x, tailPos)
 		}
-		if node.Alternative == nil {
-			changeOperandAtXByTail(jumpNotTruthyPos)
-		} else {
-			jumpPos := c.emit(code.Jump, -1)
 
-			changeOperandAtXByTail(jumpNotTruthyPos)
+		jumpPos := c.emit(code.Jump, -1)
+
+		changeOperandAtXByTail(jumpNotTruthyPos)
+
+		if node.Alternative == nil {
+			c.emit(code.Null)
+		} else {
 
 			err = c.Compile(node.Alternative)
 
@@ -156,8 +158,9 @@ func (c *Compiler) Compile(node ast.Node) error {
 				c.removeLastPop()
 			}
 
-			changeOperandAtXByTail(jumpPos)
 		}
+
+		changeOperandAtXByTail(jumpPos)
 
 	case *ast.IntegerLiteral:
 		integer := &object.Integer{Value: node.Value}
