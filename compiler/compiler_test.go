@@ -423,6 +423,42 @@ func TestFunctions(t *testing.T) {
 				code.Make(code.Pop),
 			},
 		},
+		{
+
+			input: `fn(){5 + 10}`,
+			expectedConstants: []interface{}{
+				5,
+				10,
+				[]code.Instructions{
+					code.Make(code.Constant, 0),
+					code.Make(code.Constant, 1),
+					code.Make(code.Add),
+					code.Make(code.ReturnValue),
+				},
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.Constant, 2),
+				code.Make(code.Pop),
+			},
+		},
+		{
+
+			input: `fn(){1;2}`,
+			expectedConstants: []interface{}{
+				1,
+				2,
+				[]code.Instructions{
+					code.Make(code.Constant, 0),
+					code.Make(code.Pop),
+					code.Make(code.Constant, 1),
+					code.Make(code.ReturnValue),
+				},
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.Constant, 2),
+				code.Make(code.Pop),
+			},
+		},
 	}
 	runCompilerTest(t, tests)
 }
