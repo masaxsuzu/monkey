@@ -111,6 +111,43 @@ func TestGlobalLetStatements(t *testing.T) {
 	testRun(t, tests)
 }
 
+func TestCallingFunctions(t *testing.T) {
+	tests := []testCase{
+		{
+			"let f = fn(){5 +10};f()",
+			15},
+		{
+			`
+				let one = fn(){1};
+				let two = fn(){2};
+				one() + two();
+			`,
+			3,
+		},
+		{
+			`
+				let one = fn(){1};
+				let two = fn(){one()*2};
+				fn(){two()+1}()
+			`,
+			3,
+		},
+		{
+			`
+				fn(){1;2}();
+			`,
+			2,
+		},
+		{
+			`
+				fn(){return 1;2}();
+			`,
+			1,
+		},
+	}
+	testRun(t, tests)
+}
+
 func testRun(t *testing.T, tests []testCase) {
 	t.Helper()
 

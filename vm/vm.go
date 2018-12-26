@@ -128,6 +128,23 @@ func (vm *VirtualMachine) Run() error {
 			globalIndex := code.ReadUint16(ins[ip+1:])
 			vm.currentFrame().ip += 2
 			vm.globals[globalIndex] = vm.pop()
+		case code.Call:
+			fn, ok := vm.stack[vm.sp-1].(*object.CompiledFunction)
+			if !ok {
+				return fmt.Errorf("calling non-function")
+			}
+			frame := NewFrame(fn)
+			vm.pushFrame(frame)
+		case code.ReturnValue:
+			ret := vm.pop()
+
+			vm.popFrame()
+			vm.pop() // remove *object.CompiledFunction
+			err := vm.push(ret)
+
+			if err != nil {
+				return err
+			}
 		case code.Array:
 			numElements := int(code.ReadUint16(ins[ip+1:]))
 			if numElements == 0 {
