@@ -33,7 +33,9 @@ const (
 	JumpNotTruthy
 	Null
 	GetGlobal
+	GetLocal
 	SetGlobal
+	SetLocal
 	Array
 	Hash
 	Index
@@ -60,7 +62,9 @@ var definitions = map[OperandCode]*Definition{
 	JumpNotTruthy: {"JumpNotTruthy", []int{2}},
 	Null:          {"Null", []int{}},
 	GetGlobal:     {"GetGlobal", []int{2}},
+	GetLocal:      {"GetLocal", []int{1}},
 	SetGlobal:     {"SetGlobal", []int{2}},
+	SetLocal:      {"SetLocal", []int{1}},
 	Array:         {"Array", []int{2}},
 	Hash:          {"Hash", []int{2}},
 	Index:         {"Index", []int{}},
@@ -131,6 +135,8 @@ func Make(op OperandCode, operands ...int) []byte {
 	for i, o := range operands {
 		width := def.OperandWidths[i]
 		switch width {
+		case 1:
+			instruction[offset] = byte(o)
 		case 2:
 			binary.BigEndian.PutUint16(instruction[offset:], uint16(o))
 		}
@@ -147,12 +153,18 @@ func ReadOperands(def *Definition, ins Instructions) ([]int, int) {
 
 	for i, width := range def.OperandWidths {
 		switch width {
+		case 1:
+			operands[i] = int(ReadUint8(ins[offset:]))
 		case 2:
 			operands[i] = int(ReadUint16(ins[offset:]))
 		}
 		offset += width
 	}
 	return operands, offset
+}
+
+func ReadUint8(ins Instructions) uint8 {
+	return uint8(ins[0])
 }
 
 func ReadUint16(ins Instructions) uint16 {

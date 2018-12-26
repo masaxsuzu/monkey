@@ -11,6 +11,7 @@ func TestMake(t *testing.T) {
 		{Constant, []int{1}, []byte{byte(Constant), 0, 1}},
 		{Constant, []int{65534}, []byte{byte(Constant), 255, 254}},
 		{Add, []int{}, []byte{byte(Add)}},
+		{GetLocal, []int{255}, []byte{byte(GetLocal), 255}},
 		{OperandCode(255), nil, []byte{}},
 	}
 
@@ -47,6 +48,7 @@ func TestInstructionsString(t *testing.T) {
 		Make(Bang),
 		Make(Jump, 1),
 		Make(JumpNotTruthy, 2),
+		Make(GetLocal, 1),
 		Make(Null),
 	}
 	expected := `0000 Add
@@ -65,7 +67,8 @@ func TestInstructionsString(t *testing.T) {
 0017 Bang
 0018 Jump 1
 0021 JumpNotTruthy 2
-0024 Null
+0024 GetLocal 1
+0026 Null
 `
 
 	concatted := Instructions{}
