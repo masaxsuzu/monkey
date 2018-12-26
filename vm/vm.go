@@ -9,29 +9,38 @@ import (
 
 const StackSize = 2048
 const GlobalSize = 65536
+const MaxFrames = 1024
 
 var True = &object.Boolean{Value: true}
 var False = &object.Boolean{Value: false}
 var Null = &object.Null{}
 
 type VirtualMachine struct {
-	DebugMode    bool
-	constants    []object.Object
-	instructions code.Instructions
+	DebugMode bool
+	constants []object.Object
 
-	stack   []object.Object
-	sp      int // Points to the next value. Top of stack is stack[sp-1]
-	globals []object.Object
+	stack      []object.Object
+	sp         int // Points to the next value. Top of stack is stack[sp-1]
+	globals    []object.Object
+	frames     []*Frame
+	frameIndex int
 }
 
 func New(byteCode *compiler.ByteCode) *VirtualMachine {
+	main := &object.CompiledFunction{Instructions: byteCode.Instructions}
+	mainFrame := NewFrame(main)
+	frames := make([]*Frame, MaxFrames)
+	frames[0] = mainFrame
+
 	return &VirtualMachine{
-		instructions: byteCode.Instructions,
-		constants:    byteCode.Constants,
-		stack:        make([]object.Object, StackSize),
-		sp:           0,
-		globals:      make([]object.Object, GlobalSize),
-		DebugMode:    false,
+		constants:  byteCode.Constants,
+		stack:      make([]object.Object, StackSize),
+		sp:         0,
+		globals:    make([]object.Object, GlobalSize),
+		frames:     frames,
+		frameIndex: 1,
+
+		DebugMode: false,
 	}
 }
 
@@ -49,12 +58,19 @@ func (vm *VirtualMachine) StackTop() object.Object {
 }
 
 func (vm *VirtualMachine) Run() error {
-	for ip := 0; ip < len(vm.instructions); ip++ {
-		op := code.OperandCode(vm.instructions[ip])
+	var ip int
+	var ins code.Instructions
+	var op code.OperandCode
+
+	for vm.currentFrame().ip < len(vm.currentFrame().Instructions())-1 {
+		vm.currentFrame().ip++
+		ip = vm.currentFrame().ip
+		ins = vm.currentFrame().Instructions()
+		op = code.OperandCode(ins[ip])
 		switch op {
 		case code.Constant:
-			index := code.ReadUint16(vm.instructions[ip+1:])
-			ip += 2
+			index := code.ReadUint16(ins[ip+1:])
+			vm.currentFrame().ip += 2
 
 			err := vm.push(vm.constants[index])
 
@@ -90,34 +106,34 @@ func (vm *VirtualMachine) Run() error {
 				return err
 			}
 		case code.JumpNotTruthy:
-			pos := int(code.ReadUint16(vm.instructions[ip+1:]))
-			ip += 2
+			pos := int(code.ReadUint16(ins[ip+1:]))
+			vm.currentFrame().ip += 2
 
 			condition := vm.pop()
 			if !isTruthy(condition) {
-				ip = pos - 1
+				vm.currentFrame().ip = pos - 1
 			}
 
 		case code.Jump:
-			pos := int(code.ReadUint16(vm.instructions[ip+1:]))
-			ip = pos - 1
+			pos := int(code.ReadUint16(ins[ip+1:]))
+			vm.currentFrame().ip = pos - 1
 		case code.GetGlobal:
-			globalIndex := code.ReadUint16(vm.instructions[ip+1:])
-			ip += 2
+			globalIndex := code.ReadUint16(ins[ip+1:])
+			vm.currentFrame().ip += 2
 			err := vm.push(vm.globals[globalIndex])
 			if err != nil {
 				return err
 			}
 		case code.SetGlobal:
-			globalIndex := code.ReadUint16(vm.instructions[ip+1:])
-			ip += 2
+			globalIndex := code.ReadUint16(ins[ip+1:])
+			vm.currentFrame().ip += 2
 			vm.globals[globalIndex] = vm.pop()
 		case code.Array:
-			numElements := int(code.ReadUint16(vm.instructions[ip+1:]))
+			numElements := int(code.ReadUint16(ins[ip+1:]))
 			if numElements == 0 {
 
 			}
-			ip += 2
+			vm.currentFrame().ip += 2
 			array := vm.buildArray(vm.sp-numElements, vm.sp)
 			vm.sp = vm.sp - numElements
 
@@ -127,8 +143,8 @@ func (vm *VirtualMachine) Run() error {
 				return err
 			}
 		case code.Hash:
-			numElements := int(code.ReadUint16(vm.instructions[ip+1:]))
-			ip += 2
+			numElements := int(code.ReadUint16(ins[ip+1:]))
+			vm.currentFrame().ip += 2
 			hash, err := vm.buildHash(vm.sp-numElements, vm.sp)
 			if err != nil {
 				return err
@@ -390,8 +406,21 @@ func (vm *VirtualMachine) buildHash(startIndex, endIndex int) (object.Object, er
 	return &object.Hash{Pairs: hashedPairs}, nil
 }
 
+func (vm *VirtualMachine) currentFrame() *Frame {
+	return vm.frames[vm.frameIndex-1]
+}
+
+func (vm *VirtualMachine) pushFrame(f *Frame) {
+	vm.frames[vm.frameIndex] = f
+	vm.frameIndex++
+}
+
+func (vm *VirtualMachine) popFrame() *Frame {
+	vm.frameIndex--
+	return vm.frames[vm.frameIndex]
+}
 func (vm *VirtualMachine) dump() {
-	fmt.Printf("[instructions]\n%s", vm.instructions)
+	fmt.Printf("[instructions]\n%s", vm.currentFrame().Instructions())
 	fmt.Println("[global scope]")
 	for i, v := range vm.globals {
 		if v != nil {
