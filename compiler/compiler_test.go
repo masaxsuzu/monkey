@@ -403,6 +403,79 @@ func TestIndexExpressions(t *testing.T) {
 	runCompilerTest(t, tests)
 }
 
+func TestFunctions(t *testing.T) {
+	tests := []compilerTestCase{
+		{
+
+			input: `fn(){return 5 + 10}`,
+			expectedConstants: []interface{}{
+				5,
+				10,
+				[]code.Instructions{
+					code.Make(code.Constant, 0),
+					code.Make(code.Constant, 1),
+					code.Make(code.Add),
+					code.Make(code.ReturnValue),
+				},
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.Constant, 2),
+				code.Make(code.Pop),
+			},
+		},
+	}
+	runCompilerTest(t, tests)
+}
+
+func TestCompilerScopes(t *testing.T) {
+	c := New()
+
+	if c.scopeIndex != 0 {
+		t.Errorf("scopeIndex wrong. got=%d, want=%d", c.scopeIndex, 0)
+	}
+
+	c.emit(code.Mul)
+	c.enterScope()
+
+	if c.scopeIndex != 1 {
+		t.Errorf("scopeIndex wrong. got=%d, want=%d", c.scopeIndex, 1)
+	}
+
+	c.emit(code.Sub)
+
+	if len(c.scopes[c.scopeIndex].instructions) != 1 {
+		t.Errorf("instructions length wrong. got=%d, want=%d", len(c.scopes[c.scopeIndex].instructions), 1)
+	}
+
+	last := c.scopes[c.scopeIndex].lastInstruction
+	if last.Code != code.Sub {
+		t.Errorf("lastInstruction.Code wrong. got=%d, want=%d", last.Code, code.Sub)
+	}
+
+	c.leaveScope()
+
+	if c.scopeIndex != 0 {
+		t.Errorf("scopeIndex wrong. got=%d, want=%d", c.scopeIndex, 0)
+	}
+
+	c.emit(code.Add)
+
+	if len(c.scopes[c.scopeIndex].instructions) != 2 {
+		t.Errorf("instructions length wrong. got=%d, want=%d", len(c.scopes[c.scopeIndex].instructions), 2)
+	}
+
+	last = c.scopes[c.scopeIndex].lastInstruction
+	if last.Code != code.Add {
+		t.Errorf("lastInstruction.Code wrong. got=%d, want=%d", last.Code, code.Add)
+	}
+
+	prev := c.scopes[c.scopeIndex].previousInstruction
+	if prev.Code != code.Mul {
+		t.Errorf("prevInstruction.Code wrong. got=%d, want=%d", prev.Code, code.Sub)
+	}
+
+}
+
 func runCompilerTest(t *testing.T, tests []compilerTestCase) {
 	t.Helper()
 
@@ -442,7 +515,7 @@ func testInstructions(
 
 	for i, ins := range concatted {
 		if actual[i] != ins {
-			return fmt.Errorf("wrogn instruction at %d.\nwant=%q\ngot =%q", i, concatted, actual)
+			return fmt.Errorf("wrong instruction at %d.\nwant=%q\ngot =%q", i, concatted, actual)
 		}
 	}
 	return nil
@@ -468,6 +541,17 @@ func testConstants(
 			err := testStringObject(constant, actual[i])
 			if err != nil {
 				return fmt.Errorf("constant %d - testStringObject faild : %s", i, err)
+			}
+		case []code.Instructions:
+			fn, ok := actual[i].(*object.CompiledFunction)
+			if !ok {
+				return fmt.Errorf("constant %d - not a function: %T", i, actual[i])
+			}
+
+			err := testInstructions(constant, fn.Instructions)
+
+			if err != nil {
+				return fmt.Errorf("constant %d - testInstructions failed: %s", i, err)
 			}
 		}
 	}

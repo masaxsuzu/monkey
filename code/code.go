@@ -37,6 +37,8 @@ const (
 	Array
 	Hash
 	Index
+	ReturnValue
+	Return
 )
 
 var definitions = map[OperandCode]*Definition{
@@ -61,6 +63,8 @@ var definitions = map[OperandCode]*Definition{
 	Array:         {"Array", []int{2}},
 	Hash:          {"Hash", []int{2}},
 	Index:         {"Index", []int{}},
+	ReturnValue:   {"ReturnValue", []int{}},
+	Return:        {"Return", []int{}},
 }
 
 func (ins Instructions) String() string {
