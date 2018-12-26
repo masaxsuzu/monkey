@@ -44,9 +44,8 @@ func TestBooleanExpressions(t *testing.T) {
 		{"false != false", false},
 		{"1 > 2", false},
 		{"1 < 2", true},
-		// TODO Compare integer and boolean
-		//{"1 == false", false},
-		//{"2 != true", false},
+		{"1 == false", false},
+		{"2 != true", true},
 		{"!true", false},
 		{"!!true", true},
 		{"!1", false},

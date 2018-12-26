@@ -260,9 +260,16 @@ func (vm *VirtualMachine) executeIntegerComparison(
 	op code.OperandCode,
 	left, right object.Object,
 ) error {
-	leftValue := left.(*object.Integer).Value
-	rightValue := right.(*object.Integer).Value
-
+	l, ok := left.(*object.Integer)
+	if !ok {
+		return vm.push(nativeBoolToBooleanObject(op != code.Equal))
+	}
+	r, ok := right.(*object.Integer)
+	if !ok {
+		return vm.push(nativeBoolToBooleanObject(op != code.Equal))
+	}
+	leftValue := l.Value
+	rightValue := r.Value
 	switch op {
 	case code.Equal:
 		return vm.push(nativeBoolToBooleanObject(leftValue == rightValue))
