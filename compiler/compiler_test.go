@@ -481,6 +481,47 @@ func TestFunctionsWithoutReturnValue(t *testing.T) {
 	}
 	runCompilerTest(t, tests)
 }
+
+func TestFunctionCalls(t *testing.T) {
+	tests := []compilerTestCase{
+		{
+
+			input: `fn(){24}()`,
+			expectedConstants: []interface{}{
+				24,
+				[]code.Instructions{
+					code.Make(code.Constant, 0),
+					code.Make(code.ReturnValue),
+				},
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.Constant, 1),
+				code.Make(code.Call),
+				code.Make(code.Pop),
+			},
+		},
+		{
+
+			input: `let f = fn(){24};f();`,
+			expectedConstants: []interface{}{
+				24,
+				[]code.Instructions{
+					code.Make(code.Constant, 0),
+					code.Make(code.ReturnValue),
+				},
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.Constant, 1),
+				code.Make(code.SetGlobal, 0),
+				code.Make(code.GetGlobal, 0),
+				code.Make(code.Call),
+				code.Make(code.Pop),
+			},
+		},
+	}
+	runCompilerTest(t, tests)
+}
+
 func TestCompilerScopes(t *testing.T) {
 	c := New()
 

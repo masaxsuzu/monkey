@@ -218,6 +218,13 @@ func (c *Compiler) Compile(node ast.Node) error {
 		ins := c.leaveScope()
 		compiledFn := &object.CompiledFunction{Instructions: ins}
 		c.emit(code.Constant, c.addConstant(compiledFn))
+	case *ast.CallExpression:
+		err := c.Compile(node.Function)
+		if err != nil {
+			return err
+		}
+
+		c.emit(code.Call)
 
 	case *ast.Identifier:
 		symbol, ok := c.symbolTable.Resolve(node.Value)

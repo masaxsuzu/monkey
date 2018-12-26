@@ -39,6 +39,7 @@ const (
 	Index
 	ReturnValue
 	Return
+	Call
 )
 
 var definitions = map[OperandCode]*Definition{
@@ -65,6 +66,7 @@ var definitions = map[OperandCode]*Definition{
 	Index:         {"Index", []int{}},
 	ReturnValue:   {"ReturnValue", []int{}},
 	Return:        {"Return", []int{}},
+	Call:          {"Call", []int{}},
 }
 
 func (ins Instructions) String() string {
