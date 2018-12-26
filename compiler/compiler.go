@@ -210,6 +210,11 @@ func (c *Compiler) Compile(node ast.Node) error {
 		if c.lastInstructionIs(code.Pop) {
 			c.replaceLastPopWithNewReturn()
 		}
+
+		if !c.lastInstructionIs(code.ReturnValue) {
+			c.emit(code.Return)
+		}
+
 		ins := c.leaveScope()
 		compiledFn := &object.CompiledFunction{Instructions: ins}
 		c.emit(code.Constant, c.addConstant(compiledFn))
