@@ -145,6 +145,13 @@ func (vm *VirtualMachine) Run() error {
 			if err != nil {
 				return err
 			}
+		case code.Return:
+			vm.popFrame()
+			vm.pop()
+			err := vm.push(Null)
+			if err != nil {
+				return err
+			}
 		case code.Array:
 			numElements := int(code.ReadUint16(ins[ip+1:]))
 			if numElements == 0 {

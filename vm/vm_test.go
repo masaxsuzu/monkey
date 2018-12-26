@@ -148,6 +148,33 @@ func TestCallingFunctions(t *testing.T) {
 	testRun(t, tests)
 }
 
+func TestCallingFunctionsWithoutReturnValue(t *testing.T) {
+	tests := []testCase{
+		{
+			`
+				fn(){}();
+			`,
+			Null,
+		},
+		{
+			`
+				let f= fn(){};
+				f();
+			`,
+			Null,
+		},
+		{
+			`
+				let a= fn(){};
+				let b= fn(){a()};
+				b();
+			`,
+			Null,
+		},
+	}
+	testRun(t, tests)
+}
+
 func testRun(t *testing.T, tests []testCase) {
 	t.Helper()
 
@@ -251,9 +278,11 @@ func testExpectedObject(
 		}
 
 	case *object.Null:
-		if want != Null {
+		if got != Null {
 			t.Errorf("object is not Null: %T (%+v)", got, want)
 		}
+	default:
+		t.Errorf("test is not implemented. %T (%+v)", got, want)
 	}
 }
 
