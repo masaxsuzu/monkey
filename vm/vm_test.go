@@ -298,6 +298,20 @@ func TestClosures(t *testing.T) {
 	testRun(t, tests)
 }
 
+func TestRecursiveFunctions(t *testing.T) {
+	tests := []testCase{
+		{
+			`
+			let f = fn(x){
+				if (x < 2) { return x}
+				return f(x-1) + f(x-2)
+			}
+			f(15)`,
+			610,
+		},
+	}
+	testRun(t, tests)
+}
 func testRun(t *testing.T, tests []testCase) {
 	t.Helper()
 
