@@ -41,6 +41,34 @@ func BenchmarkRun25NestedFibonacci_VM(b *testing.B) {
 	run(fmt.Sprintf(input, 25))
 }
 
+func BenchmarkRun26NestedFibonacci_Evaluator(b *testing.B) {
+	evaluate(fmt.Sprintf(input, 26))
+}
+func BenchmarkRun26NestedFibonacci_VM(b *testing.B) {
+	run(fmt.Sprintf(input, 26))
+}
+
+func BenchmarkRun27NestedFibonacci_Evaluator(b *testing.B) {
+	evaluate(fmt.Sprintf(input, 27))
+}
+func BenchmarkRun27NestedFibonacci_VM(b *testing.B) {
+	run(fmt.Sprintf(input, 27))
+}
+
+func BenchmarkRun28NestedFibonacci_Evaluator(b *testing.B) {
+	evaluate(fmt.Sprintf(input, 28))
+}
+func BenchmarkRun28NestedFibonacci_VM(b *testing.B) {
+	run(fmt.Sprintf(input, 28))
+}
+
+func BenchmarkRun29NestedFibonacci_Evaluator(b *testing.B) {
+	evaluate(fmt.Sprintf(input, 29))
+}
+func BenchmarkRun29NestedFibonacci_VM(b *testing.B) {
+	run(fmt.Sprintf(input, 29))
+}
+
 func BenchmarkRun30NestedFibonacci_Evaluator(b *testing.B) {
 	evaluate(fmt.Sprintf(input, 30))
 }
