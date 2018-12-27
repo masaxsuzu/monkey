@@ -3,9 +3,11 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"github.com/masa-suzu/monkey/compiler"
 	"github.com/masa-suzu/monkey/formatter"
 	"github.com/masa-suzu/monkey/lexer"
 	"github.com/masa-suzu/monkey/parser"
+	"github.com/masa-suzu/monkey/vm"
 
 	"github.com/gopherjs/gopherjs/js"
 	"github.com/masa-suzu/monkey/object"
@@ -20,9 +22,10 @@ func main() {
 
 func startRep(source string) string {
 	out := bytes.NewBufferString("")
-	env := object.NewEnvironment()
-	macros := object.NewEnvironment()
-	repl.Rep(source, out, env, macros)
+	constants := []object.Object{}
+	globals := make([]object.Object, vm.GlobalSize)
+	symbolTable := compiler.NewSymbolTable()
+	repl.Rep_VM(source, out, false, constants, globals, symbolTable)
 	return fmt.Sprint(out)
 }
 
