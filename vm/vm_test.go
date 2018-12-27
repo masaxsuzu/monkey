@@ -175,6 +175,39 @@ func TestCallingFunctionsWithoutReturnValue(t *testing.T) {
 	testRun(t, tests)
 }
 
+func TestCallingFunctionsWithBindings(t *testing.T) {
+	tests := []testCase{
+		{
+			`
+				fn(){let one = 1;one}();
+			`,
+			1,
+		},
+		{
+			`
+				let f = fn(){let one = 1;let two = 2;one + two;}
+				f();
+			`,
+			3,
+		},
+		{
+			`
+				let f = fn(){let mon = "mon"; return mon + "key"}
+				f();
+			`,
+			"monkey",
+		},
+		{
+			`
+				let f = fn(){let f = fn(){"monkey"};f}
+				f()();
+			`,
+			"monkey",
+		},
+	}
+	testRun(t, tests)
+}
+
 func testRun(t *testing.T, tests []testCase) {
 	t.Helper()
 
