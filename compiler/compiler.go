@@ -232,7 +232,7 @@ func (c *Compiler) Compile(node ast.Node) error {
 			NumLocals:     numLocals,
 			NumParameters: len(node.Parameters),
 		}
-		c.emit(code.Constant, c.addConstant(compiledFn))
+		c.emit(code.Closure, c.addConstant(compiledFn), 0)
 	case *ast.CallExpression:
 		err := c.Compile(node.Function)
 		if err != nil {

@@ -28,7 +28,8 @@ type VirtualMachine struct {
 
 func New(byteCode *compiler.ByteCode) *VirtualMachine {
 	main := &object.CompiledFunction{Instructions: byteCode.Instructions}
-	mainFrame := NewFrame(main, 0)
+	mainClosure := &object.Closure{Function: main}
+	mainFrame := NewFrame(mainClosure, 0)
 	frames := make([]*Frame, MaxFrames)
 	frames[0] = mainFrame
 
@@ -74,6 +75,15 @@ func (vm *VirtualMachine) Run() error {
 
 			err := vm.push(vm.constants[index])
 
+			if err != nil {
+				return err
+			}
+		case code.Closure:
+			constIndex := code.ReadUint16(ins[ip+1:])
+			_ = code.ReadUint8(ins[ip+3:])
+			vm.currentFrame().ip += 3
+
+			err := vm.pushClosure(int(constIndex))
 			if err != nil {
 				return err
 			}
@@ -148,7 +158,7 @@ func (vm *VirtualMachine) Run() error {
 			numArgs := code.ReadUint8(ins[ip+1:])
 			vm.currentFrame().ip += 1
 
-			err := vm.callFunction(int(numArgs))
+			err := vm.executeCall(int(numArgs))
 			if err != nil {
 				return err
 			}
@@ -450,22 +460,36 @@ func (vm *VirtualMachine) buildHash(startIndex, endIndex int) (object.Object, er
 	return &object.Hash{Pairs: hashedPairs}, nil
 }
 
-func (vm *VirtualMachine) callFunction(numArgs int) error {
-	fn, ok := vm.stack[vm.sp-1-numArgs].(*object.CompiledFunction)
-	if !ok {
-		return fmt.Errorf("xcalling non-function")
+func (vm *VirtualMachine) executeCall(numArgs int) error {
+	callee := vm.stack[vm.sp-1-numArgs]
+	switch callee := callee.(type) {
+	case *object.Closure:
+		return vm.callClosure(callee, numArgs)
+	default:
+		return fmt.Errorf("calling non-closure and non-builtin")
+	}
+}
+func (vm *VirtualMachine) callClosure(c *object.Closure, numArgs int) error {
+	if numArgs != c.Function.NumParameters {
+		return fmt.Errorf("wrong number of arguments: want=%d, got=%d", c.Function.NumParameters, numArgs)
 	}
 
-	if numArgs != fn.NumParameters {
-		return fmt.Errorf("wrong number of arguments: want=%d, got=%d", fn.NumParameters, numArgs)
-	}
-	frame := NewFrame(fn, vm.sp-numArgs)
+	frame := NewFrame(c, vm.sp-numArgs)
 	vm.pushFrame(frame)
 
-	vm.sp = frame.basePointer + fn.NumLocals
+	vm.sp = frame.basePointer + c.Function.NumLocals
 	return nil
 }
 
+func (vm *VirtualMachine) pushClosure(constIndex int) error {
+	constant := vm.constants[constIndex]
+	f, ok := constant.(*object.CompiledFunction)
+	if !ok {
+		return fmt.Errorf("not a function: %+v", constant)
+	}
+	closure := &object.Closure{Function: f}
+	return vm.push(closure)
+}
 func (vm *VirtualMachine) currentFrame() *Frame {
 	return vm.frames[vm.frameIndex-1]
 }
