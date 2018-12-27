@@ -225,14 +225,20 @@ func (c *Compiler) Compile(node ast.Node) error {
 			c.emit(code.Return)
 		}
 
+		freeSymbols := c.symbolTable.FreeSymbols
 		numLocals := c.symbolTable.numDefinitions
 		ins := c.leaveScope()
+
+		for _, s := range freeSymbols {
+			c.loadSymbol(s)
+		}
+
 		compiledFn := &object.CompiledFunction{
 			Instructions:  ins,
 			NumLocals:     numLocals,
 			NumParameters: len(node.Parameters),
 		}
-		c.emit(code.Closure, c.addConstant(compiledFn), 0)
+		c.emit(code.Closure, c.addConstant(compiledFn), len(freeSymbols))
 	case *ast.CallExpression:
 		err := c.Compile(node.Function)
 		if err != nil {
@@ -251,11 +257,8 @@ func (c *Compiler) Compile(node ast.Node) error {
 		if !ok {
 			return fmt.Errorf("undefined variable %s", node.Value)
 		}
-		if symbol.Scope == GlobalScope {
-			c.emit(code.GetGlobal, symbol.Index)
-		} else {
-			c.emit(code.GetLocal, symbol.Index)
-		}
+		c.loadSymbol(symbol)
+
 	case *ast.IntegerLiteral:
 		integer := &object.Integer{Value: node.Value}
 		c.emit(code.Constant, c.addConstant(integer))
@@ -429,4 +432,15 @@ func (c *Compiler) leaveScope() code.Instructions {
 
 	c.symbolTable = c.symbolTable.Outer
 	return instructions
+}
+
+func (c *Compiler) loadSymbol(s Symbol) {
+	switch s.Scope {
+	case GlobalScope:
+		c.emit(code.GetGlobal, s.Index)
+	case LocalScope:
+		c.emit(code.GetLocal, s.Index)
+	case FreeScope:
+		c.emit(code.GetFree, s.Index)
+	}
 }

@@ -43,6 +43,7 @@ const (
 	Return
 	Call
 	Closure
+	GetFree
 )
 
 var definitions = map[OperandCode]*Definition{
@@ -73,6 +74,7 @@ var definitions = map[OperandCode]*Definition{
 	Return:        {"Return", []int{}},
 	Call:          {"Call", []int{1}},
 	Closure:       {"Closure", []int{2, 1}},
+	GetFree:       {"GetFree", []int{1}},
 }
 
 func (ins Instructions) String() string {

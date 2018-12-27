@@ -690,6 +690,95 @@ func TestLetStatementScopes(t *testing.T) {
 	runCompilerTest(t, tests)
 }
 
+func TestClosures(t *testing.T) {
+	tests := []compilerTestCase{
+		{
+
+			input: `
+			fn(a){fn(b){return a-b}}
+			`,
+			expectedConstants: []interface{}{
+				[]code.Instructions{
+					code.Make(code.GetFree, 0),
+					code.Make(code.GetLocal, 0),
+					code.Make(code.Sub),
+					code.Make(code.ReturnValue),
+				},
+				[]code.Instructions{
+					code.Make(code.GetLocal, 0),
+					code.Make(code.Closure, 0, 1),
+					code.Make(code.ReturnValue),
+				},
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.Closure, 1, 0),
+				code.Make(code.Pop),
+			},
+		},
+		{
+
+			input: `
+			let g = 55;
+			fn(a){fn(b){return g + a+b}}
+			`,
+			expectedConstants: []interface{}{
+				55,
+				[]code.Instructions{
+					code.Make(code.GetGlobal, 0),
+					code.Make(code.GetFree, 0),
+					code.Make(code.Add),
+					code.Make(code.GetLocal, 0),
+					code.Make(code.Add),
+					code.Make(code.ReturnValue),
+				},
+				[]code.Instructions{
+					code.Make(code.GetLocal, 0),
+					code.Make(code.Closure, 1, 1),
+					code.Make(code.ReturnValue),
+				},
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.Constant, 0),
+				code.Make(code.SetGlobal, 0),
+				code.Make(code.Closure, 2, 0),
+				code.Make(code.Pop),
+			},
+		},
+		{
+
+			input: `
+			fn(a){fn(b){fn(c){a + b + c}}}
+			`,
+			expectedConstants: []interface{}{
+				[]code.Instructions{
+					code.Make(code.GetFree, 0),
+					code.Make(code.GetFree, 1),
+					code.Make(code.Add),
+					code.Make(code.GetLocal, 0),
+					code.Make(code.Add),
+					code.Make(code.ReturnValue),
+				},
+				[]code.Instructions{
+					code.Make(code.GetFree, 0),
+					code.Make(code.GetLocal, 0),
+					code.Make(code.Closure, 0, 2),
+					code.Make(code.ReturnValue),
+				},
+				[]code.Instructions{
+					code.Make(code.GetLocal, 0),
+					code.Make(code.Closure, 1, 1),
+					code.Make(code.ReturnValue),
+				},
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.Closure, 2, 0),
+				code.Make(code.Pop),
+			},
+		},
+	}
+	runCompilerTest(t, tests)
+}
+
 func runCompilerTest(t *testing.T, tests []compilerTestCase) {
 	t.Helper()
 
