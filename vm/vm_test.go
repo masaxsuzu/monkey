@@ -244,6 +244,44 @@ func TestCallingFunctionsWithArgumentsAndBindings(t *testing.T) {
 	testRun(t, tests)
 }
 
+func TestCallingFunctionsWithWrongArguments(t *testing.T) {
+	tests := []testCase{
+		{
+			"fn(){1;}(1);",
+			"wrong number of arguments: want=0, got=1",
+		},
+		{
+			"fn(a){a;}();",
+			"wrong number of arguments: want=1, got=0",
+		},
+		{
+			"fn(x,y){x+y;}(1);",
+			"wrong number of arguments: want=2, got=1",
+		},
+	}
+
+	for _, tt := range tests {
+		program := parse(tt.in)
+
+		c := compiler.New()
+		err := c.Compile(program)
+
+		if err != nil {
+			t.Fatalf("compiler error: %s", err)
+		}
+
+		vm := New(c.ByteCode())
+		err = vm.Run()
+		if err == nil {
+			t.Fatalf("expected VM error but resulted in none")
+		}
+
+		if err.Error() != tt.want {
+			t.Fatalf("wrong VM error: want=%q, got=%q", tt.want, err)
+		}
+	}
+}
+
 func testRun(t *testing.T, tests []testCase) {
 	t.Helper()
 
