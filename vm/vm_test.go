@@ -204,6 +204,42 @@ func TestCallingFunctionsWithBindings(t *testing.T) {
 			`,
 			"monkey",
 		},
+		{
+			`
+				let sum = fn(x,y){let z = x +y;z;}
+				let outer = fn(){
+					sum(1,2) + sum(3,4)		
+				}
+				outer();
+			`,
+			10,
+		},
+	}
+	testRun(t, tests)
+}
+
+func TestCallingFunctionsWithArgumentsAndBindings(t *testing.T) {
+	tests := []testCase{
+		{
+			`
+				fn(two){let one = 1;one+two}(2);
+			`,
+			3,
+		},
+		{
+			`
+				let f = fn(three){let one = 1;let two = 2;one + two+three;}
+				f(3);
+			`,
+			6,
+		},
+		{
+			`
+				let f = fn(key){let mon = "mon"; return mon + key}
+				f("key");
+			`,
+			"monkey",
+		},
 	}
 	testRun(t, tests)
 }

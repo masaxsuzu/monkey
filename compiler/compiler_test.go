@@ -496,7 +496,7 @@ func TestFunctionCalls(t *testing.T) {
 			},
 			expectedInstructions: []code.Instructions{
 				code.Make(code.Constant, 1),
-				code.Make(code.Call),
+				code.Make(code.Call, 0),
 				code.Make(code.Pop),
 			},
 		},
@@ -514,7 +514,64 @@ func TestFunctionCalls(t *testing.T) {
 				code.Make(code.Constant, 1),
 				code.Make(code.SetGlobal, 0),
 				code.Make(code.GetGlobal, 0),
-				code.Make(code.Call),
+				code.Make(code.Call, 0),
+				code.Make(code.Pop),
+			},
+		},
+		{
+
+			input: `let f = fn(x){};f(24);`,
+			expectedConstants: []interface{}{
+				[]code.Instructions{
+					code.Make(code.Return),
+				},
+				24,
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.Constant, 0),
+				code.Make(code.SetGlobal, 0),
+				code.Make(code.GetGlobal, 0),
+				code.Make(code.Constant, 1),
+				code.Make(code.Call, 1),
+				code.Make(code.Pop),
+			},
+		},
+		{
+
+			input: `let f = fn(x){x};f(24);`,
+			expectedConstants: []interface{}{
+				[]code.Instructions{
+					code.Make(code.GetLocal, 0),
+					code.Make(code.ReturnValue),
+				},
+				24,
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.Constant, 0),
+				code.Make(code.SetGlobal, 0),
+				code.Make(code.GetGlobal, 0),
+				code.Make(code.Constant, 1),
+				code.Make(code.Call, 1),
+				code.Make(code.Pop),
+			},
+		},
+		{
+
+			input: `let f = fn(x,y){};f(24,36);`,
+			expectedConstants: []interface{}{
+				[]code.Instructions{
+					code.Make(code.Return),
+				},
+				24,
+				36,
+			},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.Constant, 0),
+				code.Make(code.SetGlobal, 0),
+				code.Make(code.GetGlobal, 0),
+				code.Make(code.Constant, 1),
+				code.Make(code.Constant, 2),
+				code.Make(code.Call, 2),
 				code.Make(code.Pop),
 			},
 		},

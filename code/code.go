@@ -70,7 +70,7 @@ var definitions = map[OperandCode]*Definition{
 	Index:         {"Index", []int{}},
 	ReturnValue:   {"ReturnValue", []int{}},
 	Return:        {"Return", []int{}},
-	Call:          {"Call", []int{}},
+	Call:          {"Call", []int{1}},
 }
 
 func (ins Instructions) String() string {

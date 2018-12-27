@@ -145,13 +145,13 @@ func (vm *VirtualMachine) Run() error {
 			frame := vm.currentFrame()
 			vm.stack[frame.basePointer+int(localIndex)] = vm.pop()
 		case code.Call:
-			fn, ok := vm.stack[vm.sp-1].(*object.CompiledFunction)
-			if !ok {
-				return fmt.Errorf("calling non-function")
+			numArgs := code.ReadUint8(ins[ip+1:])
+			vm.currentFrame().ip += 1
+
+			err := vm.callFunction(int(numArgs))
+			if err != nil {
+				return err
 			}
-			frame := NewFrame(fn, vm.sp)
-			vm.pushFrame(frame)
-			vm.sp = frame.basePointer + fn.NumLocals
 
 		case code.ReturnValue:
 			ret := vm.pop()
@@ -448,6 +448,18 @@ func (vm *VirtualMachine) buildHash(startIndex, endIndex int) (object.Object, er
 	}
 
 	return &object.Hash{Pairs: hashedPairs}, nil
+}
+
+func (vm *VirtualMachine) callFunction(numArgs int) error {
+	fn, ok := vm.stack[vm.sp-1-numArgs].(*object.CompiledFunction)
+	if !ok {
+		return fmt.Errorf("xcalling non-function")
+	}
+	frame := NewFrame(fn, vm.sp-numArgs)
+	vm.pushFrame(frame)
+
+	vm.sp = frame.basePointer + fn.NumLocals
+	return nil
 }
 
 func (vm *VirtualMachine) currentFrame() *Frame {
