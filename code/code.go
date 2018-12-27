@@ -42,6 +42,7 @@ const (
 	ReturnValue
 	Return
 	Call
+	Closure
 )
 
 var definitions = map[OperandCode]*Definition{
@@ -71,6 +72,7 @@ var definitions = map[OperandCode]*Definition{
 	ReturnValue:   {"ReturnValue", []int{}},
 	Return:        {"Return", []int{}},
 	Call:          {"Call", []int{1}},
+	Closure:       {"Closure", []int{2, 1}},
 }
 
 func (ins Instructions) String() string {
@@ -104,6 +106,8 @@ func (ins Instructions) fmtInstruction(def *Definition, operands []int) string {
 		return def.Name
 	case 1:
 		return fmt.Sprintf("%s %d", def.Name, operands[0])
+	case 2:
+		return fmt.Sprintf("%s %d %d", def.Name, operands[0], operands[1])
 	}
 	return fmt.Sprintf("ERROR: unhandled operandCount for %s\n", def.Name)
 }
