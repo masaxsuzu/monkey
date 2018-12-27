@@ -282,6 +282,22 @@ func TestCallingFunctionsWithWrongArguments(t *testing.T) {
 	}
 }
 
+func TestClosures(t *testing.T) {
+	tests := []testCase{
+		{
+			`
+			let double = fn(x){
+				fn(){
+					return 2*x
+				}
+			}
+			double(1)()`,
+			2,
+		},
+	}
+	testRun(t, tests)
+}
+
 func testRun(t *testing.T, tests []testCase) {
 	t.Helper()
 
