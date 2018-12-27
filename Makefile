@@ -6,7 +6,8 @@ validate:
 	go vet ./...
 	goimports -l ./
 	go test ./...
-
+bench:
+	docker-compose run dev go test ./benchmark -bench Run -cpu 1
 run:
 	go run main.go
 
