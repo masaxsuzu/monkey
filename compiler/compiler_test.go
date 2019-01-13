@@ -779,6 +779,25 @@ func TestClosures(t *testing.T) {
 	runCompilerTest(t, tests)
 }
 
+func TestBuiltins(t *testing.T) {
+	tests := []compilerTestCase{
+		{
+
+			input: `
+			len([]);
+			`,
+			expectedConstants: []interface{}{},
+			expectedInstructions: []code.Instructions{
+				code.Make(code.GetBuiltin, 0),
+				code.Make(code.Array, 0),
+				code.Make(code.Call, 1),
+				code.Make(code.Pop),
+			},
+		},
+	}
+	runCompilerTest(t, tests)
+}
+
 func runCompilerTest(t *testing.T, tests []compilerTestCase) {
 	t.Helper()
 

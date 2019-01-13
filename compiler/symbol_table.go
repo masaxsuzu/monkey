@@ -3,9 +3,10 @@ package compiler
 type SymbolScope string
 
 const (
-	GlobalScope SymbolScope = "GLOBAL"
-	LocalScope  SymbolScope = "LOCAL"
-	FreeScope   SymbolScope = "FREE"
+	GlobalScope  SymbolScope = "GLOBAL"
+	LocalScope   SymbolScope = "LOCAL"
+	FreeScope    SymbolScope = "FREE"
+	BuiltinScope SymbolScope = "BUILTIN"
 )
 
 type Symbol struct {
@@ -46,6 +47,13 @@ func (st *SymbolTable) Define(name string) Symbol {
 	return symbol
 }
 
+func (st *SymbolTable) DefineBuiltin(index int, name string) Symbol {
+	symbol := Symbol{Name: name, Index: index, Scope: BuiltinScope}
+	st.store[name] = symbol
+	return symbol
+
+}
+
 func (st *SymbolTable) defineFree(original Symbol) Symbol {
 	st.FreeSymbols = append(st.FreeSymbols, original)
 	sym := Symbol{Name: original.Name, Index: len(st.FreeSymbols) - 1}
@@ -60,7 +68,7 @@ func (st *SymbolTable) Resolve(name string) (Symbol, bool) {
 		if !ok {
 			return s, ok
 		}
-		if s.Scope == GlobalScope {
+		if s.Scope == GlobalScope || s.Scope == BuiltinScope {
 			return s, ok
 		}
 		free := st.defineFree(s)

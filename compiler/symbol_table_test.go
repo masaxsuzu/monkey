@@ -270,3 +270,35 @@ func TestResolveUnresolvableFree(t *testing.T) {
 		}
 	}
 }
+
+func TestResolveBuiltins(t *testing.T) {
+	g := NewSymbolTable()
+	s1 := NewEnclosedSymbolTable(g)
+	s2 := NewEnclosedSymbolTable(s1)
+
+	want := []Symbol{
+		{Name: "a", Scope: BuiltinScope, Index: 0},
+		{Name: "c", Scope: BuiltinScope, Index: 1},
+		{Name: "e", Scope: BuiltinScope, Index: 2},
+		{Name: "f", Scope: BuiltinScope, Index: 3},
+	}
+
+	for i, v := range want {
+		g.DefineBuiltin(i, v.Name)
+	}
+	for _, table := range []*SymbolTable{g, s1, s2} {
+		for _, sym := range want {
+			ret, ok := table.Resolve(sym.Name)
+
+			if !ok {
+				t.Errorf("name %s not resolvable", sym.Name)
+				continue
+			}
+
+			if ret != sym {
+				t.Errorf("want %s to resolve to %+v, got=%+v", sym.Name, sym, ret)
+			}
+		}
+	}
+
+}

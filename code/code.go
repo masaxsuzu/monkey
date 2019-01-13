@@ -44,6 +44,7 @@ const (
 	Call
 	Closure
 	GetFree
+	GetBuiltin
 )
 
 var definitions = map[OperandCode]*Definition{
@@ -75,6 +76,7 @@ var definitions = map[OperandCode]*Definition{
 	Call:          {"Call", []int{1}},
 	Closure:       {"Closure", []int{2, 1}},
 	GetFree:       {"GetFree", []int{1}},
+	GetBuiltin:    {"GetBuiltin", []int{1}},
 }
 
 func (ins Instructions) String() string {
