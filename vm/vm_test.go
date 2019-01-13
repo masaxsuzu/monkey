@@ -294,6 +294,16 @@ func TestClosures(t *testing.T) {
 			double(1)()`,
 			2,
 		},
+		{
+			`
+			let head = fn(x){
+				fn(){
+					return first(x)
+				}
+			}
+			head([10,1])()`,
+			10,
+		},
 	}
 	testRun(t, tests)
 }
@@ -329,6 +339,42 @@ func TestBuiltinFunctions(t *testing.T) {
 		},
 		{
 			`len(1)`, &object.Error{Message: "argument to `len` not supported, got INTEGER"},
+		},
+		{
+			`first([1,2,3])`, 1,
+		},
+		{
+			`first([])`, Null,
+		},
+		{
+			`first(1)`, &object.Error{Message: "argument to first must be ARRAY, got INTEGER"},
+		},
+		{
+			`last([1,2,3])`, 3,
+		},
+		{
+			`last([])`, Null,
+		},
+		{
+			`last(1)`, &object.Error{Message: "argument to last must be ARRAY, got INTEGER"},
+		},
+		{
+			`rest([1,2,3])`, []int{2, 3},
+		},
+		{
+			`rest([])`, Null,
+		},
+		{
+			`rest(1)`, &object.Error{Message: "argument to rest must be ARRAY, got INTEGER"},
+		},
+		{
+			`puts("monkey")`, Null,
+		},
+		{
+			`help()`, Null,
+		},
+		{
+			`exit()`, Null,
 		},
 	}
 	testRun(t, tests)
