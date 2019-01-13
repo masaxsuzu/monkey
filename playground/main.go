@@ -25,6 +25,9 @@ func startRep(source string) string {
 	constants := []object.Object{}
 	globals := make([]object.Object, vm.GlobalSize)
 	symbolTable := compiler.NewSymbolTable()
+	for i, v := range object.Builtins {
+		symbolTable.DefineBuiltin(i, v.Name)
+	}
 	repl.Rep_VM(source, out, false, constants, globals, symbolTable)
 	return fmt.Sprint(out)
 }

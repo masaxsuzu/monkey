@@ -19,6 +19,9 @@ func Start(in io.Reader, out io.Writer, prompt string, useVM bool, debugMode boo
 	constants := []object.Object{}
 	globals := make([]object.Object, vm.GlobalSize)
 	symbolTable := compiler.NewSymbolTable()
+	for i, v := range object.Builtins {
+		symbolTable.DefineBuiltin(i, v.Name)
+	}
 	for {
 		fmt.Printf(prompt)
 		scanned := scanner.Scan()
