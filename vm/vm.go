@@ -87,6 +87,14 @@ func (vm *VirtualMachine) Run() error {
 			if err != nil {
 				return err
 			}
+		case code.GetBuiltin:
+			index := code.ReadUint8(ins[ip+1:])
+			vm.currentFrame().ip += 1
+			definition := object.Builtins[index]
+			err := vm.push(definition.Builtin)
+			if err != nil {
+				return err
+			}
 		case code.Add, code.Sub, code.Mul, code.Div:
 			err := vm.executeBinaryOperation(op)
 			if err != nil {
@@ -473,6 +481,8 @@ func (vm *VirtualMachine) executeCall(numArgs int) error {
 	switch callee := callee.(type) {
 	case *object.Closure:
 		return vm.callClosure(callee, numArgs)
+	case *object.Builtin:
+		return vm.callBuiltin(callee, numArgs)
 	default:
 		return fmt.Errorf("calling non-closure and non-builtin")
 	}
@@ -486,6 +496,18 @@ func (vm *VirtualMachine) callClosure(c *object.Closure, numArgs int) error {
 	vm.pushFrame(frame)
 
 	vm.sp = frame.basePointer + c.Function.NumLocals
+	return nil
+}
+
+func (vm *VirtualMachine) callBuiltin(builtin *object.Builtin, numArgs int) error {
+	args := vm.stack[vm.sp-numArgs : vm.sp]
+	result := builtin.Fn(args...)
+	vm.sp = vm.sp - numArgs - 1
+	if result != nil {
+		vm.push(result)
+	} else {
+		vm.push(Null)
+	}
 	return nil
 }
 

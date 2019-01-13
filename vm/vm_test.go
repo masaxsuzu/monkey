@@ -312,6 +312,28 @@ func TestRecursiveFunctions(t *testing.T) {
 	}
 	testRun(t, tests)
 }
+
+func TestBuiltinFunctions(t *testing.T) {
+	tests := []testCase{
+		{
+			`len("")`, 0,
+		},
+		{
+			`len([])`, 0,
+		},
+		{
+			`len("four")`, 4,
+		},
+		{
+			`len([1,2,3])`, 3,
+		},
+		{
+			`len(1)`, &object.Error{Message: "argument to `len` not supported, got INTEGER"},
+		},
+	}
+	testRun(t, tests)
+}
+
 func testRun(t *testing.T, tests []testCase) {
 	t.Helper()
 
@@ -417,6 +439,16 @@ func testExpectedObject(
 	case *object.Null:
 		if got != Null {
 			t.Errorf("object is not Null: %T (%+v)", got, want)
+		}
+	case *object.Error:
+		{
+			err, ok := got.(*object.Error)
+			if !ok {
+				t.Errorf("object is not Error: %T (%+v)", got, want)
+			}
+			if err.Message != want.Message {
+				t.Errorf("wrong error message. want=%q, got=%q", want.Message, err.Message)
+			}
 		}
 	default:
 		t.Errorf("test is not implemented. %T (%+v)", got, want)
