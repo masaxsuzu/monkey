@@ -380,6 +380,15 @@ func TestBuiltinFunctions(t *testing.T) {
 	testRun(t, tests)
 }
 
+func TestIssue001(t *testing.T) {
+	tests := []testCase{
+		{"return 1;", 1},
+		{"if(true){return \"x\";}", "x"},
+		{"fn(){if(true){return true;};}();", true},
+	}
+	testRun(t, tests)
+}
+
 func testRun(t *testing.T, tests []testCase) {
 	t.Helper()
 
