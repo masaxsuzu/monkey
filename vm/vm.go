@@ -183,14 +183,17 @@ func (vm *VirtualMachine) Run() error {
 			ret := vm.pop()
 
 			frame := vm.popFrame()
+
 			vm.sp = frame.basePointer - 1
-
+			if vm.sp < 0{
+				vm.sp = 0
+				vm.frameIndex = 1
+				return nil
+			} 
 			err := vm.push(ret)
-
 			if err != nil {
-				return err
 			}
-
+		
 		case code.Return:
 			frame := vm.popFrame()
 			vm.sp = frame.basePointer - 1
